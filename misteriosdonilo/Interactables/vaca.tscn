@@ -1,0 +1,3 @@
+[gd_scene format=3 uid="uid://d2pcbwxxc0dnk"]
+
+[node name="Vaca" type="CharacterBody2D"]

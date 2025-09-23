@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://sxmkhpirinpp"]
+
+[node name="MainBody" type="CharacterBody2D"]
+
+[node name="Colisão" type="CollisionShape2D" parent="."]
+
+[node name="Textura" type="Sprite2D" parent="."]
+
+[node name="Animação" type="AnimationPlayer" parent="."]

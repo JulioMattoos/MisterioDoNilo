@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://bwmlsuhcyphi3"]
+
+[ext_resource type="PackedScene" uid="uid://u0ba5h7uvox" path="res://Caracters/Neferti/main_caracter.tscn" id="1_0geru"]
+
+[node name="Neferti" instance=ExtResource("1_0geru")]

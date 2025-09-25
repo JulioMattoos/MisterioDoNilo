@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://bcr20bxec5srd"]
+
+[ext_resource type="Script" uid="uid://50xd6b7no13d" path="res://scripts/Fase_1/card_resposta_fase_1.gd" id="1_cbr44"]
+[ext_resource type="Texture2D" uid="uid://chh05u6olrfbe" path="res://imagens/cards_Fase_1/pg1_a3.png" id="2_cbr44"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_84waf"]
+size = Vector2(155, 153)
+
+[node name="CardResposta_Fase_1" type="Area2D"]
+script = ExtResource("1_cbr44")
+
+[node name="SpriteCard_Fase_1" type="Sprite2D" parent="."]
+scale = Vector2(0.09, 0.09)
+texture = ExtResource("2_cbr44")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-0.5, 0.5)
+shape = SubResource("RectangleShape2D_84waf")
+
+[connection signal="input_event" from="." to="." method="_on_input_event"]

@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://vah8xxmht0ap"]
 
-[ext_resource type="Texture2D" uid="uid://kogwlpc1ygf3" path="res://mapa/completo.png" id="2_hqyvl"]
-[ext_resource type="Script" uid="uid://dvfbrpr0l1da4" path="res://Scene/khepre.gd" id="2_otv2m"]
+[ext_resource type="Texture2D" uid="uid://kogwlpc1ygf3" path="res://imagens/mapa/completo.png" id="2_hqyvl"]
+[ext_resource type="Script" uid="uid://dvfbrpr0l1da4" path="res://scripts/khepre.gd" id="2_otv2m"]
 [ext_resource type="Texture2D" uid="uid://cs15w5pfblqdt" path="res://Caracters/Khepre/Khepre/Khepre_LeftWalk1.png" id="3_ud633"]
 [ext_resource type="Texture2D" uid="uid://redl8e7t0cof" path="res://Caracters/Khepre/Khepre/Khepre_LeftWalk.png" id="4_yw53o"]
 [ext_resource type="Texture2D" uid="uid://bygpu60u1erho" path="res://Caracters/Khepre/Khepre/Khepre_RightWalk1.png" id="5_71e0h"]

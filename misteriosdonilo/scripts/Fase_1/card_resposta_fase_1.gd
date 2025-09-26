@@ -1,84 +1,64 @@
 extends Area2D
-
 class_name CardResposta
 
-# Sinal quando card é solto na área de resposta
 signal resposta_arrastada(valor, eh_correta)
 
-# Variáveis do card
 var valor: int = 0
 var eh_correta: bool = false
-var arrastando: bool = false
 var posicao_original: Vector2
 
-# Referências aos nós filhos
-@onready var sprite = $SpriteCard
-@onready var collision_shape = $CollisionShape
+@onready var sprite: Sprite2D = $SpriteCard_Fase_1
+
+var _arrastando := false
+var _offset: Vector2
 
 func _ready():
-	# Conectar o sinal de input do mouse
-	connect("input_event", _on_input_event)
-	# Guardar posição original para voltar se errar
-	posicao_original = position
-
-# Configurar o card com valor e se é correto
-func configurar(valor_config: int, eh_correta_config: bool):
-	valor = valor_config
-	eh_correta = eh_correta_config
+	if posicao_original == Vector2.ZERO:
+		posicao_original = global_position
 	
-	# Carregar a imagem PNG do card baseado no valor
-	var texture_path = "res://assets/images/cards/card_%d.png" % valor_config
-	var texture = load(texture_path)
-	
-	if texture:
-		sprite.texture = texture
-	else:
-		# Fallback: criar um quadrado colorido
-		print("Texture não encontrada: ", texture_path)
+	# Conectar input_event seguro
+	var cb = Callable(self, "_on_input_event")
+	if not is_connected("input_event", cb):
+		connect("input_event", cb)
 
-# Quando o mouse interage com o card
 func _on_input_event(_viewport, event, _shape_idx):
-	# Verificar se foi clique esquerdo
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
-			# Mouse pressionado - iniciar arraste
-			iniciar_arraste()
+			# Iniciar arrasto
+			_arrastando = true
+			_offset = global_position - get_global_mouse_position()
+			get_viewport().set_input_as_handled()
 		else:
-			# Mouse solto - finalizar arraste
-			finalizar_arraste()
-
-func iniciar_arraste():
-	arrastando = true
-	z_index = 10  # Faz o card ficar por cima dos outros
-	scale = Vector2(1.1, 1.1)  # Aumenta um pouco ao ser arrastado
-
-func finalizar_arraste():
-	arrastando = false
-	z_index = 0   # Volta ao z-index normal
-	scale = Vector2(1.0, 1.0)  # Volta ao tamanho normal
+			# Soltar
+			if _arrastando:
+				_arrastando = false
+				_on_soltar()
 	
-	# Verificar se está em cima de alguma área de resposta
-	var areas = get_overlapping_areas()
-	for area in areas:
-		if area.is_in_group("area_resposta"):
-			# Emitir sinal de resposta
-			resposta_arrastada.emit(valor, eh_correta)
+	elif event is InputEventMouseMotion and _arrastando:
+		# Mover suavemente
+		global_position = get_global_mouse_position() + _offset
+
+func _on_soltar():
+	var areas_sobrepostas = get_overlapping_areas()
+	for area in areas_sobrepostas:
+		if area is AreaResposta:
+			emit_signal("resposta_arrastada", valor, eh_correta)
 			return
 	
-	# Se não está em área de resposta, volta para posição original
+	# Se não encontrou área válida, voltar
 	voltar_para_original()
 
-# Atualiza a posição do card enquanto está sendo arrastado
-func _process(_delta):
-	if arrastando:
-		global_position = get_global_mouse_position()
+func configurar(_valor: int, _eh_correta: bool) -> void:
+	valor = _valor
+	eh_correta = _eh_correta
 
-# Animação para voltar à posição original
-func voltar_para_original():
-	var tween = create_tween()
-	tween.tween_property(self, "position", posicao_original, 0.3)
-	tween.set_ease(Tween.EASE_OUT)
-
-# Função para obter o valor do card (usado na verificação)
-func get_valor():
+func get_valor() -> int:
 	return valor
+
+func voltar_para_original():
+	global_position = posicao_original
+
+func fixar_na_posicao_atual():
+	_arrastando = false
+	collision_layer = 0
+	collision_mask = 0

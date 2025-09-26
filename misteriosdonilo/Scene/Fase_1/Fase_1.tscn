@@ -33,17 +33,17 @@ position = Vector2(276, 117)
 [node name="AreaResposta3Fase1" parent="." instance=ExtResource("3_pvynm")]
 position = Vector2(276, -73)
 
-[node name="CardResposta_Fase_1" parent="." instance=ExtResource("4_5osw5")]
+[node name="Card2Resposta_Fase_1" parent="." instance=ExtResource("4_5osw5")]
 position = Vector2(450, 670)
 
-[node name="CardResposta_Fase_2" parent="." instance=ExtResource("5_5ayer")]
+[node name="Card3Resposta_Fase_1" parent="." instance=ExtResource("5_5ayer")]
 position = Vector2(275, 670)
 
-[node name="CardResposta_Fase_3" parent="." instance=ExtResource("6_i3oin")]
+[node name="Card5Resposta_Fase_1" parent="." instance=ExtResource("6_i3oin")]
 position = Vector2(100, 670)
 
-[node name="CardResposta_Fase_4" parent="." instance=ExtResource("7_res67")]
+[node name="Card9Resposta_Fase_1" parent="." instance=ExtResource("7_res67")]
 position = Vector2(625, 670)
 
-[node name="CardResposta_Fase_5" parent="." instance=ExtResource("8_gnrma")]
+[node name="Card6Resposta_Fase_1" parent="." instance=ExtResource("8_gnrma")]
 position = Vector2(800, 670)

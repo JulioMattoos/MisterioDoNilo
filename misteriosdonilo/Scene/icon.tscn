@@ -71,6 +71,7 @@ position = Vector2(507, 384)
 texture = ExtResource("2_hqyvl")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
+visible = false
 position = Vector2(-1, 0)
 
 [node name="casaGrande" type="CollisionPolygon2D" parent="StaticBody2D"]
@@ -205,10 +206,12 @@ scale = Vector2(0.0538277, 0.0538277)
 texture = ExtResource("8_npxfr")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Paser"]
+visible = false
 position = Vector2(448, 350)
 shape = SubResource("CircleShape2D_x76k5")
 
 [node name="InteractionArea" type="Area2D" parent="Paser"]
+visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Paser/InteractionArea"]
 visible = false

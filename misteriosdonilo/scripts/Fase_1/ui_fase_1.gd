@@ -1,4 +1,4 @@
-extends CanvasLayer
+extends Area2D
 class_name UiFase1
 
 signal botao_iniciar_pressed()

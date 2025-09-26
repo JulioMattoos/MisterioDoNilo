@@ -2,9 +2,9 @@ extends Node2D
 
 # Configuração das equações - CORRIGIDOS OS RESULTADOS
 var equacoes = [
-	{"expressao": "1 + 1", "resultado": 2, "area_index": 0},
-	{"expressao": "3 + 2", "resultado": 5, "area_index": 1},
-	{"expressao": "9 - 6", "resultado": 3, "area_index": 2}
+	{"expressao": "1 + 1", "resultado": 2, "area_index": 2},
+	{"expressao": "3 + 2", "resultado": 5, "area_index": 5},
+	{"expressao": "9 - 6", "resultado": 3, "area_index": 3}
 ]
 
 var equacao_atual = 0

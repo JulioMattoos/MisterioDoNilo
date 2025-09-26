@@ -1,7 +1,6 @@
-[gd_scene load_steps=15 format=3 uid="uid://pndd5tf6kjbv"]
+[gd_scene load_steps=14 format=3 uid="uid://pndd5tf6kjbv"]
 
-[ext_resource type="Texture2D" uid="uid://kogwlpc1ygf3" path="res://mapa/mapa.png" id="1_v26gm"]
-[ext_resource type="Script" uid="uid://dvfbrpr0l1da4" path="res://Scene/khepre.gd" id="2_44vhy"]
+[ext_resource type="Script" uid="uid://dvfbrpr0l1da4" path="res://scripts/khepre.gd" id="2_44vhy"]
 [ext_resource type="Texture2D" uid="uid://redl8e7t0cof" path="res://Caracters/Khepre/Khepre/Khepre_LeftWalk.png" id="3_0k1jd"]
 [ext_resource type="Texture2D" uid="uid://cs15w5pfblqdt" path="res://Caracters/Khepre/Khepre/Khepre_LeftWalk1.png" id="4_6mbw3"]
 [ext_resource type="Texture2D" uid="uid://dyrfqwevmyhb3" path="res://Caracters/Khepre/Khepre/Khepre_RightWalk.png" id="5_4rraq"]
@@ -68,7 +67,6 @@ radius = 30.0
 
 [node name="MapaBase" type="Sprite2D"]
 position = Vector2(512, 384)
-texture = ExtResource("1_v26gm")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 visible = false

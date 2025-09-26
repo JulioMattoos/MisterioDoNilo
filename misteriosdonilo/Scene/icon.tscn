@@ -1,7 +1,7 @@
 [gd_scene load_steps=15 format=3 uid="uid://vah8xxmht0ap"]
 
-[ext_resource type="Texture2D" uid="uid://kogwlpc1ygf3" path="res://mapa/mapa.png" id="2_hqyvl"]
-[ext_resource type="Script" uid="uid://dvfbrpr0l1da4" path="res://Scene/khepre.gd" id="2_otv2m"]
+[ext_resource type="Texture2D" uid="uid://w8eialwa5ldk" path="res://imagens/mapa/completo.png" id="1_h4brd"]
+[ext_resource type="Script" uid="uid://dvfbrpr0l1da4" path="res://scripts/khepre.gd" id="2_otv2m"]
 [ext_resource type="Texture2D" uid="uid://cs15w5pfblqdt" path="res://Caracters/Khepre/Khepre/Khepre_LeftWalk1.png" id="3_ud633"]
 [ext_resource type="Texture2D" uid="uid://redl8e7t0cof" path="res://Caracters/Khepre/Khepre/Khepre_LeftWalk.png" id="4_yw53o"]
 [ext_resource type="Texture2D" uid="uid://bygpu60u1erho" path="res://Caracters/Khepre/Khepre/Khepre_RightWalk1.png" id="5_71e0h"]
@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://pndd5tf6kjbv" path="res://Scene/DialogueBox.tscn" id="8_h4brd"]
 [ext_resource type="Texture2D" uid="uid://bydfudoeaxjc8" path="res://Scene/Paser.png" id="8_npxfr"]
 [ext_resource type="Script" uid="uid://xaygdupxkb4b" path="res://Scene/paser.gd" id="8_x76k5"]
-[ext_resource type="PackedScene" uid="uid://bdupuuuef8p65" path="res://Scene/Fase_1.tscn" id="9_h4brd"]
+[ext_resource type="PackedScene" uid="uid://cgdvg6tiw3k8o" path="res://Scene/Fase_1/UI_Fase_1.tscn" id="9_h4brd"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tr34o"]
 
@@ -68,10 +68,9 @@ radius = 42.0119
 
 [node name="MapaBase" type="Sprite2D"]
 position = Vector2(507, 384)
-texture = ExtResource("2_hqyvl")
+texture = ExtResource("1_h4brd")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
-visible = false
 position = Vector2(-1, 0)
 
 [node name="casaGrande" type="CollisionPolygon2D" parent="StaticBody2D"]
@@ -206,12 +205,10 @@ scale = Vector2(0.0538277, 0.0538277)
 texture = ExtResource("8_npxfr")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Paser"]
-visible = false
 position = Vector2(448, 350)
 shape = SubResource("CircleShape2D_x76k5")
 
 [node name="InteractionArea" type="Area2D" parent="Paser"]
-visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Paser/InteractionArea"]
 visible = false

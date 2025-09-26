@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://cvqhkirudawdw"]
+
+[ext_resource type="Script" uid="uid://bh5u055tc5rlt" path="res://scripts/Fase_1/area_resposta_fase_1.gd" id="1_rxcmk"]
+[ext_resource type="Texture2D" uid="uid://bwuifnnvtjeew" path="res://imagens/cards_Fase_1/card_vazio.png" id="2_sms6g"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6ahln"]
+size = Vector2(154, 151)
+
+[node name="AreaRespostaFase1" type="Area2D" groups=["area_resposta"]]
+script = ExtResource("1_rxcmk")
+
+[node name="SpriteArea_Fase_1" type="Sprite2D" parent="."]
+position = Vector2(490, 368)
+scale = Vector2(0.09, 0.09)
+texture = ExtResource("2_sms6g")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(490, 368.5)
+shape = SubResource("RectangleShape2D_6ahln")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]

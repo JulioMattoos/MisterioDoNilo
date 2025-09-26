@@ -1,0 +1,70 @@
+[gd_scene load_steps=3 format=3 uid="uid://cgdvg6tiw3k8o"]
+
+[ext_resource type="Script" uid="uid://m6kb522vrckk" path="res://scripts/Fase_1/ui_fase_1.gd" id="1_ljqpy"]
+[ext_resource type="Texture2D" uid="uid://cbt7cbnshn10f" path="res://imagens/assets_Fase_1/3.png" id="2_jclib"]
+
+[node name="UiFase1" type="Area2D"]
+script = ExtResource("1_ljqpy")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(512, 384)
+scale = Vector2(0.533333, 0.711111)
+texture = ExtResource("2_jclib")
+
+[node name="TelaInicial_Fase_1" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -512.0
+offset_right = -512.0
+grow_horizontal = 2
+
+[node name="LabelTitulo_Fase_1" type="Label" parent="TelaInicial_Fase_1"]
+layout_mode = 2
+offset_left = 512.0
+offset_right = 1540.0
+offset_bottom = 145.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 36
+text = "FASE 1 - ADIÇÃO E SUBTRAÇÃO"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BotaoIniciar_Fase_1" type="Button" parent="TelaInicial_Fase_1"]
+clip_contents = true
+layout_mode = 2
+offset_left = 589.0
+offset_top = 668.0
+offset_right = 828.0
+offset_bottom = 749.0
+theme_override_font_sizes/font_size = 24
+text = "INICIAR JOGO"
+
+[node name="TelaVitoria_Fase_1" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="LabelVitoria_Fase_1" type="Label" parent="TelaVitoria_Fase_1"]
+layout_mode = 0
+offset_left = 512.0
+offset_top = 200.0
+offset_right = 742.0
+offset_bottom = 223.0
+theme_override_font_sizes/font_size = 36
+text = "PARABÉNS! FASE CONCLUÍDA!"
+
+[node name="BotaoProximaFase_Fase_1" type="Button" parent="TelaVitoria_Fase_1"]
+layout_mode = 0
+offset_left = -100.0
+offset_top = 350.0
+offset_right = 100.0
+offset_bottom = 410.0
+theme_override_font_sizes/font_size = 24
+text = "PRÓXIMA FASE"
+
+[connection signal="pressed" from="TelaInicial_Fase_1/BotaoIniciar_Fase_1" to="." method="_on_botao_iniciar_fase_1_pressed"]

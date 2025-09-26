@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://kogwlpc1ygf3"
-path="res://.godot/imported/completo.png-bc0e25ee0e1e4f632b08613248684c4e.ctex"
+uid="uid://dubtx88e17q4x"
+path="res://.godot/imported/DialogoPaser.png-e9bfeac54d3bd70a94ef1ead4c20a53a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://mapa/completo.png"
-dest_files=["res://.godot/imported/completo.png-bc0e25ee0e1e4f632b08613248684c4e.ctex"]
+source_file="res://Caracters/Paser/Paser/DialogoPaser.png"
+dest_files=["res://.godot/imported/DialogoPaser.png-e9bfeac54d3bd70a94ef1ead4c20a53a.ctex"]
 
 [params]
 

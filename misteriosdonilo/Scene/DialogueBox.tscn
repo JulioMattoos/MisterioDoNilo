@@ -1,15 +1,15 @@
-[gd_scene load_steps=15 format=3 uid="uid://vah8xxmht0ap"]
+[gd_scene load_steps=15 format=3 uid="uid://pndd5tf6kjbv"]
 
-[ext_resource type="Texture2D" uid="uid://kogwlpc1ygf3" path="res://mapa/mapa.png" id="2_hqyvl"]
-[ext_resource type="Script" uid="uid://dvfbrpr0l1da4" path="res://Scene/khepre.gd" id="2_otv2m"]
-[ext_resource type="Texture2D" uid="uid://cs15w5pfblqdt" path="res://Caracters/Khepre/Khepre/Khepre_LeftWalk1.png" id="3_ud633"]
-[ext_resource type="Texture2D" uid="uid://redl8e7t0cof" path="res://Caracters/Khepre/Khepre/Khepre_LeftWalk.png" id="4_yw53o"]
-[ext_resource type="Texture2D" uid="uid://bygpu60u1erho" path="res://Caracters/Khepre/Khepre/Khepre_RightWalk1.png" id="5_71e0h"]
-[ext_resource type="Texture2D" uid="uid://dyrfqwevmyhb3" path="res://Caracters/Khepre/Khepre/Khepre_RightWalk.png" id="6_rhbex"]
-[ext_resource type="PackedScene" uid="uid://pndd5tf6kjbv" path="res://Scene/DialogueBox.tscn" id="8_h4brd"]
-[ext_resource type="Texture2D" uid="uid://bydfudoeaxjc8" path="res://Scene/Paser.png" id="8_npxfr"]
-[ext_resource type="Script" uid="uid://xaygdupxkb4b" path="res://Scene/paser.gd" id="8_x76k5"]
-[ext_resource type="PackedScene" uid="uid://bdupuuuef8p65" path="res://Scene/Fase_1.tscn" id="9_h4brd"]
+[ext_resource type="Texture2D" uid="uid://kogwlpc1ygf3" path="res://mapa/mapa.png" id="1_v26gm"]
+[ext_resource type="Script" uid="uid://dvfbrpr0l1da4" path="res://Scene/khepre.gd" id="2_44vhy"]
+[ext_resource type="Texture2D" uid="uid://redl8e7t0cof" path="res://Caracters/Khepre/Khepre/Khepre_LeftWalk.png" id="3_0k1jd"]
+[ext_resource type="Texture2D" uid="uid://cs15w5pfblqdt" path="res://Caracters/Khepre/Khepre/Khepre_LeftWalk1.png" id="4_6mbw3"]
+[ext_resource type="Texture2D" uid="uid://dyrfqwevmyhb3" path="res://Caracters/Khepre/Khepre/Khepre_RightWalk.png" id="5_4rraq"]
+[ext_resource type="Texture2D" uid="uid://bygpu60u1erho" path="res://Caracters/Khepre/Khepre/Khepre_RightWalk1.png" id="6_up0aw"]
+[ext_resource type="Script" uid="uid://xaygdupxkb4b" path="res://Scene/paser.gd" id="7_0vn6r"]
+[ext_resource type="PackedScene" uid="uid://bdupuuuef8p65" path="res://Scene/Fase_1.tscn" id="8_0k1jd"]
+[ext_resource type="Texture2D" uid="uid://bydfudoeaxjc8" path="res://Scene/Paser.png" id="8_3bwm8"]
+[ext_resource type="Texture2D" uid="uid://dubtx88e17q4x" path="res://Caracters/Paser/Paser/DialogoPaser.png" id="9_44vhy"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tr34o"]
 
@@ -17,10 +17,10 @@
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("4_yw53o")
+"texture": ExtResource("3_0k1jd")
 }, {
 "duration": 1.0,
-"texture": ExtResource("3_ud633")
+"texture": ExtResource("4_6mbw3")
 }],
 "loop": true,
 "name": &"walk_down",
@@ -28,10 +28,10 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("4_yw53o")
+"texture": ExtResource("3_0k1jd")
 }, {
 "duration": 1.0,
-"texture": ExtResource("3_ud633")
+"texture": ExtResource("4_6mbw3")
 }],
 "loop": true,
 "name": &"walk_left",
@@ -39,10 +39,10 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("6_rhbex")
+"texture": ExtResource("5_4rraq")
 }, {
 "duration": 1.0,
-"texture": ExtResource("5_71e0h")
+"texture": ExtResource("6_up0aw")
 }],
 "loop": true,
 "name": &"walk_right",
@@ -50,10 +50,10 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("6_rhbex")
+"texture": ExtResource("5_4rraq")
 }, {
 "duration": 1.0,
-"texture": ExtResource("5_71e0h")
+"texture": ExtResource("6_up0aw")
 }],
 "loop": true,
 "name": &"walk_up",
@@ -61,16 +61,17 @@ animations = [{
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_x76k5"]
-radius = 12.3693
+radius = 16.0312
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_npxfr"]
-radius = 42.0119
+radius = 30.0
 
 [node name="MapaBase" type="Sprite2D"]
-position = Vector2(507, 384)
-texture = ExtResource("2_hqyvl")
+position = Vector2(512, 384)
+texture = ExtResource("1_v26gm")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
+visible = false
 position = Vector2(-1, 0)
 
 [node name="casaGrande" type="CollisionPolygon2D" parent="StaticBody2D"]
@@ -182,10 +183,11 @@ polygon = PackedVector2Array(-238, 327, -238, 342, -235, 347, -230, 350, -223, 3
 position = Vector2(-113, -206)
 polygon = PackedVector2Array(-237, 330, -237, 341, -235, 347, -230, 349, -223, 348, -213, 347, -209, 342, -210, 330, -214, 322, -221, 321, -229, 321, -236, 323)
 
-[node name="Khepre" type="CharacterBody2D" parent="." groups=["player"]]
-script = ExtResource("2_otv2m")
+[node name="Khepre" type="CharacterBody2D" parent="."]
+visible = false
+script = ExtResource("2_44vhy")
 
-[node name="ColisaoKhepre" type="CollisionShape2D" parent="Khepre"]
+[node name="ColisãoKhepre" type="CollisionShape2D" parent="Khepre"]
 shape = SubResource("RectangleShape2D_tr34o")
 
 [node name="SkinKhepre" type="AnimatedSprite2D" parent="Khepre"]
@@ -195,25 +197,46 @@ sprite_frames = SubResource("SpriteFrames_rxos1")
 animation = &"walk_down"
 
 [node name="Paser" type="CharacterBody2D" parent="."]
-script = ExtResource("8_x76k5")
-dialogue_box_scene = ExtResource("8_h4brd")
-next_level_scene = ExtResource("9_h4brd")
+script = ExtResource("7_0vn6r")
+next_level_scene = ExtResource("8_0k1jd")
 
 [node name="Sprite2D" type="Sprite2D" parent="Paser"]
 position = Vector2(447.875, 349.875)
 scale = Vector2(0.0538277, 0.0538277)
-texture = ExtResource("8_npxfr")
+texture = ExtResource("8_3bwm8")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Paser"]
+visible = false
 position = Vector2(448, 350)
 shape = SubResource("CircleShape2D_x76k5")
 
 [node name="InteractionArea" type="Area2D" parent="Paser"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Paser/InteractionArea"]
-visible = false
 position = Vector2(448, 348)
 shape = SubResource("CircleShape2D_npxfr")
+
+[node name="DialogueBox" type="Control" parent="."]
+custom_minimum_size = Vector2(1024, 768)
+layout_mode = 3
+anchors_preset = 0
+offset_left = -514.0
+offset_top = -383.0
+offset_right = 510.0
+offset_bottom = 385.0
+
+[node name="TextureRect" type="TextureRect" parent="DialogueBox"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 3.0
+offset_right = 3.0
+offset_bottom = -1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("9_44vhy")
+expand_mode = 1
 
 [connection signal="body_entered" from="Paser/InteractionArea" to="Paser" method="_on_interaction_area_body_entered"]
 [connection signal="body_exited" from="Paser/InteractionArea" to="Paser" method="_on_interaction_area_body_exited"]

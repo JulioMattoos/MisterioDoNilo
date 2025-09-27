@@ -169,57 +169,41 @@ func _processar_resposta(valor, correto_para_esta_area):
 	print("Equação atual: ", equacao_atual)
 	
 	# ⭐ MELHORIA: Buscar card de forma mais robusta
+	# Encontrar o card que foi solto
 	var card_solto = null
-	for card in cards_instanciados:  # ⭐ Usar array de controle
-		if card and is_instance_valid(card) and card.has_method("get_valor"):
-			var card_valor = card.get_valor() if card.has_method("get_valor") else card.valor
-			print("Verificando card: ", card.name, " - Valor: ", card_valor)
-			if card_valor == valor:
-				card_solto = card
-				print("✅ Card correto encontrado: ", card.name)
-				break
+	for card in container_cards.get_children():
+		if card is CardResposta and card.valor == valor:
+			card_solto = card
+			break
 	
 	if card_solto == null:
-		print("❌ ERRO: Nenhum card com valor ", valor, " encontrado!")
-		print("Cards disponíveis:")
-		for card in cards_instanciados:
-			if card and is_instance_valid(card):
-				var card_valor = card.get_valor() if card.has_method("get_valor") else card.valor
-				print(" - ", card.name, " | Valor: ", card_valor)
-		return
-	
-	# ⭐ VERIFICAR se o card já está fixado
-	if cartas_corretas_fixadas.has(card_solto):
-		print("ℹ️ Card já estava fixado - ignorando")
 		return
 	
 	if correto_para_esta_area:
-		print("🎉 RESPOSTA CORRETA PARA A EQUAÇÃO: ", equacoes[equacao_atual]["expressao"])
+		# VERIFICAR se esta carta já não foi usada corretamente antes
+		if cartas_corretas_fixadas.has(card_solto):
+			return  # Já está fixada, não processar novamente
+			
+		print("Resposta CORRETA! Valor: ", valor)
+		ui_fase_1.mostrar_feedback("Correto! 🎉", true)
 		
-		# Verificar se é a resposta esperada para a equação atual
-		var resultado_esperado = equacoes[equacao_atual]["resultado"]
-		if valor == resultado_esperado:
-			ui_fase_1.mostrar_feedback("Correto! 🎉", true)
-			card_solto.fixar_na_posicao_atual()
-			cartas_corretas_fixadas.append(card_solto)
-			print("✅ Card fixado com sucesso!")
-			
-			# Avançar no jogo
-			await get_tree().create_timer(1.0).timeout
-			equacao_atual += 1
-			
-			if equacao_atual < equacoes.size():
-				ui_fase_1.atualizar_progresso(equacao_atual, equacoes.size())
-				print("➡️ Próxima equação: ", equacoes[equacao_atual]["expressao"])
-			else:
-				completar_fase()
+		# Fixar a carta - não pode mais ser movida
+		card_solto.fixar_na_posicao_atual()
+		cartas_corretas_fixadas.append(card_solto)
+		
+		# Avançar para próxima equação
+		await get_tree().create_timer(1.0).timeout
+		equacao_atual += 1
+		
+		if equacao_atual < equacoes.size():
+			ui_fase_1.atualizar_progresso(equacao_atual, equacoes.size())
 		else:
-			print("❌ Card correto, mas não para esta equação!")
-			ui_fase_1.mostrar_feedback("Card correto, mas equação errada!", false)
-			card_solto.voltar_para_original()
+			completar_fase()
 	else:
-		print("❌ RESPOSTA INCORRETA!")
+		print("Resposta INCORRETA! Valor: ", valor)
 		ui_fase_1.mostrar_feedback("Tente novamente!", false)
+		
+		# Apenas voltar para posição original (pode tentar novamente)
 		card_solto.voltar_para_original()
 
 func liberar_todas_cartas():

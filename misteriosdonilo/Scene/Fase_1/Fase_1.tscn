@@ -23,15 +23,14 @@ texture = ExtResource("2_y7shb")
 [node name="ContainerCards_Fase_1" type="Node2D" parent="."]
 position = Vector2(-408, 930)
 
-[node name="AreaResposta1Fase1" parent="." instance=ExtResource("3_pvynm")]
-position = Vector2(292, -259)
-scale = Vector2(1.0075, 1)
-
-[node name="AreaResposta2Fase1" parent="." instance=ExtResource("3_pvynm")]
-position = Vector2(296, 119)
-
-[node name="AreaResposta3Fase1" parent="." instance=ExtResource("3_pvynm")]
+[node name="AreaResposta2Fase2" parent="." instance=ExtResource("3_pvynm")]
 position = Vector2(296, -70)
+
+[node name="AreaResposta2Fase3" parent="." instance=ExtResource("3_pvynm")]
+position = Vector2(296, -263)
+
+[node name="AreaResposta2Fase4" parent="." instance=ExtResource("3_pvynm")]
+position = Vector2(296, 116)
 
 [node name="Card2Resposta_Fase_1" parent="." instance=ExtResource("4_5osw5")]
 position = Vector2(450, 670)

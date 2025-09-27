@@ -1,4 +1,4 @@
-extends Area2D
+extends Control
 class_name UiFase1
 
 signal botao_iniciar_pressed()
@@ -36,3 +36,11 @@ func mostrar_feedback(mensagem: String, positivo: bool):
 
 func atualizar_progresso(atual: int, total: int):
 	print("Progresso: ", atual, "/", total)
+	
+	
+func _on_Botaoiniciar_Fase_1_pressed():
+	get_tree().change_scene_to_file("res://Scene/Fase_1/Fase_1.tscn")
+
+
+func _on_botao_iniciar_fase_1_pressed() -> void:
+	get_tree().change_scene_to_file("res://Scene/Fase_1/Fase_1.tscn")

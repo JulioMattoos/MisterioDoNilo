@@ -3,7 +3,9 @@
 [ext_resource type="Script" uid="uid://m6kb522vrckk" path="res://scripts/Fase_1/ui_fase_1.gd" id="1_ljqpy"]
 [ext_resource type="Texture2D" uid="uid://cbt7cbnshn10f" path="res://imagens/assets_Fase_1/3.png" id="2_jclib"]
 
-[node name="UiFase1" type="Area2D"]
+[node name="UiFase1" type="Control"]
+layout_mode = 3
+anchors_preset = 0
 script = ExtResource("1_ljqpy")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
@@ -12,7 +14,7 @@ scale = Vector2(0.533333, 0.711111)
 texture = ExtResource("2_jclib")
 
 [node name="TelaInicial_Fase_1" type="Control" parent="."]
-layout_mode = 3
+layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5

@@ -17,8 +17,10 @@ func _ready():
 	if posicao_original == Vector2.ZERO:
 		posicao_original = global_position
 	
-	# ⭐ CORREÇÃO: Conectar o input_event corretamente
-	input_event.connect(_on_input_event)
+	# ⭐ CORREÇÃO: Verificar se já está conectado antes de conectar
+	if not input_event.is_connected(_on_input_event):
+		input_event.connect(_on_input_event)
+	
 	input_pickable = true  # ⭐ IMPORTANTE: Permitir que receba input
 	
 	print("✅ Card carregado - Nome: ", name, " - Valor: ", valor)

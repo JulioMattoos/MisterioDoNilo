@@ -14,9 +14,9 @@ var jogo_iniciado = false
 @onready var container_cards = $ContainerCards_Fase_1
 
 # Array para armazenar as áreas de resposta
-@onready var area_resposta1 = $AreaResposta1Fase1
-@onready var area_resposta2 = $AreaResposta2Fase1
-@onready var area_resposta3 = $AreaResposta3Fase1
+@onready var area_resposta1 = $AreaResposta2Fase4
+@onready var area_resposta2 = $AreaResposta2Fase2
+@onready var area_resposta3 = $AreaResposta2Fase3
 
 var areas_resposta: Array = []
 var cartas_corretas_fixadas: Array = []

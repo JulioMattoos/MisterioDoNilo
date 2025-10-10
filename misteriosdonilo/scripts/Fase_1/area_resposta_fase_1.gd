@@ -4,12 +4,14 @@ class_name AreaResposta
 signal resposta_recebida(valor: int, correto_para_esta_area: bool)
 signal card_entrou_na_area(area: AreaResposta, card: Object)
 
-var resultado_esperado: int = 0
+var resultado_esperado: int = 2
 var expressao: String = ""
 var tem_card_correto: bool = false
 
 func _ready():
-	area_entered.connect(_on_area_entered)
+	# SOLUÇÃO: Verificar se já está conectado antes de conectar
+	if not area_entered.is_connected(_on_area_entered):
+		area_entered.connect(_on_area_entered)
 	
 	if resultado_esperado == 0 and expressao.is_empty():
 		push_warning("AreaResposta não foi configurada corretamente - use a função configurar()")
@@ -50,15 +52,15 @@ func _on_area_entered(area: Area2D):
 	
 	print("Objeto não reconhecido como card: ", area.name)
 
-func _processar_resposta(valor_card: int, card: Object):
-	var correto_para_esta_area: bool = (valor_card == resultado_esperado)
+func _processar_resposta(_valor_card: int, _card: Object):
+	var correto_para_esta_area: bool = (_valor_card == resultado_esperado)
 	tem_card_correto = correto_para_esta_area
 	
-	print("Card valor: ", valor_card)
+	print("Card valor: ", _valor_card)
 	print("Área espera: ", resultado_esperado, " (", expressao, ")")
 	print("Correto para esta área: ", correto_para_esta_area)
 	
-	resposta_recebida.emit(valor_card, correto_para_esta_area)
+	resposta_recebida.emit(_valor_card, correto_para_esta_area)
 
 func esta_correta() -> bool:
 	return tem_card_correto

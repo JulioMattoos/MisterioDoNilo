@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bwuifnnvtjeew" path="res://imagens/cards_Fase_1/card_vazio.png" id="2_sms6g"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6ahln"]
-size = Vector2(213, 173)
+size = Vector2(31, 31)
 
 [node name="AreaRespostaFase1" type="Area2D" groups=["area_resposta"]]
 script = ExtResource("1_rxcmk")
@@ -15,7 +15,5 @@ scale = Vector2(0.109162, 0.09)
 texture = ExtResource("2_sms6g")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(509.5, 366.5)
+position = Vector2(504.5, 362.5)
 shape = SubResource("RectangleShape2D_6ahln")
-
-[connection signal="area_entered" from="." to="." method="_on_area_entered"]

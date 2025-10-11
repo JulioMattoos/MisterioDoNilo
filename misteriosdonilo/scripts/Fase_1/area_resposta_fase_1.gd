@@ -10,8 +10,8 @@ var tem_card_correto: bool = false
 
 func _ready():
 	# SOLUÇÃO: Verificar se já está conectado antes de conectar
-	if not area_entered.is_connected(_on_area_entered):
-		area_entered.connect(_on_area_entered)
+	if not is_connected("area_entered", _on_area_entered):
+		connect("area_entered", _on_area_entered)
 	
 	if resultado_esperado == 0 and expressao.is_empty():
 		push_warning("AreaResposta não foi configurada corretamente - use a função configurar()")

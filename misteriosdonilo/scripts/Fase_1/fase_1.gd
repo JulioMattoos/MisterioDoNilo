@@ -137,7 +137,7 @@ func criar_cards_dinamicamente():
 			container_cards.add_child(card)
 			
 			# Configurar DEPOIS de adicionar
-			card.configurar(valor, false)
+			card.configurar(valor)
 			card.position = Vector2(200 + i * 120, 500)
 			card.posicao_original = card.position
 			

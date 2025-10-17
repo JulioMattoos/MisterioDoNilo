@@ -14,9 +14,9 @@ var jogo_iniciado = false
 @onready var container_cards = $ContainerCards_Fase_1
 
 # Array para armazenar as áreas de resposta
-@onready var area_resposta1 = $AreaResposta2Fase4
-@onready var area_resposta2 = $AreaResposta2Fase2
-@onready var area_resposta3 = $AreaResposta2Fase3
+@onready var area_resposta1 = $AreaResposta1Fase1
+@onready var area_resposta2 = $AreaResposta2Fase1
+@onready var area_resposta3 = $AreaResposta3Fase1
 
 var areas_resposta: Array = []
 var cartas_corretas_fixadas: Array = []
@@ -28,6 +28,8 @@ func _ready():
 	# Configurar o array de áreas
 	areas_resposta = [area_resposta1, area_resposta2, area_resposta3]
 	
+	# ⭐⭐ NOVO: Esconder todos os cards corretos no início
+	_esconder_cards_corretos()
 	# Verificar se todos os nodes existem
 	if not ui_fase_1:
 		push_error("UI_Fase_1 não encontrada!")
@@ -36,6 +38,8 @@ func _ready():
 	
 	# Configurar cada área com sua equação específica
 	configurar_areas_resposta()
+	# ⭐⭐ GARANTIR QUE CARDS ESTÃO INVISÍVEIS
+	garantir_cards_area_invisiveis()
 	
 	if ui_fase_1:
 		var cb = Callable(self, "iniciar_jogo")
@@ -90,6 +94,9 @@ func iniciar_jogo():
 	equacao_atual = 0
 	cartas_corretas_fixadas.clear()
 	cards_instanciados.clear()  # ⭐ LIMPAR array de cards
+	
+	# ⭐ GARANTIR INVISIBILIDADE NOVAMENTE
+	garantir_cards_area_invisiveis()
 
 	if ui_fase_1:
 		ui_fase_1.mostrar_jogo()
@@ -166,32 +173,70 @@ func _processar_resposta(valor, correto_para_esta_area):
 	print("=== PROCESSANDO RESPOSTA ===")
 	print("Valor recebido: ", valor)
 	print("Correto para esta área? ", correto_para_esta_area)
-	print("Equação atual: ", equacao_atual)
 	
-	# ⭐ MELHORIA: Buscar card de forma mais robusta
-	# Encontrar o card que foi solto
+	# Buscar card solto e área
 	var card_solto = null
+	var area_correta = null
+	
+	# BUSCAR CARD SOLTO
 	for card in container_cards.get_children():
 		if card is CardResposta and card.valor == valor:
 			card_solto = card
+			print("🎯 Card solto encontrado: ", card.name, " - Valor: ", card.valor)
 			break
 	
 	if card_solto == null:
+		print("❌ Card solto não encontrado!")
 		return
 	
-	if correto_para_esta_area:
-		# VERIFICAR se esta carta já não foi usada corretamente antes
-		if cartas_corretas_fixadas.has(card_solto):
-			return  # Já está fixada, não processar novamente
+	# ⭐ MÉTODO MELHORADO: Buscar área pela POSIÇÃO do card
+	print("📍 Procurando área correta pela posição do card...")
+	var areas_sobrepostas = card_solto.get_overlapping_areas()
+	
+	for area in areas_sobrepostas:
+		if area is AreaResposta:
+			print("   Área encontrada: ", area.name)
+			print("   - Resultado esperado: ", area.resultado_esperado)
+			print("   - Expressão: ", area.expressao)
 			
-		print("Resposta CORRETA! Valor: ", valor)
+			# Verificar se é a área correta
+			if area.resultado_esperado == valor:
+				area_correta = area
+				print("🎯 Área CORRETA identificada: ", area.name)
+				break
+			else:
+				print("   ⚠️ Área INCORETA - esperava: ", area.resultado_esperado)
+	
+	# ⭐ FALLBACK: Se não encontrou pela posição, usar o método antigo
+	if area_correta == null:
+		print("🔍 Fallback: buscando área por último card recebido...")
+		for area in areas_resposta:
+			if area and area.ultimo_card_recebido == valor:
+				area_correta = area
+				print("📍 Área encontrada por fallback: ", area.name)
+				break
+	
+	# ⭐ VALIDAÇÃO FINAL
+	if area_correta == null:
+		print("❌ Nenhuma área correta encontrada para o valor ", valor)
+		card_solto.voltar_para_original()
+		return
+	
+	# PROCESSAR RESPOSTA CORRETA OU INCORRETA
+	if correto_para_esta_area:
+		if cartas_corretas_fixadas.has(card_solto):
+			print("⚠️ Card já foi usado corretamente antes")
+			card_solto.voltar_para_original()
+			return
+			
+		print("🎉 Resposta CORRETA! Iniciando troca...")
+		print("   Card: ", card_solto.name, " | Área: ", area_correta.name)
 		ui_fase_1.mostrar_feedback("Correto! 🎉", true)
 		
-		# Fixar a carta - não pode mais ser movida
-		card_solto.fixar_na_posicao_atual()
-		cartas_corretas_fixadas.append(card_solto)
+		# ⭐ EXECUTAR TROCA
+		_executar_troca_card(card_solto, area_correta)
 		
-		# Avançar para próxima equação
+		# Avançar equação
 		await get_tree().create_timer(1.0).timeout
 		equacao_atual += 1
 		
@@ -200,10 +245,9 @@ func _processar_resposta(valor, correto_para_esta_area):
 		else:
 			completar_fase()
 	else:
-		print("Resposta INCORRETA! Valor: ", valor)
+		print("❌ Resposta INCORRETA!")
+		print("   Card: ", card_solto.valor, " | Área esperava: ", area_correta.resultado_esperado)
 		ui_fase_1.mostrar_feedback("Tente novamente!", false)
-		
-		# Apenas voltar para posição original (pode tentar novamente)
 		card_solto.voltar_para_original()
 
 func liberar_todas_cartas():
@@ -245,3 +289,147 @@ func _input(event):
 				if card and is_instance_valid(card):
 					var valor = card.get_valor() if card.has_method("get_valor") else card.valor
 					print(" - ", card.name, " | Valor: ", valor, " | Fixado: ", cartas_corretas_fixadas.has(card))
+					
+
+# ⭐ FUNÇÃO DE TROCA MELHORADA
+func _executar_troca_card(card_arrastado: CardResposta, area_resposta: AreaResposta):
+	print("🔄 INICIANDO TROCA DE CARD")
+	print("   Card: ", card_arrastado.name, " (", card_arrastado.valor, ")")
+	print("   Área: ", area_resposta.name)
+	
+	# 1. VERIFICAR SE A ÁREA TEM O MÉTODO
+	if not area_resposta.has_method("mostrar_card_correto"):
+		print("❌ ERRO: Área não tem método mostrar_card_correto()")
+		card_arrastado.voltar_para_original()
+		return
+	
+	# 2. DEBUG: Verificar estado antes da troca
+	print("📊 ESTADO ANTES DA TROCA:")
+	print("   - Card arrastado visível: ", card_arrastado.visible)
+	print("   - Card fixo visível: ", area_resposta.tem_card_correto_visivel() if area_resposta.has_method("tem_card_correto_visivel") else "N/A")
+	
+	# 3. MOSTRAR CARD FIXO NA ÁREA (PRIMEIRO)
+	print("🎯 Ativando card fixo na área...")
+	area_resposta.mostrar_card_correto()
+	
+	# 4. VERIFICAR SE O CARD FIXO FICOU VISÍVEL
+	if area_resposta.has_method("tem_card_correto_visivel"):
+		var ficou_visivel = area_resposta.tem_card_correto_visivel()
+		print("   ✅ Card fixo ficou visível? ", ficou_visivel)
+		
+		if not ficou_visivel:
+			print("❌ ALERTA: Card fixo NÃO ficou visível!")
+	
+	# 5. REMOVER CARD ARRASTADO
+	print("✨ Removendo card arrastado...")
+	if card_arrastado.has_method("desaparecer"):
+		card_arrastado.desaparecer()
+	else:
+		# Fallback seguro
+		card_arrastado.visible = false
+		card_arrastado.set_process_input(false)
+		await get_tree().process_frame
+		if is_instance_valid(card_arrastado):
+			card_arrastado.queue_free()
+	
+	# 6. ATUALIZAR CONTROLE DE ESTADO
+	cartas_corretas_fixadas.append(card_arrastado)
+	if cards_instanciados.has(card_arrastado):
+		cards_instanciados.erase(card_arrastado)
+	
+	print("✅ TROCA CONCLUÍDA!")
+	print("   - Card arrastado: REMOVIDO")
+	print("   - Card fixo: ATIVADO na área")
+	
+func garantir_cards_area_invisiveis():
+	print("🔒 GARANTINDO CARDS DAS ÁREAS INVISÍVEIS...")
+	
+	var areas_verificadas = 0
+	var areas_corrigidas = 0
+	
+	for i in range(areas_resposta.size()):
+		var area = areas_resposta[i]
+		
+		if area == null:
+			print("❌ Área ", i, " é nula - pulando")
+			continue
+		
+		areas_verificadas += 1
+		
+		# MÉTODO 1: Usar função da área se existir
+		if area.has_method("esconder_card_correto"):
+			area.esconder_card_correto()
+			print("✅ Área ", i, " - esconder_card_correto() chamado")
+			areas_corrigidas += 1
+		
+		# MÉTODO 2: Acesso direto ao sprite (fallback)
+		elif area.has_node("CardCorretoSprite"):
+			var sprite = area.get_node("CardCorretoSprite")
+			if sprite:
+				sprite.visible = false
+				sprite.scale = Vector2(1, 1)
+				sprite.modulate = Color.WHITE
+				print("✅ Área ", i, " - CardCorretoSprite desativado diretamente")
+				areas_corrigidas += 1
+		
+		# MÉTODO 3: Tentar acesso por propriedade
+		elif "card_correto_sprite" in area:
+			var sprite = area.card_correto_sprite
+			if sprite and is_instance_valid(sprite):
+				sprite.visible = false
+				print("✅ Área ", i, " - card_correto_sprite desativado via propriedade")
+				areas_corrigidas += 1
+		
+		else:
+			print("⚠️ Área ", i, " - Não encontrou método para esconder card")
+	
+	print("📊 RESUMO: ", areas_corrigidas, "/", areas_verificadas, " áreas corrigidas")
+	
+	# ⭐ VERIFICAÇÃO FINAL
+	verificar_visibilidade_areas()
+
+
+func verificar_visibilidade_areas():
+	print("🔍 VERIFICANDO VISIBILIDADE DAS ÁREAS:")
+	
+	for i in range(areas_resposta.size()):
+		var area = areas_resposta[i]
+		var visivel = "N/A"
+		var resultado = "N/A"
+		
+		if area == null:
+			print("   ", i, ": ❌ Área NULA")
+			continue
+		
+		# Tentar diferentes formas de verificar
+		if area.has_method("esconder_card_correto") and "resultado_esperado" in area:
+			resultado = str(area.resultado_esperado)
+		
+		if area.has_node("CardCorretoSprite"):
+			var sprite = area.get_node("CardCorretoSprite")
+			visivel = str(sprite.visible) if sprite else "Sprite Nulo"
+		elif "card_correto_sprite" in area:
+			var sprite = area.card_correto_sprite
+			visivel = str(sprite.visible) if sprite and is_instance_valid(sprite) else "Sprite Inválido"
+		
+		print("   ", i, ": Resultado=", resultado, " | Visível=", visivel)
+	
+	print("======================================")
+	
+	
+func _esconder_cards_corretos():
+	print("🔧 Escondendo todos os cards corretos...")
+	
+	var card1 = get_node_or_null("Card_Correto_Fase_1")
+	var card2 = get_node_or_null("Card_Correto_Fase_2") 
+	var card3 = get_node_or_null("Card_Correto_Fase_3")
+	
+	if card1:
+		card1.visible = false
+		print("✅ Card_Correto_Fase_1 escondido")
+	if card2:
+		card2.visible = false
+		print("✅ Card_Correto_Fase_2 escondido")
+	if card3:
+		card3.visible = false
+		print("✅ Card_Correto_Fase_3 escondido")

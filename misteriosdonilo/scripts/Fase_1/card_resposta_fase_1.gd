@@ -148,3 +148,24 @@ func _process(_delta):
 func _exit_tree():
 	if _arrastando:
 		_arrastando = false
+
+
+# ⭐ ADICIONE ESTA FUNÇÃO NO CardResposta.gd SE AINDA NÃO EXISTIR
+func desaparecer():
+	print("🔄 Card desaparecendo: ", valor)
+	
+	# 1. Desativar todas as interações
+	set_process_input(false)
+	collision_layer = 0
+	collision_mask = 0
+	
+	# 2. Animação de desaparecimento
+	var tween = create_tween()
+	tween.tween_property(self, "scale", Vector2(1.2, 1.2), 0.1)
+	tween.tween_property(self, "scale", Vector2(0, 0), 0.3)
+	tween.tween_property(self, "modulate", Color.TRANSPARENT, 0.3)
+	
+	# 3. Remover após animação
+	tween.tween_callback(queue_free)
+	
+	print("✅ Card removido: ", valor)

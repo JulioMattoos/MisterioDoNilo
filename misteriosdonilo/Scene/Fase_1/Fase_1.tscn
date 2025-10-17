@@ -23,26 +23,38 @@ texture = ExtResource("2_y7shb")
 [node name="ContainerCards_Fase_1" type="Node2D" parent="."]
 position = Vector2(-408, 930)
 
-[node name="AreaResposta2Fase2" parent="." instance=ExtResource("3_pvynm")]
+[node name="AreaResposta2Fase1" parent="." instance=ExtResource("3_pvynm")]
 position = Vector2(296, -70)
 
-[node name="AreaResposta2Fase3" parent="." instance=ExtResource("3_pvynm")]
+[node name="AreaResposta1Fase1" parent="." instance=ExtResource("3_pvynm")]
 position = Vector2(296, -263)
 
-[node name="AreaResposta2Fase4" parent="." instance=ExtResource("3_pvynm")]
+[node name="AreaResposta3Fase1" parent="." instance=ExtResource("3_pvynm")]
 position = Vector2(296, 116)
 
 [node name="Card2Resposta_Fase_1" parent="." instance=ExtResource("4_5osw5")]
 position = Vector2(450, 670)
 
 [node name="Card3Resposta_Fase_1" parent="." instance=ExtResource("5_5ayer")]
-position = Vector2(275, 670)
+position = Vector2(325, 670)
 
 [node name="Card5Resposta_Fase_1" parent="." instance=ExtResource("6_i3oin")]
-position = Vector2(100, 670)
+position = Vector2(200, 670)
 
 [node name="Card9Resposta_Fase_1" parent="." instance=ExtResource("7_res67")]
-position = Vector2(625, 670)
+position = Vector2(575, 670)
 
 [node name="Card6Resposta_Fase_1" parent="." instance=ExtResource("8_gnrma")]
-position = Vector2(800, 670)
+position = Vector2(700, 670)
+
+[node name="Card_Correto_Fase_1" parent="." instance=ExtResource("4_5osw5")]
+visible = false
+position = Vector2(810, 110)
+
+[node name="Card_Correto_Fase_2" parent="." instance=ExtResource("6_i3oin")]
+visible = false
+position = Vector2(810, 310)
+
+[node name="Card_Correto_Fase_3" parent="." instance=ExtResource("5_5ayer")]
+visible = false
+position = Vector2(810, 500)

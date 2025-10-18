@@ -91,37 +91,28 @@ func _processar_resposta(_valor_card: int, _card: Object):
 func _ativar_card_correto_especifico():
 	print("🔍 Ativando card correto específico para: ", name)
 	
-	# Buscar os cards corretos (eles estão no mesmo nível da área na hierarquia)
-	var card1 = get_node_or_null("../Card_Correto_Fase_1")
-	var card2 = get_node_or_null("../Card_Correto_Fase_2")
-	var card3 = get_node_or_null("../Card_Correto_Fase_3")
+	# Buscar o card correto específico apenas desta área
+	var card_correto_path = ""
 	
-	# Primeiro esconder TODOS (para garantir)
-	if card1: card1.visible = false
-	if card2: card2.visible = false  
-	if card3: card3.visible = false
-	
-	# Agora mostrar apenas o card correto para esta área
 	match name:
 		"AreaResposta1Fase1":
-			if card1:
-				card1.visible = true
-				print("✅ Card_Correto_Fase_1 ATIVADO!")
-		
+			card_correto_path = "../Card_Correto_Fase_1"
 		"AreaResposta2Fase1":
-			if card2:
-				card2.visible = true
-				print("✅ Card_Correto_Fase_2 ATIVADO!")
-		
+			card_correto_path = "../Card_Correto_Fase_2"
 		"AreaResposta3Fase1":
-			if card3:
-				card3.visible = true
-				print("✅ Card_Correto_Fase_3 ATIVADO!")
-		
+			card_correto_path = "../Card_Correto_Fase_3"
 		_:
 			print("❌ Nome da área não reconhecido: ", name)
+			return
+	
+	var card_correto = get_node_or_null(card_correto_path)
+	
+	if card_correto:
+		card_correto.visible = true
+		print("✅ Card correto ativado para área: ", name)
+	else:
+		print("❌ Card correto não encontrado para área: ", name)
 
-# ⭐ FUNÇÕES DE CONTROLE VISUAL - CORRIGIDAS
 
 
 func esconder_card_correto():

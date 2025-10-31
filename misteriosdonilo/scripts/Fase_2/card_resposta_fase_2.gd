@@ -1,7 +1,7 @@
 extends Area2D
-class_name CardResposta
+class_name CardResposta_2
 
-signal resposta_arrastada(valor)
+signal resposta_arrastada(valor: int)
 
 var valor: int = 0
 var posicao_original: Vector2
@@ -20,7 +20,7 @@ func _ready():
 	if posicao_original == Vector2.ZERO:
 		posicao_original = global_position
 	
-	# Conectar input_event
+	# Conectar input_event - ✅ CORREÇÃO: sintaxe corrigida
 	if not input_event.is_connected(_on_input_event):
 		input_event.connect(_on_input_event)
 	
@@ -47,12 +47,12 @@ func _extrair_valor_do_nome():
 		valor = 0
 
 # ⭐ CORREÇÃO: Método configurar atualizado
-func configurar(_eh_correta: bool) -> void:
-	# ⭐ AGORA o valor já foi extraído do nome automaticamente
-	print("🔧 Card ", name, " configurado - Valor: ", valor, " - Correto: ", _eh_correta)
+func configurar(_valor: int) -> void:
+	self.valor = _valor
+	print("🔧 Card ", name, " configurado - Valor: ", valor)
 
-# Resto do código permanece igual...
-func _on_input_event(_viewport, event, _shape_idx):
+# ✅ CORREÇÃO: Método _on_input_event com parâmetros corretos
+func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
 	if fixado:
 		return
 	
@@ -86,7 +86,7 @@ func _processar_soltura():
 	var menor_distancia = 100.0
 	
 	for area in areas_sobrepostas:
-		if area.has_method("get_valor_esperado") or area is AreaResposta:
+		if area is AreaResposta_2:
 			var distancia = global_position.distance_to(area.global_position)
 			print("📏 Área encontrada a distância: ", distancia)
 			
@@ -103,9 +103,9 @@ func _processar_soltura():
 		print("❌ Nenhuma área próxima - voltando para posição original")
 		voltar_para_original()
 
-func _emitir_sinal(area):
+func _emitir_sinal(area: AreaResposta_2):
 	print("📢 Emitindo sinal para área - Card valor: ", valor)
-	emit_signal("resposta_arrastada", valor)
+	resposta_arrastada.emit(valor)
 	
 	if area.has_method("receber_card"):
 		area.receber_card(self)
@@ -141,7 +141,7 @@ func liberar_card():
 	input_pickable = true
 	print("🔓 Card ", name, " liberado - Valor: ", valor)
 
-func _process(_delta):
+func _process(_delta: float):
 	if _arrastando:
 		global_position = get_global_mouse_position() + _offset
 
@@ -149,8 +149,7 @@ func _exit_tree():
 	if _arrastando:
 		_arrastando = false
 
-
-# ⭐ ADICIONE ESTA FUNÇÃO NO CardResposta.gd SE AINDA NÃO EXISTIR
+# ⭐ FUNÇÃO DE DESAPARECER
 func desaparecer():
 	print("🔄 Card desaparecendo: ", valor)
 	

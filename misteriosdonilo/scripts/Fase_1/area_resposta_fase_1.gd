@@ -91,28 +91,24 @@ func _processar_resposta(_valor_card: int, _card: Object):
 func _ativar_card_correto_especifico():
 	print("🔍 Ativando card correto específico para: ", name)
 	
-	# Buscar o card correto específico apenas desta área
-	var card_correto_path = ""
+	# Procura automaticamente o card correto pelo número da área
+	var numero_area = ""
+	var regex = RegEx.new()
+	if regex.compile("\\d+") == OK:
+		var result = regex.search(name)
+		if result:
+			numero_area = result.get_string()
 	
-	match name:
-		"AreaResposta1Fase1":
-			card_correto_path = "../Card_Correto_Fase_1"
-		"AreaResposta2Fase1":
-			card_correto_path = "../Card_Correto_Fase_2"
-		"AreaResposta3Fase1":
-			card_correto_path = "../Card_Correto_Fase_3"
-		_:
-			print("❌ Nome da área não reconhecido: ", name)
-			return
+	var card_correto_path = "../Card_Correto_Fase_%s" % numero_area
+	print("🧭 Procurando card no caminho: ", card_correto_path)
 	
 	var card_correto = get_node_or_null(card_correto_path)
 	
 	if card_correto:
 		card_correto.visible = true
-		print("✅ Card correto ativado para área: ", name)
+		print("✅ Card correto ativado: ", card_correto.name)
 	else:
 		print("❌ Card correto não encontrado para área: ", name)
-
 
 
 func esconder_card_correto():

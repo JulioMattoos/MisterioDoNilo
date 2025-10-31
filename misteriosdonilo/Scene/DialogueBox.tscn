@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://dyrfqwevmyhb3" path="res://Caracters/Khepre/Khepre/Khepre_RightWalk.png" id="5_4rraq"]
 [ext_resource type="Texture2D" uid="uid://bygpu60u1erho" path="res://Caracters/Khepre/Khepre/Khepre_RightWalk1.png" id="6_up0aw"]
 [ext_resource type="Script" uid="uid://xaygdupxkb4b" path="res://Scene/paser.gd" id="7_0vn6r"]
-[ext_resource type="PackedScene" uid="uid://bdupuuuef8p65" path="res://Scene/Fase_1.tscn" id="8_0k1jd"]
+[ext_resource type="PackedScene" uid="uid://bdupuuuef8p65" path="res://Scene/Fase_1/Fase_1.tscn" id="8_0k1jd"]
 [ext_resource type="Texture2D" uid="uid://bydfudoeaxjc8" path="res://Scene/Paser.png" id="8_3bwm8"]
 [ext_resource type="Texture2D" uid="uid://dubtx88e17q4x" path="res://Caracters/Paser/Paser/DialogoPaser.png" id="9_44vhy"]
 
@@ -235,6 +235,16 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("9_44vhy")
 expand_mode = 1
+
+[node name="texto" type="Label" parent="DialogueBox"]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 0
+offset_left = 417.0
+offset_top = 731.0
+offset_right = 734.0
+offset_bottom = 768.0
+text = "APERTE ESPAÇO PARA CONTINUAR!!!"
+max_lines_visible = 27
 
 [connection signal="body_entered" from="Paser/InteractionArea" to="Paser" method="_on_interaction_area_body_entered"]
 [connection signal="body_exited" from="Paser/InteractionArea" to="Paser" method="_on_interaction_area_body_exited"]

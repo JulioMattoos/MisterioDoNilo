@@ -194,6 +194,9 @@ scale = Vector2(0.2, 0.2)
 sprite_frames = SubResource("SpriteFrames_rxos1")
 animation = &"walk_down"
 
+[node name="Camera2D" type="Camera2D" parent="Khepre"]
+zoom = Vector2(4, 4)
+
 [node name="Paser" type="CharacterBody2D" parent="."]
 script = ExtResource("8_x76k5")
 dialogue_box_scene = ExtResource("8_h4brd")

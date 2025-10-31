@@ -37,22 +37,27 @@ collision_layer = 2
 
 [node name="Card2Resposta_Fase_1" parent="." instance=ExtResource("4_5osw5")]
 position = Vector2(450, 670)
+scale = Vector2(1.2, 1.2)
 collision_mask = 2
 
 [node name="Card3Resposta_Fase_1" parent="." instance=ExtResource("5_5ayer")]
 position = Vector2(325, 670)
+scale = Vector2(1.2, 1.2)
 collision_mask = 2
 
 [node name="Card5Resposta_Fase_1" parent="." instance=ExtResource("6_i3oin")]
 position = Vector2(200, 670)
+scale = Vector2(1.2, 1.2)
 collision_mask = 2
 
 [node name="Card9Resposta_Fase_1" parent="." instance=ExtResource("7_res67")]
 position = Vector2(575, 670)
+scale = Vector2(1.2, 1.2)
 collision_mask = 2
 
 [node name="Card6Resposta_Fase_1" parent="." instance=ExtResource("8_gnrma")]
 position = Vector2(700, 670)
+scale = Vector2(1.2, 1.2)
 collision_mask = 2
 
 [node name="Card_Correto_Fase_1" parent="." groups=["area_resposta"] instance=ExtResource("4_5osw5")]

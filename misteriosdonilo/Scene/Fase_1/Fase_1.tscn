@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://bdupuuuef8p65"]
 
 [ext_resource type="Script" uid="uid://do0kg3p2q4xl7" path="res://scripts/Fase_1/fase_1.gd" id="1_pvynm"]
-[ext_resource type="Texture2D" uid="uid://b11bjisv3wdwd" path="res://imagens/assets_Fase_1/5.png" id="2_y7shb"]
+[ext_resource type="Texture2D" uid="uid://b0u42tik0i8nu" path="res://imagens/assets_Fase_1/2025-10-30_21h08_59.jpg" id="2_5osw5"]
 [ext_resource type="PackedScene" uid="uid://cvqhkirudawdw" path="res://Scene/Fase_1/AreaResposta_Fase_1.tscn" id="3_pvynm"]
 [ext_resource type="PackedScene" uid="uid://rdmdk150aurm" path="res://Scene/Fase_1/Card2Resposta_Fase_1.tscn" id="4_5osw5"]
 [ext_resource type="PackedScene" uid="uid://bcr20bxec5srd" path="res://Scene/Fase_1/Card3Resposta_Fase_1.tscn" id="5_5ayer"]
@@ -16,45 +16,59 @@ script = ExtResource("1_pvynm")
 position = Vector2(512, 384)
 
 [node name="Background_Fase_1" type="Sprite2D" parent="."]
-position = Vector2(512, 384)
-scale = Vector2(0.533333, 0.709259)
-texture = ExtResource("2_y7shb")
+position = Vector2(514, 381)
+scale = Vector2(1.05676, 1.17737)
+texture = ExtResource("2_5osw5")
 
 [node name="ContainerCards_Fase_1" type="Node2D" parent="."]
 position = Vector2(-408, 930)
 
 [node name="AreaResposta2Fase1" parent="." instance=ExtResource("3_pvynm")]
-position = Vector2(296, -70)
+position = Vector2(237, -78)
+collision_layer = 2
 
 [node name="AreaResposta1Fase1" parent="." instance=ExtResource("3_pvynm")]
-position = Vector2(296, -263)
+position = Vector2(237, -220)
+collision_layer = 2
 
 [node name="AreaResposta3Fase1" parent="." instance=ExtResource("3_pvynm")]
-position = Vector2(296, 116)
+position = Vector2(237, 63)
+collision_layer = 2
 
 [node name="Card2Resposta_Fase_1" parent="." instance=ExtResource("4_5osw5")]
 position = Vector2(450, 670)
+collision_mask = 2
 
 [node name="Card3Resposta_Fase_1" parent="." instance=ExtResource("5_5ayer")]
 position = Vector2(325, 670)
+collision_mask = 2
 
 [node name="Card5Resposta_Fase_1" parent="." instance=ExtResource("6_i3oin")]
 position = Vector2(200, 670)
+collision_mask = 2
 
 [node name="Card9Resposta_Fase_1" parent="." instance=ExtResource("7_res67")]
 position = Vector2(575, 670)
+collision_mask = 2
 
 [node name="Card6Resposta_Fase_1" parent="." instance=ExtResource("8_gnrma")]
 position = Vector2(700, 670)
+collision_mask = 2
 
-[node name="Card_Correto_Fase_1" parent="." instance=ExtResource("4_5osw5")]
-visible = false
-position = Vector2(810, 110)
+[node name="Card_Correto_Fase_1" parent="." groups=["area_resposta"] instance=ExtResource("4_5osw5")]
+position = Vector2(740, 142)
+scale = Vector2(1.2, 1.2)
+collision_layer = 0
+collision_mask = 4
 
-[node name="Card_Correto_Fase_2" parent="." instance=ExtResource("6_i3oin")]
-visible = false
-position = Vector2(810, 310)
+[node name="Card_Correto_Fase_2" parent="." groups=["area_resposta"] instance=ExtResource("6_i3oin")]
+position = Vector2(740, 284)
+scale = Vector2(1.2, 1.2)
+collision_layer = 0
+collision_mask = 4
 
 [node name="Card_Correto_Fase_3" parent="." instance=ExtResource("5_5ayer")]
-visible = false
-position = Vector2(810, 500)
+position = Vector2(740, 426)
+scale = Vector2(1.2, 1.2)
+collision_layer = 0
+collision_mask = 4

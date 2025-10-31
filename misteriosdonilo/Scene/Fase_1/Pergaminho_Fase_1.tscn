@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://dt5p5yf4sp0t"]
+
+[ext_resource type="Texture2D" uid="uid://dhptgd30sw4ia" path="res://imagens/assets_Fase_1/9.png" id="1_lolqj"]
+[ext_resource type="Texture2D" uid="uid://ule2cy6chjng" path="res://imagens/assets_Fase_1/2025-10-23_20h16_42.jpg" id="2_aujyg"]
+
+[node name="Pergaminho_Fase1" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(477.5, 384)
+scale = Vector2(0.666146, 0.711111)
+texture = ExtResource("1_lolqj")
+
+[node name="TextureButton" type="TextureButton" parent="."]
+offset_left = 32.0
+offset_top = 25.0
+offset_right = 193.0
+offset_bottom = 90.0
+texture_normal = ExtResource("2_aujyg")

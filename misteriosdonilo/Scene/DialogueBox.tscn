@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://dyrfqwevmyhb3" path="res://Caracters/Khepre/Khepre/Khepre_RightWalk.png" id="5_4rraq"]
 [ext_resource type="Texture2D" uid="uid://bygpu60u1erho" path="res://Caracters/Khepre/Khepre/Khepre_RightWalk1.png" id="6_up0aw"]
 [ext_resource type="Script" uid="uid://xaygdupxkb4b" path="res://Scene/paser.gd" id="7_0vn6r"]
-[ext_resource type="PackedScene" uid="uid://bdupuuuef8p65" path="res://Scene/Fase_1.tscn" id="8_0k1jd"]
+[ext_resource type="PackedScene" uid="uid://bdupuuuef8p65" path="res://Scene/Fase_1/Fase_1.tscn" id="8_0k1jd"]
 [ext_resource type="Texture2D" uid="uid://bydfudoeaxjc8" path="res://Scene/Paser.png" id="8_3bwm8"]
 [ext_resource type="Texture2D" uid="uid://dubtx88e17q4x" path="res://Caracters/Paser/Paser/DialogoPaser.png" id="9_44vhy"]
 

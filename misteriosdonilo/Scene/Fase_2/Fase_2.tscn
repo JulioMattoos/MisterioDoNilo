@@ -1,6 +1,6 @@
 [gd_scene load_steps=15 format=3 uid="uid://bc11toql33v4v"]
 
-[ext_resource type="Script" uid="uid://b2t4inbhvb0np" path="res://scripts/Fase_3/fase_3.gd" id="1_n3b2c"]
+[ext_resource type="Script" uid="uid://b2t4inbhvb0np" path="res://scripts/Fase_2/fase_2.gd" id="1_n3b2c"]
 [ext_resource type="Texture2D" uid="uid://dutk7kavhe8eh" path="res://imagens/assets_Fase_2/2025-10-30_23h26_35.jpg" id="2_62mfm"]
 [ext_resource type="PackedScene" uid="uid://bg6v6vkpja07x" path="res://Scene/Fase_2/AreaResposta_Fase_2.tscn" id="3_ud4fh"]
 [ext_resource type="PackedScene" uid="uid://dgvskhj5ju57u" path="res://Scene/Fase_2/Card2Resposta_Fase_2.tscn" id="4_bwhiu"]

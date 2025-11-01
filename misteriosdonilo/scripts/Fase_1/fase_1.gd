@@ -126,13 +126,8 @@ func conectar_areas_resposta():
 				print("ERRO: Área ", i, " não tem sinal resposta_recebida")
 
 func iniciar_jogo():
-	# ⭐ VERIFICAR SE NÍVEL 1 JÁ FOI CONCLUÍDO NESTA SESSÃO
-	if Engine.has_singleton("GameManager") and GameManager.fase_concluida(1):
-		print("✅ Nível 1 já foi concluído nesta sessão! Redirecionando para Fase 2...")
-		get_tree().change_scene_to_file("res://Scene/Fase_2/Fase_2.tscn")
-		return
-	
 	print("Iniciando jogo...")
+	
 	jogo_iniciado = true
 	equacao_atual = 0
 	respostas_corretas = 0  # ⭐ RESETAR contador de respostas corretas
@@ -312,9 +307,13 @@ func completar_fase():
 	print("⌨️ Aguardando tecla Espaço...")
 	await _aguardar_tecla_espaco()
 	
-	# Troca de cena para o mapa principal
+	# Troca de cena para o mapa principal (com verificação de segurança)
 	print("🗺️ Retornando ao mapa principal...")
-	get_tree().change_scene_to_file("res://Scene/icon.tscn")
+	var tree = get_tree()
+	if tree != null and is_inside_tree():
+		tree.call_deferred("change_scene_to_file", "res://Scene/icon.tscn")
+	else:
+		print("❌ ERRO: Árvore da cena não está disponível!")
 
 func voltar_ao_menu():
 	print("Voltando ao menu...")
@@ -340,7 +339,11 @@ func _aguardar_tecla_espaco() -> void:
 	
 	# Verificar a cada frame se a tecla foi pressionada
 	while true:
-		await get_tree().process_frame
+		var tree = get_tree()
+		if tree == null or not is_inside_tree():
+			print("❌ ERRO: Árvore da cena não está mais disponível!")
+			break
+		await tree.process_frame
 		
 		# Verificar através da flag (setada em _input)
 		if espaco_pressionado:
@@ -529,25 +532,35 @@ func _esconder_cards_corretos():
 		print("✅ Card_Correto_Fase_3 escondido")
 		
 		
-# ⭐ FUNÇÃO: Salvar progresso do jogo (apenas na sessão atual)
+# ⭐ FUNÇÃO: Salvar progresso do jogo
 func salvar_progresso():
-	# Usar GameManager singleton
-	if Engine.has_singleton("GameManager"):
-		GameManager.concluir_fase(1)
-		print("✅ Fase 1 marcada como concluída (sessão atual)")
+	var config = ConfigFile.new()
+	var caminho_save = "user://progresso_jogo.save"
+	
+	# Carregar progresso existente
+	if config.load(caminho_save) != OK:
+		print("📝 Criando novo arquivo de progresso...")
+	
+	# Marcar nível 1 como concluído
+	config.set_value("progresso", "fase_1_completa", true)
+	
+	# Salvar arquivo
+	var resultado = config.save(caminho_save)
+	if resultado == OK:
+		print("✅ Progresso salvo com sucesso! Fase 1 marcada como concluída.")
 	else:
-		print("⚠️ GameManager não encontrado! Criando variável temporária...")
-		# Fallback: criar variável estática temporária
-		if not "fase_1_sessao_completa" in get_script().get_script_property_list():
-			set_meta("fase_1_sessao_completa", true)
-			print("✅ Fase 1 marcada como concluída (variável temporária)")
+		print("❌ Erro ao salvar progresso: ", resultado)
 
-# ⭐ FUNÇÃO: Verificar se fase foi concluída (apenas na sessão atual)
+# ⭐ FUNÇÃO: Verificar se fase foi concluída
 static func fase_concluida(numero_fase: int) -> bool:
-	# Verificar via GameManager singleton primeiro
-	if Engine.has_singleton("GameManager"):
-		return GameManager.fase_concluida(numero_fase)
-	return false
+	var config = ConfigFile.new()
+	var caminho_save = "user://progresso_jogo.save"
+	
+	if config.load(caminho_save) != OK:
+		return false
+	
+	var chave = "fase_%d_completa" % numero_fase
+	return config.get_value("progresso", chave, false)
 
 # ⭐ NOVA FUNÇÃO: Mostrar tela final do nível
 func mostrar_tela_final():
@@ -607,8 +620,10 @@ func mostrar_tela_final():
 			texture_rect_conclusao.show()
 	
 	# Aguarda alguns frames para garantir que tudo apareceu
-	await get_tree().process_frame
-	await get_tree().process_frame
+	var tree = get_tree()
+	if tree != null and is_inside_tree():
+		await tree.process_frame
+		await tree.process_frame
 	
 	# Resetar flag antes de aguardar
 	espaco_pressionado = false
@@ -617,11 +632,19 @@ func mostrar_tela_final():
 	print("⌨️ Aguardando tecla Espaço...")
 	await _aguardar_tecla_espaco()
 	
-	# Troca de cena para o mapa principal
+	# Troca de cena para o mapa principal (com verificação de segurança)
 	print("🗺️ Retornando ao mapa principal...")
-	get_tree().change_scene_to_file("res://Scene/icon.tscn")
+	tree = get_tree()
+	if tree != null and is_inside_tree():
+		tree.call_deferred("change_scene_to_file", "res://Scene/icon.tscn")
+	else:
+		print("❌ ERRO: Árvore da cena não está disponível!")
 
 
 func _on_voltar_ao_mapa_pressed() -> void:
 	print("🗺️ Botão 'Voltar ao Mapa' pressionado!")
-	get_tree().change_scene_to_file("res://Scene/icon.tscn")
+	var tree = get_tree()
+	if tree != null and is_inside_tree():
+		tree.call_deferred("change_scene_to_file", "res://Scene/icon.tscn")
+	else:
+		print("❌ ERRO: Árvore da cena não está disponível!")

@@ -4,6 +4,9 @@ extends Node
 var fase_1_completa: bool = false
 var fase_2_completa: bool = false
 
+# ⭐⭐ Variável para controlar se o DialogueBox já foi mostrado nesta sessão
+var dialogue_box_mostrado: bool = false
+
 func concluir_fase(numero_fase: int):
 	if numero_fase == 1:
 		fase_1_completa = true

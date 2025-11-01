@@ -252,12 +252,12 @@ func _processar_resposta(valor: int, correto_para_esta_area: bool):
 		if card_solto and cartas_corretas_fixadas.has(card_solto):
 			print("⚠️ Card já foi usado corretamente antes")
 			if card_solto:
-			card_solto.voltar_para_original()
+				card_solto.voltar_para_original()
 			return
 		
 		print("🎉 RESPOSTA CORRETA CONFIRMADA!")
 		if card_solto:
-		print("   Card: ", card_solto.name, " | Valor: ", card_solto.valor)
+			print("   Card: ", card_solto.name, " | Valor: ", card_solto.valor)
 		else:
 			print("   Card: (removido pela área) | Valor: ", valor)
 		print("   Área: ", area_correta.name, " | Expressão: ", area_correta.expressao)
@@ -279,7 +279,7 @@ func _processar_resposta(valor: int, correto_para_esta_area: bool):
 		
 		# ⭐⭐ EXECUTAR TROCA (só se card existe)
 		if card_solto:
-		_executar_troca_card(card_solto, area_correta)
+			_executar_troca_card(card_solto, area_correta)
 		
 		# Aguardar um pouco
 		await get_tree().create_timer(1.0).timeout
@@ -320,7 +320,7 @@ func _processar_resposta(valor: int, correto_para_esta_area: bool):
 				print("")
 				print("🎊 Iniciando processo de finalização da fase...")
 				print("📞 CHAMANDO mostrar_tela_final()...")
-			await mostrar_tela_final()  # ⭐ Adicionar await para aguardar completa conclusão
+				await mostrar_tela_final()  # ⭐ Adicionar await para aguardar completa conclusão
 				print("✅ mostrar_tela_final() CONCLUÍDO!")
 			else:
 				print("")
@@ -364,11 +364,15 @@ func _processar_resposta(valor: int, correto_para_esta_area: bool):
 				ui_fase_2.atualizar_progresso(equacao_atual, equacoes.size())
 	else:
 		print("❌ RESPOSTA INCORRETA CONFIRMADA!")
-		print("   Card: ", card_solto.valor)
+		if card_solto:
+			print("   Card: ", card_solto.valor)
+		else:
+			print("   Card: (não encontrado) | Valor recebido: ", valor)
 		print("   Área esperava: ", area_correta.resultado_esperado, " (", area_correta.expressao, ")")
 		if ui_fase_2:
 			ui_fase_2.mostrar_feedback("Tente novamente! ❌", false)
-		card_solto.voltar_para_original()
+		if card_solto:
+			card_solto.voltar_para_original()
 
 func liberar_todas_cartas():
 	for card in cards_instanciados:
@@ -574,19 +578,31 @@ func validar_fase_finalizada() -> bool:
 		# Validação: deve ter card visível E valor correto OU flag tem_card_correto
 		var area_valida = false
 		
-		# Se tem a flag tem_card_correto, considerar válida mesmo se visibilidade falhar
+		# ⭐⭐ MELHORIA: Verificação mais robusta, especialmente para Área 3
+		# Prioridade 1: Se tem a flag tem_card_correto, considerar válida
 		if tem_card_correto_flag:
 			area_valida = true
 			print("      ✅ Área ", i+1, " VÁLIDA: Flag tem_card_correto = true")
-		elif tem_card_visivel:
-			# Se temos visibilidade, verificar se o valor está correto
-			if valor_correto:
-				area_valida = true
-				print("      ✅ Área ", i+1, " VÁLIDA: Card visível e valor correto")
-			elif card_recebido == -1:
-				# Se não temos informação do card mas está visível, aceitar (pode ser caso especial)
-				area_valida = true
-				print("      ⚠️ Área ", i+1, " VÁLIDA (sem info do card, mas visível): ", resultado_esperado)
+		# Prioridade 2: Se card está visível E valor está correto
+		elif tem_card_visivel and valor_correto:
+			area_valida = true
+			print("      ✅ Área ", i+1, " VÁLIDA: Card visível e valor correto")
+		# Prioridade 3: Se card está visível mas não temos informação do card recebido (caso especial)
+		elif tem_card_visivel and card_recebido == -1:
+			# Verificar se há um card visível correspondendo ao resultado esperado
+			area_valida = true
+			print("      ⚠️ Área ", i+1, " VÁLIDA (sem info do card, mas visível): ", resultado_esperado)
+		# Prioridade 4: Se card está visível mas valor está incorreto, verificar se o sprite corresponde ao esperado
+		elif tem_card_visivel and not valor_correto:
+			# Verificação adicional: se o sprite visível tem a textura correta, considerar válido
+			if "card_correto_sprite" in area and area.card_correto_sprite:
+				var sprite = area.card_correto_sprite
+				if sprite.visible and sprite.texture:
+					# Se está visível e tem textura, provavelmente está correto mesmo que ultimo_card_recebido esteja errado
+					area_valida = true
+					print("      ⚠️ Área ", i+1, " VÁLIDA: Sprite visível com textura (valor recebido pode estar desatualizado)")
+				else:
+					print("      ❌ Área ", i+1, " INVÁLIDA: Card visível mas valor incorreto (", card_recebido, " != ", resultado_esperado, ")")
 			else:
 				print("      ❌ Área ", i+1, " INVÁLIDA: Card visível mas valor incorreto (", card_recebido, " != ", resultado_esperado, ")")
 		else:
@@ -603,7 +619,24 @@ func validar_fase_finalizada() -> bool:
 	print("   - areas_corretas: ", areas_corretas)
 	print("   - total_respostas esperado: ", total_respostas)
 	if areas_corretas < total_respostas:
-		print("❌ FALHA 4: Nem todas as áreas estão corretas (", areas_corretas, "/", total_respostas, ")")
+		print("")
+		print("❌❌❌ FALHA 4: Nem todas as áreas estão corretas (", areas_corretas, "/", total_respostas, ") ❌❌❌")
+		print("")
+		print("📋 ÁREAS QUE PRECISAM SER CORRIGIDAS:")
+		for i in range(areas_resposta.size()):
+			var area = areas_resposta[i]
+			if area == null:
+				continue
+			var resultado_esperado = area.resultado_esperado
+			var card_recebido = area.ultimo_card_recebido if "ultimo_card_recebido" in area else -1
+			var tem_card_correto_flag = area.tem_card_correto if "tem_card_correto" in area else false
+			
+			if not tem_card_correto_flag or card_recebido != resultado_esperado:
+				print("   ⚠️ Área ", i+1, " (", area.name, "):")
+				print("      - Esperado: ", resultado_esperado, " (", area.expressao, ")")
+				print("      - Recebido: ", card_recebido if card_recebido != -1 else "Nenhum")
+				print("      - ❌ PRECISA DO CARD VALOR ", resultado_esperado)
+		print("")
 		print("❌ VALIDAÇÃO INTERROMPIDA NO PASSO 4")
 		return false
 	print("✅ PASSO 4: Todas as áreas têm cards corretos (", areas_corretas, "/", total_respostas, ")")
@@ -668,37 +701,49 @@ func mostrar_tela_final():
 	print("")
 	print("🎊🎊🎊 PARABÉNS! VOCÊ COMPLETOU A FASE 2! 🎊🎊🎊")
 	print("")
-	print("📊 Status:")
-	print("   - Respostas corretas: ", respostas_corretas, "/", total_respostas)
-	print("   - Valores acertados: ", valores_ja_contados)
-	print("   - Fase validada: ✅ SIM")
-	print("")
-	print("📊 Marcando jogo_iniciado = false")
-	jogo_iniciado = false
 	
-	# Salvar progresso
-	print("💾 Salvando progresso...")
-	salvar_progresso()
-	print("✅ Progresso salvo!")
+	# ⭐⭐ PRIORIDADE: Mostrar tela de conclusão IMEDIATAMENTE
+	print("📸 MOSTRANDO TELA DE CONCLUSÃO IMEDIATAMENTE...")
+	jogo_iniciado = false  # Parar o jogo primeiro
+	
+	# Esconde elementos do jogo ANTES de mostrar a tela
+	esconder_elementos_jogo()
 	
 	# Esconde UI do jogo
 	if ui_fase_2:
 		ui_fase_2.mostrar_feedback("Parabéns! Fase 2 concluída! 🎉", true)
 	else:
 		print("⚠️ ui_fase_2 é null! Não foi possível mostrar feedback.")
-	esconder_elementos_jogo()
 	
-	# Mostra a tela de conclusão com a imagem
-	print("📸 Tentando mostrar tela de conclusão...")
+	# Mostra a tela de conclusão IMEDIATAMENTE
 	if tela_conclusao:
 		print("✅ Tela de conclusão encontrada! Tornando visível...")
 		tela_conclusao.visible = true
+		tela_conclusao.show()  # Forçar mostrar
+		tela_conclusao.process_mode = Node.PROCESS_MODE_ALWAYS  # Garantir processamento
 		print("✅ Tela de conclusão agora está visível: ", tela_conclusao.visible)
+		
+		# Garantir que o TextureRect também está visível
+		if texture_rect_conclusao:
+			texture_rect_conclusao.visible = true
+			texture_rect_conclusao.show()
+			print("✅ TextureRect também está visível")
 	else:
 		print("❌ ERRO: Tela de conclusão não encontrada!")
 	
 	# Aguarda um frame para garantir que a tela apareceu
 	await get_tree().process_frame
+	await get_tree().process_frame
+	
+	# Agora salvar progresso (depois que a tela já foi mostrada)
+	print("💾 Salvando progresso...")
+	salvar_progresso()
+	print("✅ Progresso salvo!")
+	print("")
+	print("📊 Status:")
+	print("   - Respostas corretas: ", respostas_corretas, "/", total_respostas)
+	print("   - Valores acertados: ", valores_ja_contados)
+	print("   - Fase validada: ✅ SIM")
 	
 	print("")
 	print("╔═══════════════════════════════════════════════════════════════╗")

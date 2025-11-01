@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://vah8xxmht0ap"]
+[gd_scene load_steps=18 format=3 uid="uid://vah8xxmht0ap"]
 
 [ext_resource type="Texture2D" uid="uid://w8eialwa5ldk" path="res://imagens/mapa/completo.png" id="1_h4brd"]
 [ext_resource type="Script" uid="uid://dvfbrpr0l1da4" path="res://scripts/khepre.gd" id="2_otv2m"]
@@ -10,8 +10,9 @@
 [ext_resource type="Texture2D" uid="uid://bydfudoeaxjc8" path="res://Scene/Paser.png" id="8_npxfr"]
 [ext_resource type="Script" uid="uid://xaygdupxkb4b" path="res://Scene/paser.gd" id="8_x76k5"]
 [ext_resource type="PackedScene" uid="uid://cgdvg6tiw3k8o" path="res://Scene/Fase_1/UI_Fase_1.tscn" id="9_h4brd"]
-[ext_resource type="Texture2D" uid="uid://dh8yuqindxx64" path="res://imagens/mapa/balao.png" id="10_balao"]
-[ext_resource type="Script" uid="uid://br284x10ol8ng" path="res://scripts/controlador_mapa.gd" id="11_controlador"]
+[ext_resource type="PackedScene" uid="uid://bc11toql33v4v" path="res://Scene/Fase_2/Fase_2.tscn" id="10_fase2"]
+[ext_resource type="Texture2D" uid="uid://dh8yuqindxx64" path="res://imagens/mapa/balao.png" id="11_balao"]
+[ext_resource type="Script" uid="uid://br284x10ol8ng" path="res://scripts/controlador_mapa.gd" id="12_controlador"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tr34o"]
 
@@ -69,7 +70,7 @@ radius = 12.3693
 radius = 42.0119
 
 [node name="MapaBase2" type="Sprite2D"]
-position = Vector2(507, 384)
+position = Vector2(486, 388)
 texture = ExtResource("1_h4brd")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
@@ -203,6 +204,7 @@ zoom = Vector2(4, 4)
 script = ExtResource("8_x76k5")
 dialogue_box_scene = ExtResource("8_h4brd")
 next_level_scene = ExtResource("9_h4brd")
+fase_2_scene = ExtResource("10_fase2")
 
 [node name="Sprite2D" type="Sprite2D" parent="Paser"]
 position = Vector2(447.875, 349.875)
@@ -221,7 +223,7 @@ position = Vector2(448, 348)
 shape = SubResource("CircleShape2D_npxfr")
 
 [node name="ControladorMapa" type="Node" parent="."]
-script = ExtResource("11_controlador")
+script = ExtResource("12_controlador")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -248,7 +250,7 @@ offset_right = 614.0
 offset_bottom = 175.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("10_balao")
+texture = ExtResource("11_balao")
 expand_mode = 1
 stretch_mode = 4
 

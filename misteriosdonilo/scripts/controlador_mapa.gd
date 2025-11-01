@@ -16,19 +16,13 @@ func _ready():
 	
 	# ⭐⭐ Verificar se o DialogueBox já foi mostrado nesta sessão (usar GameManager)
 	var dialogue_box_ja_mostrado = false
+	var gm = get_node_or_null("/root/GameManager")
 	
-	# Tentar acessar o GameManager de diferentes formas
-	if Engine.has_singleton("GameManager"):
-		dialogue_box_ja_mostrado = GameManager.dialogue_box_mostrado
+	if gm:
+		dialogue_box_ja_mostrado = gm.dialogue_box_mostrado
 		print("📊 GameManager encontrado! dialogue_box_mostrado = ", dialogue_box_ja_mostrado)
 	else:
-		# Tentar acessar diretamente como autoload
-		var gm = get_node_or_null("/root/GameManager")
-		if gm:
-			dialogue_box_ja_mostrado = gm.dialogue_box_mostrado
-			print("📊 GameManager encontrado via /root! dialogue_box_mostrado = ", dialogue_box_ja_mostrado)
-		else:
-			print("⚠️ GameManager não encontrado. Assumindo que DialogueBox não foi mostrado.")
+		print("⚠️ GameManager não encontrado. Assumindo que DialogueBox não foi mostrado.")
 	
 	# Garantir que o balão seja escondido também através de busca direta na árvore
 	_verificar_e_esconder_balao_se_necessario(dialogue_box_ja_mostrado)

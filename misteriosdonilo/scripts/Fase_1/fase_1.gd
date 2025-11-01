@@ -10,6 +10,17 @@ var equacoes = [
 var equacao_atual = 0
 var jogo_iniciado = false
 
+@onready var tela_conclusao = $CanvasLayer/NivelConcluido
+@onready var texture_rect_conclusao = $CanvasLayer/NivelConcluido/TextureRect
+@onready var botao_voltar = $CanvasLayer/NivelConcluido/BotaoVoltar
+@onready var container = $ContainerCards_Fase_1
+
+var respostas_corretas = 0
+var total_respostas = 3  # ajuste se necessário
+var espaco_pressionado = false  # ⭐ Flag para detectar tecla espaço
+var valores_ja_contados: Array = []  # ⭐ Array para evitar contar a mesma resposta múltiplas vezes
+
+
 @onready var ui_fase_1 = $UI_Fase_1
 @onready var container_cards = $ContainerCards_Fase_1
 
@@ -30,6 +41,7 @@ func _ready():
 	
 	# ⭐⭐ NOVO: Esconder todos os cards corretos no início
 	_esconder_cards_corretos()
+	
 	# Verificar se todos os nodes existem
 	if not ui_fase_1:
 		push_error("UI_Fase_1 não encontrada!")
@@ -38,6 +50,7 @@ func _ready():
 	
 	# Configurar cada área com sua equação específica
 	configurar_areas_resposta()
+	
 	# ⭐⭐ GARANTIR QUE CARDS ESTÃO INVISÍVEIS
 	garantir_cards_area_invisiveis()
 	
@@ -50,6 +63,30 @@ func _ready():
 	
 	esconder_elementos_jogo()
 	conectar_areas_resposta()
+	
+	if tela_conclusao:
+		tela_conclusao.visible = false   # <-- corrigido
+		tela_conclusao.hide()  # Garantir que está escondido
+	
+	if texture_rect_conclusao:
+		texture_rect_conclusao.visible = false
+		texture_rect_conclusao.hide()  # Garantir que está escondido
+
+	if botao_voltar:
+		# Conecta apenas se ainda não estiver conectado
+		if botao_voltar and not botao_voltar.is_connected("pressed", Callable(self, "_on_voltar_ao_mapa_pressed")):
+			botao_voltar.connect("pressed", Callable(self, "_on_voltar_ao_mapa_pressed"))
+
+	# conecta áreas de resposta dentro do container
+	if container:
+		for area in container.get_children():
+			if area.has_signal("resposta_correta"):
+				var cb = Callable(self, "_on_resposta_correta")
+				if not area.is_connected("resposta_correta", cb):
+					area.connect("resposta_correta", cb)
+
+
+
 
 func configurar_areas_resposta():
 	for i in range(equacoes.size()):
@@ -92,6 +129,9 @@ func iniciar_jogo():
 	print("Iniciando jogo...")
 	jogo_iniciado = true
 	equacao_atual = 0
+	respostas_corretas = 0  # ⭐ RESETAR contador de respostas corretas
+	valores_ja_contados.clear()  # ⭐ LIMPAR array de valores já contados
+	espaco_pressionado = false  # ⭐ RESETAR flag da tecla espaço
 	cartas_corretas_fixadas.clear()
 	cards_instanciados.clear()  # ⭐ LIMPAR array de cards
 	
@@ -163,7 +203,9 @@ func criar_cards_dinamicamente():
 func _on_resposta_recebida(valor, correto_para_esta_area):
 	print("=== RESPOSTA RECEBIDA DA ÁREA ===")
 	print("Valor: ", valor, " | Correto: ", correto_para_esta_area)
+	print("📊 Estado ANTES de processar: respostas_corretas = ", respostas_corretas, "/", total_respostas)
 	_processar_resposta(valor, correto_para_esta_area)
+	print("📊 Estado DEPOIS de processar: respostas_corretas = ", respostas_corretas, "/", total_respostas)
 
 func _on_card_dropped(valor):
 	# Este sinal é apenas para fallback, a verificação principal é pelas áreas
@@ -174,81 +216,63 @@ func _processar_resposta(valor, correto_para_esta_area):
 	print("Valor recebido: ", valor)
 	print("Correto para esta área? ", correto_para_esta_area)
 	
-	# Buscar card solto e área
-	var card_solto = null
-	var area_correta = null
-	
-	# BUSCAR CARD SOLTO
-	for card in container_cards.get_children():
-		if card is CardResposta and card.valor == valor:
-			card_solto = card
-			print("🎯 Card solto encontrado: ", card.name, " - Valor: ", card.valor)
-			break
-	
-	if card_solto == null:
-		print("❌ Card solto não encontrado!")
-		return
-	
-	# ⭐ MÉTODO MELHORADO: Buscar área pela POSIÇÃO do card
-	print("📍 Procurando área correta pela posição do card...")
-	var areas_sobrepostas = card_solto.get_overlapping_areas()
-	
-	for area in areas_sobrepostas:
-		if area is AreaResposta:
-			print("   Área encontrada: ", area.name)
-			print("   - Resultado esperado: ", area.resultado_esperado)
-			print("   - Expressão: ", area.expressao)
-			
-			# Verificar se é a área correta
-			if area.resultado_esperado == valor:
+	# ⭐ CORREÇÃO: Se a resposta está correta, processar diretamente sem precisar do card
+	# O card já foi processado e removido pela área
+	if correto_para_esta_area:
+		print("🎉 Resposta CORRETA detectada!")
+		
+		# ⭐ VERIFICAR SE ESTA RESPOSTA JÁ FOI CONTADA
+		if valores_ja_contados.has(valor):
+			print("⚠️ Este valor já foi contado antes! Pulando incremento...")
+			return
+		
+		# Buscar a área que recebeu este card corretamente
+		var area_correta = null
+		for area in areas_resposta:
+			if area and area.ultimo_card_recebido == valor and area.resultado_esperado == valor:
 				area_correta = area
 				print("🎯 Área CORRETA identificada: ", area.name)
 				break
-			else:
-				print("   ⚠️ Área INCORETA - esperava: ", area.resultado_esperado)
-	
-	# ⭐ FALLBACK: Se não encontrou pela posição, usar o método antigo
-	if area_correta == null:
-		print("🔍 Fallback: buscando área por último card recebido...")
-		for area in areas_resposta:
-			if area and area.ultimo_card_recebido == valor:
-				area_correta = area
-				print("📍 Área encontrada por fallback: ", area.name)
-				break
-	
-	# ⭐ VALIDAÇÃO FINAL
-	if area_correta == null:
-		print("❌ Nenhuma área correta encontrada para o valor ", valor)
-		card_solto.voltar_para_original()
-		return
-	
-	# PROCESSAR RESPOSTA CORRETA OU INCORRETA
-	if correto_para_esta_area:
-		if cartas_corretas_fixadas.has(card_solto):
-			print("⚠️ Card já foi usado corretamente antes")
-			card_solto.voltar_para_original()
-			return
-			
-		print("🎉 Resposta CORRETA! Iniciando troca...")
-		print("   Card: ", card_solto.name, " | Área: ", area_correta.name)
-		ui_fase_1.mostrar_feedback("Correto! 🎉", true)
 		
-		# ⭐ EXECUTAR TROCA
-		_executar_troca_card(card_solto, area_correta)
+		if area_correta == null:
+			print("⚠️ Área correta não encontrada, mas resposta está correta. Continuando...")
+		
+		# ⭐ INCREMENTAR CONTADOR DE RESPOSTAS CORRETAS
+		respostas_corretas += 1
+		valores_ja_contados.append(valor)  # ⭐ Marcar este valor como já contado
+		print("✅ Respostas corretas INCREMENTADAS: ", respostas_corretas, "/", total_respostas)
+		print("📝 Valores já contados: ", valores_ja_contados)
+		print("🔍 Verificando condição: respostas_corretas (", respostas_corretas, ") >= total_respostas (", total_respostas, ") = ", respostas_corretas >= total_respostas)
+		
+		# Mostrar feedback (com verificação de null)
+		if ui_fase_1:
+			ui_fase_1.mostrar_feedback("Correto! 🎉", true)
+		else:
+			print("⚠️ ui_fase_1 é null! Não foi possível mostrar feedback.")
 		
 		# Avançar equação
 		await get_tree().create_timer(1.0).timeout
 		equacao_atual += 1
 		
-		if equacao_atual < equacoes.size():
-			ui_fase_1.atualizar_progresso(equacao_atual, equacoes.size())
+		# Verificar se todas as 3 respostas foram acertadas
+		print("🔍 VERIFICAÇÃO FINAL: respostas_corretas = ", respostas_corretas, ", total_respostas = ", total_respostas)
+		if respostas_corretas >= total_respostas:
+			print("🎊🎊🎊 TODOS OS 3 CARDS FORAM ACERTADOS! 🎊🎊🎊")
+			print("🎊 Chamando mostrar_tela_final() agora...")
+			mostrar_tela_final()
 		else:
-			completar_fase()
+			print("⏳ Ainda faltam acertos. Cards acertados: ", respostas_corretas, "/", total_respostas)
+			if equacao_atual < equacoes.size():
+				if ui_fase_1:
+					ui_fase_1.atualizar_progresso(equacao_atual, equacoes.size())
+				else:
+					print("⚠️ ui_fase_1 é null! Não foi possível atualizar progresso.")
 	else:
 		print("❌ Resposta INCORRETA!")
-		print("   Card: ", card_solto.valor, " | Área esperava: ", area_correta.resultado_esperado)
-		ui_fase_1.mostrar_feedback("Tente novamente!", false)
-		card_solto.voltar_para_original()
+		if ui_fase_1:
+			ui_fase_1.mostrar_feedback("Tente novamente!", false)
+		else:
+			print("⚠️ ui_fase_1 é null! Não foi possível mostrar feedback.")
 
 func liberar_todas_cartas():
 	for card in cards_instanciados:
@@ -257,11 +281,34 @@ func liberar_todas_cartas():
 
 func completar_fase():
 	print("🎊 FASE COMPLETADA!")
-	ui_fase_1.mostrar_feedback("Parabéns! Fase concluída! 🎉", true)
 	jogo_iniciado = false
 	
-	await get_tree().create_timer(3.0).timeout
-	voltar_ao_menu()
+	# Esconde UI do jogo
+	if ui_fase_1:
+		ui_fase_1.mostrar_feedback("Parabéns! Fase concluída! 🎉", true)
+	else:
+		print("⚠️ ui_fase_1 é null! Não foi possível mostrar feedback.")
+	esconder_elementos_jogo()
+	
+	# Mostra a tela de conclusão com a imagem
+	print("📸 Tentando mostrar tela de conclusão...")
+	if tela_conclusao:
+		print("✅ Tela de conclusão encontrada! Tornando visível...")
+		tela_conclusao.visible = true
+		print("✅ Tela de conclusão agora está visível: ", tela_conclusao.visible)
+	else:
+		print("❌ ERRO: Tela de conclusão não encontrada!")
+	
+	# Aguarda um frame para garantir que a tela apareceu
+	await get_tree().process_frame
+	
+	# Aguarda o jogador apertar Espaço
+	print("⌨️ Aguardando tecla Espaço...")
+	await _aguardar_tecla_espaco()
+	
+	# Troca de cena para o mapa principal
+	print("🗺️ Retornando ao mapa principal...")
+	get_tree().change_scene_to_file("res://Scene/icon.tscn")
 
 func voltar_ao_menu():
 	print("Voltando ao menu...")
@@ -277,12 +324,53 @@ func voltar_ao_menu():
 	if ui_fase_1: 
 		ui_fase_1.mostrar_tela_inicial()
 
-# ⭐ NOVO: Função para debug
+
+func _aguardar_tecla_espaco() -> void:
+	print("⌛ Aguardando tecla Espaço para retornar...")
+	espaco_pressionado = false  # Resetar flag
+	
+	# Variável para detectar se foi apenas pressionada (não mantida)
+	var espaco_pressionado_anterior = false
+	
+	# Verificar a cada frame se a tecla foi pressionada
+	while true:
+		await get_tree().process_frame
+		
+		# Verificar através da flag (setada em _input)
+		if espaco_pressionado:
+			print("✅ Flag de tecla espaço detectada!")
+			break
+		
+		# Verificar diretamente pelo Input
+		var espaco_atual = Input.is_key_pressed(KEY_SPACE) or Input.is_action_pressed("ui_accept") or Input.is_action_pressed("interact")
+		
+		# Detectar quando a tecla é pressionada (não mantida)
+		if espaco_atual and not espaco_pressionado_anterior:
+			print("✅ Tecla Espaço pressionada (detectada no loop)!")
+			espaco_pressionado = true
+			break
+		
+		espaco_pressionado_anterior = espaco_atual
+	
+	print("✅ Tecla Espaço confirmada! Retornando ao mapa...")
+
+
+
+# ⭐ NOVO: Função para debug e detectar tecla espaço
 func _input(event):
 	if event is InputEventKey and event.pressed:
+		# Detectar tecla Espaço apenas se a tela de conclusão estiver visível
+		if event.keycode == KEY_SPACE and tela_conclusao and tela_conclusao.visible:
+			espaco_pressionado = true
+			print("⌨️ Tecla Espaço detectada! Flag setada para: ", espaco_pressionado)
+		
+		# Debug (tecla D)
 		if event.keycode == KEY_D:
 			print("=== DEBUG INFO ===")
 			print("Equação atual: ", equacao_atual)
+			print("Respostas corretas: ", respostas_corretas, "/", total_respostas)
+			print("Tela conclusão visível: ", tela_conclusao.visible if tela_conclusao else "N/A")
+			print("TextureRect visível: ", texture_rect_conclusao.visible if texture_rect_conclusao else "N/A")
 			print("Cards instanciados: ", cards_instanciados.size())
 			print("Cards fixados: ", cartas_corretas_fixadas.size())
 			for card in cards_instanciados:
@@ -433,3 +521,78 @@ func _esconder_cards_corretos():
 	if card3:
 		card3.visible = false
 		print("✅ Card_Correto_Fase_3 escondido")
+		
+		
+# ⭐ NOVA FUNÇÃO: Mostrar tela final do nível
+func mostrar_tela_final():
+	print("🎉 Nível 1 Concluído! Mostrando tela de conclusão...")
+	jogo_iniciado = false
+	
+	# Esconde elementos do jogo
+	esconder_elementos_jogo()
+	if ui_fase_1:
+		ui_fase_1.mostrar_feedback("Parabéns! Fase concluída! 🎉", true)
+	else:
+		print("⚠️ ui_fase_1 é null! Não foi possível mostrar feedback de conclusão.")
+	
+	# Mostra a tela de conclusão (Control)
+	if tela_conclusao:
+		print("✅ Tela de conclusão encontrada! Tornando visível...")
+		tela_conclusao.visible = true
+		tela_conclusao.show()  # ⭐ FORÇAR mostrar
+		print("✅ Tela de conclusão visível: ", tela_conclusao.visible)
+		
+		# Forçar processamento
+		tela_conclusao.process_mode = Node.PROCESS_MODE_ALWAYS
+	else:
+		print("❌ ERRO: Tela de conclusão (Control) não encontrada!")
+		return
+	
+	# Garante que o TextureRect também está visível
+	if texture_rect_conclusao:
+		print("✅ TextureRect encontrado! Tornando visível...")
+		texture_rect_conclusao.visible = true
+		texture_rect_conclusao.show()  # ⭐ FORÇAR mostrar
+		print("✅ TextureRect visível: ", texture_rect_conclusao.visible)
+		
+		# Verifica se a textura está carregada
+		if texture_rect_conclusao.texture:
+			print("✅ Textura 'nivel concluido.png' carregada!")
+		else:
+			print("❌ ERRO: Textura não encontrada no TextureRect!")
+			# Tentar carregar manualmente
+			var texture_path = "res://imagens/assets_Fase_1/nivel concluido.png"
+			var texture = load(texture_path)
+			if texture:
+				texture_rect_conclusao.texture = texture
+				print("✅ Textura carregada manualmente!")
+			else:
+				print("❌ ERRO: Não foi possível carregar a textura!")
+	else:
+		print("❌ ERRO: TextureRect não encontrado!")
+		# Tentar buscar novamente
+		texture_rect_conclusao = get_node_or_null("CanvasLayer/NivelConcluido/TextureRect")
+		if texture_rect_conclusao:
+			print("✅ TextureRect encontrado via get_node_or_null!")
+			texture_rect_conclusao.visible = true
+			texture_rect_conclusao.show()
+	
+	# Aguarda alguns frames para garantir que tudo apareceu
+	await get_tree().process_frame
+	await get_tree().process_frame
+	
+	# Resetar flag antes de aguardar
+	espaco_pressionado = false
+	
+	# Aguarda o jogador apertar Espaço
+	print("⌨️ Aguardando tecla Espaço...")
+	await _aguardar_tecla_espaco()
+	
+	# Troca de cena para o mapa principal
+	print("🗺️ Retornando ao mapa principal...")
+	get_tree().change_scene_to_file("res://Scene/icon.tscn")
+
+
+func _on_voltar_ao_mapa_pressed() -> void:
+	print("🗺️ Botão 'Voltar ao Mapa' pressionado!")
+	get_tree().change_scene_to_file("res://Scene/icon.tscn")

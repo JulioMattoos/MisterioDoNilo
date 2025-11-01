@@ -1,6 +1,6 @@
 [gd_scene load_steps=15 format=3 uid="uid://bc11toql33v4v"]
 
-[ext_resource type="Script" uid="uid://b2t4inbhvb0np" path="res://scripts/Fase_2/fase_2.gd" id="1_n3b2c"]
+[ext_resource type="Script" uid="uid://b2t4inbhvb0np" path="res://scripts/Fase_3/fase_3.gd" id="1_n3b2c"]
 [ext_resource type="Texture2D" uid="uid://dutk7kavhe8eh" path="res://imagens/assets_Fase_2/2025-10-30_23h26_35.jpg" id="2_62mfm"]
 [ext_resource type="PackedScene" uid="uid://bg6v6vkpja07x" path="res://Scene/Fase_2/AreaResposta_Fase_2.tscn" id="3_ud4fh"]
 [ext_resource type="PackedScene" uid="uid://dgvskhj5ju57u" path="res://Scene/Fase_2/Card2Resposta_Fase_2.tscn" id="4_bwhiu"]
@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://dpy8vaucybe1p" path="res://Scene/Fase_2/Card28Resposta_Fase_2.tscn" id="8_dhqrw"]
 [ext_resource type="PackedScene" uid="uid://di7i1vwn2g80p" path="res://Scene/Fase_2/Card40Resposta_Fase_2.tscn" id="9_3yg8f"]
 [ext_resource type="PackedScene" uid="uid://dqnw3mr4qw53p" path="res://Scene/Fase_2/Card48Resposta_Fase_2.tscn" id="10_b512p"]
-[ext_resource type="Script" uid="uid://d031w2sd00h5s" path="res://Scene/Fase_1/area_pergaminho.gd" id="11_perg"]
+[ext_resource type="Script" uid="uid://d031w2sd00h5s" path="res://scripts/Fase_3/area_pergaminho.gd" id="11_perg"]
 [ext_resource type="Script" uid="uid://dnj16rknwjes2" path="res://Scene/Fase_1/popup_dica.gd" id="12_popup"]
 [ext_resource type="Texture2D" uid="uid://dhptgd30sw4ia" path="res://imagens/assets_Fase_1/9.png" id="13_text"]
 [ext_resource type="Texture2D" uid="uid://boguo5mwev24p" path="res://imagens/assets_Fase_1/nivel concluido.png" id="14_concluido"]
@@ -113,8 +113,8 @@ shape = SubResource("RectangleShape2D_perg")
 script = ExtResource("12_popup")
 
 [node name="pergaminho" type="Sprite2D" parent="PopupDica"]
-position = Vector2(512.5, 385)
-scale = Vector2(0.535938, 0.716667)
+position = Vector2(525, 385)
+scale = Vector2(0.548437, 0.717593)
 texture = ExtResource("13_text")
 
 [node name="Area2D" type="Area2D" parent="PopupDica"]

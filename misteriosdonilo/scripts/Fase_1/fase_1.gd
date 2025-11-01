@@ -598,6 +598,14 @@ func mostrar_tela_final():
 	# ⭐ SALVAR PROGRESSO
 	salvar_progresso()
 	
+	# ⭐⭐ Marcar fase 1 como concluída no GameManager (para mover Paser)
+	var gm = get_node_or_null("/root/GameManager")
+	if gm:
+		gm.concluir_fase(1)
+		print("✅ Fase 1 marcada como concluída no GameManager. Paser será movido para novo local.")
+	else:
+		print("⚠️ GameManager não encontrado via /root")
+	
 	# Esconde elementos do jogo
 	esconder_elementos_jogo()
 	if ui_fase_1:

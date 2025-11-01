@@ -14,8 +14,16 @@ var dialogue_instance = null
 # O Godot vai permitir que você arraste as cenas para esses campos no Inspector.
 @export var dialogue_box_scene : PackedScene
 @export var next_level_scene : PackedScene
+@export var fase_2_scene : PackedScene  # ⭐⭐ Cena da fase 2
+
+# ⭐⭐ Posições do Paser: posição inicial e posição após fase 1
+var posicao_inicial: Vector2
+var posicao_fase_2: Vector2 = Vector2(265, -71)  # ⭐⭐ Posição após concluir fase 1
 
 func _ready():
+	# Salvar posição inicial
+	posicao_inicial = global_position
+	
 	# Verifica se a cena do diálogo foi atribuída no Inspector.
 	# Isso ajuda a evitar o erro "Cannot call method 'instantiate' on a null value".
 	if dialogue_box_scene == null:
@@ -24,6 +32,9 @@ func _ready():
 	# Verifica se a cena da próxima fase foi atribuída no Inspector.
 	if next_level_scene == null:
 		print("Erro: A cena da próxima fase não foi atribuída no Inspector!")
+	
+	# ⭐⭐ Verificar se fase 1 foi concluída e mover Paser para nova posição
+	_verificar_e_mover_paser()
 
 func _process(delta):
 	# Condição para depuração.
@@ -59,19 +70,13 @@ func show_dialogue():
 	_esconder_balao_imediato()
 	
 	# ⭐⭐ Marcar que o DialogueBox foi mostrado nesta sessão (usar GameManager)
-	if Engine.has_singleton("GameManager"):
-		GameManager.dialogue_box_mostrado = true
+	var gm = get_node_or_null("/root/GameManager")
+	if gm:
+		gm.dialogue_box_mostrado = true
 		print("✅ DialogueBox marcado como mostrado. Balão não aparecerá mais nesta sessão.")
-		print("📊 GameManager.dialogue_box_mostrado = ", GameManager.dialogue_box_mostrado)
+		print("📊 GameManager.dialogue_box_mostrado = ", gm.dialogue_box_mostrado)
 	else:
-		# Fallback: tentar via /root
-		var gm = get_node_or_null("/root/GameManager")
-		if gm:
-			gm.dialogue_box_mostrado = true
-			print("✅ DialogueBox marcado como mostrado (via /root). Balão não aparecerá mais nesta sessão.")
-			print("📊 GameManager.dialogue_box_mostrado = ", gm.dialogue_box_mostrado)
-		else:
-			print("❌ ERRO: GameManager não encontrado!")
+		print("❌ ERRO: GameManager não encontrado!")
 	
 	# Garante que a cena de diálogo existe antes de tentar instanciá-la.
 	if dialogue_box_scene != null:
@@ -96,16 +101,55 @@ func change_scene():
 	# ⭐⭐ IMPORTANTE: Esconder o balão IMEDIATAMENTE antes de trocar a cena
 	_esconder_balao_imediato()
 	
-	# Carregar a fase normalmente (sempre começar na fase 1)
+	# ⭐⭐ Verificar qual fase carregar baseado no progresso
+	var cena_para_carregar = null
+	var gm = get_node_or_null("/root/GameManager")
+	
+	if gm:
+		if gm.fase_concluida(1):
+			# Se fase 1 foi concluída, carregar fase 2
+			if fase_2_scene != null:
+				cena_para_carregar = fase_2_scene.resource_path
+				print("✅ Carregando Fase 2 (fase 1 já foi concluída)")
+			else:
+				print("⚠️ Fase 2 não configurada! Carregando Fase 1 como fallback.")
+				cena_para_carregar = next_level_scene.resource_path if next_level_scene else null
+		else:
+			# Se fase 1 ainda não foi concluída, carregar fase 1
+			cena_para_carregar = next_level_scene.resource_path if next_level_scene else null
+			print("✅ Carregando Fase 1 (ainda não concluída)")
+	else:
+		# Fallback: sempre carregar fase 1 se GameManager não estiver disponível
+		cena_para_carregar = next_level_scene.resource_path if next_level_scene else null
+		print("⚠️ GameManager não encontrado. Carregando Fase 1 como padrão.")
+	
+	# Carregar a fase
 	var tree = get_tree()
 	if tree == null or not is_inside_tree():
 		print("❌ ERRO: Árvore da cena não está disponível!")
 		return
 	
-	if next_level_scene != null:
-		tree.call_deferred("change_scene_to_file", next_level_scene.resource_path)
+	if cena_para_carregar != null:
+		tree.call_deferred("change_scene_to_file", cena_para_carregar)
 	else:
-		print("Erro: A cena da próxima fase não foi atribuída!")
+		print("❌ ERRO: Nenhuma cena configurada para carregar!")
+
+func _verificar_e_mover_paser():
+	# Verificar se fase 1 foi concluída e mover Paser para nova posição
+	var gm = get_node_or_null("/root/GameManager")
+	if gm:
+		if gm.fase_concluida(1):
+			# Mover Paser para a posição da fase 2
+			global_position = posicao_fase_2
+			print("✅ Paser movido para posição da Fase 2: ", posicao_fase_2)
+		else:
+			# Manter Paser na posição inicial
+			global_position = posicao_inicial
+			print("✅ Paser mantido na posição inicial: ", posicao_inicial)
+	else:
+		# Se GameManager não estiver disponível, manter na posição inicial
+		global_position = posicao_inicial
+		print("⚠️ GameManager não encontrado. Paser mantido na posição inicial.")
 
 func _esconder_balao_imediato():
 	# Tentar encontrar e esconder o balão diretamente

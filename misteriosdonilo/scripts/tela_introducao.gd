@@ -3,7 +3,7 @@ extends Control
 @onready var texture_rect_fundo = $TextureRect
 
 func _ready():
-	print("Tela de Título carregada!")
+	print("Tela de Introdução carregada!")
 	
 	# Habilitar detecção de mouse na tela inteira
 	mouse_filter = Control.MOUSE_FILTER_STOP
@@ -15,14 +15,14 @@ func _ready():
 		texture_rect_fundo.mouse_filter = Control.MOUSE_FILTER_STOP
 		print("✅ TextureRect configurado!")
 	
-	print("💡 Clique em qualquer lugar da tela para iniciar o jogo!")
+	print("💡 Clique em qualquer lugar da tela para ir ao mapa!")
 
 func _input(event):
 	# Detectar cliques do mouse
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			print("🗺️ Tela clicada! Carregando mapa principal...")
-			iniciar_jogo()
+			ir_para_mapa()
 			get_viewport().set_input_as_handled()
 
 func _gui_input(event):
@@ -30,13 +30,13 @@ func _gui_input(event):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			print("🗺️ Tela clicada! Carregando mapa principal...")
-			iniciar_jogo()
+			ir_para_mapa()
 			accept_event()
 
-func iniciar_jogo():
+func ir_para_mapa():
 	var tree = get_tree()
 	if tree != null and is_inside_tree():
-		tree.call_deferred("change_scene_to_file", "res://Scene/TelaIntroducao.tscn")
+		tree.call_deferred("change_scene_to_file", "res://Scene/icon.tscn")
 	else:
 		print("❌ ERRO: Árvore da cena não está disponível!")
 

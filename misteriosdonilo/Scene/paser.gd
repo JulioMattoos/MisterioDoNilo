@@ -97,6 +97,8 @@ func change_scene():
 	if is_instance_valid(dialogue_instance):
 		dialogue_instance.queue_free()
 	
+
+
 	# ⭐⭐ IMPORTANTE: Esconder o balão IMEDIATAMENTE antes de trocar a cena
 	_esconder_balao_imediato()
 	

@@ -5,6 +5,6 @@ extends Area2D
 func _ready():
 	input_event.connect(_on_pergaminho_click)
 
-func _on_pergaminho_click(viewport, event, shape_idx):
+func _on_pergaminho_click(_viewport, event, _shape_idx):
 	if event is InputEventMouseButton and event.pressed:
 		popup_dica.visible = true

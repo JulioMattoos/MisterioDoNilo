@@ -71,17 +71,7 @@ func change_scene():
 	if is_instance_valid(dialogue_instance):
 		dialogue_instance.queue_free()
 	
-	# ⭐ VERIFICAR PROGRESSO: Se fase 1 já foi concluída, ir direto para fase 2
-	var fase_1_completa = fase_1_completa()
-	
-	if fase_1_completa:
-		print("✅ Fase 1 já foi concluída! Redirecionando para Fase 2...")
-		# Carregar Fase 2 diretamente
-		var fase_2_path = "res://Scene/Fase_2/Fase_2.tscn"
-		get_tree().call_deferred("change_scene_to_file", fase_2_path)
-		return
-	
-	# Se fase 1 não foi concluída, carregar a fase normal
+	# Carregar a fase normalmente (sempre começar na fase 1)
 	if next_level_scene != null:
 		get_tree().call_deferred("change_scene_to_file", next_level_scene.resource_path)
 	else:

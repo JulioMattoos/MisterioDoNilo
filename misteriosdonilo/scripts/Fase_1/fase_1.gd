@@ -126,12 +126,6 @@ func conectar_areas_resposta():
 				print("ERRO: Área ", i, " não tem sinal resposta_recebida")
 
 func iniciar_jogo():
-	# ⭐ VERIFICAR SE NÍVEL 1 JÁ FOI CONCLUÍDO
-	if fase_concluida(1):
-		print("✅ Nível 1 já foi concluído! Redirecionando para Fase 2...")
-		get_tree().change_scene_to_file("res://Scene/Fase_2/Fase_2.tscn")
-		return
-	
 	print("Iniciando jogo...")
 	jogo_iniciado = true
 	equacao_atual = 0

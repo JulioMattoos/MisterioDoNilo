@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://vah8xxmht0ap"]
+[gd_scene load_steps=19 format=3 uid="uid://vah8xxmht0ap"]
 
 [ext_resource type="Texture2D" uid="uid://w8eialwa5ldk" path="res://imagens/mapa/completo.png" id="1_h4brd"]
 [ext_resource type="Script" uid="uid://dvfbrpr0l1da4" path="res://scripts/khepre.gd" id="2_otv2m"]
@@ -12,7 +12,8 @@
 [ext_resource type="PackedScene" uid="uid://cgdvg6tiw3k8o" path="res://Scene/Fase_1/UI_Fase_1.tscn" id="9_h4brd"]
 [ext_resource type="PackedScene" uid="uid://bc11toql33v4v" path="res://Scene/Fase_2/Fase_2.tscn" id="10_fase2"]
 [ext_resource type="Texture2D" uid="uid://dh8yuqindxx64" path="res://imagens/mapa/balao.png" id="11_balao"]
-[ext_resource type="Script" uid="uid://br284x10ol8ng" path="res://scripts/controlador_mapa.gd" id="12_controlador"]
+[ext_resource type="Texture2D" uid="uid://qli2no6x7bke" path="res://imagens/mapa/balao2.png" id="12_balao2"]
+[ext_resource type="Script" uid="uid://br284x10ol8ng" path="res://scripts/controlador_mapa.gd" id="13_controlador"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tr34o"]
 
@@ -223,7 +224,7 @@ position = Vector2(448, 348)
 shape = SubResource("CircleShape2D_npxfr")
 
 [node name="ControladorMapa" type="Node" parent="."]
-script = ExtResource("12_controlador")
+script = ExtResource("13_controlador")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -251,6 +252,34 @@ offset_bottom = 175.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("11_balao")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="BalaoFala2" type="Control" parent="CanvasLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -400.0
+offset_top = 20.0
+offset_right = 400.0
+offset_bottom = 180.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/BalaoFala2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 384.0
+offset_top = 70.0
+offset_right = 614.0
+offset_bottom = 175.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("12_balao2")
 expand_mode = 1
 stretch_mode = 4
 

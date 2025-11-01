@@ -66,14 +66,15 @@ func _on_interaction_area_body_exited(body):
 		player_in_range = false
 
 func show_dialogue():
-	# ⭐⭐ IMPORTANTE: Esconder o balão quando o DialogueBox aparecer
+	# ⭐⭐ IMPORTANTE: Esconder os balões quando o DialogueBox aparecer
 	_esconder_balao_imediato()
+	_esconder_balao2_imediato()
 	
 	# ⭐⭐ Marcar que o DialogueBox foi mostrado nesta sessão (usar GameManager)
 	var gm = get_node_or_null("/root/GameManager")
 	if gm:
 		gm.dialogue_box_mostrado = true
-		print("✅ DialogueBox marcado como mostrado. Balão não aparecerá mais nesta sessão.")
+		print("✅ DialogueBox marcado como mostrado. Balões não aparecerão mais nesta sessão.")
 		print("📊 GameManager.dialogue_box_mostrado = ", gm.dialogue_box_mostrado)
 	else:
 		print("❌ ERRO: GameManager não encontrado!")
@@ -155,7 +156,7 @@ func _esconder_balao_imediato():
 	if balao:
 		balao.visible = false
 		balao.hide()
-		print("✅ Balão escondido!")
+		print("✅ Balão 1 escondido!")
 	
 	# Também tentar através da raiz da cena atual
 	var root = get_tree().current_scene
@@ -164,7 +165,7 @@ func _esconder_balao_imediato():
 		if balao:
 			balao.visible = false
 			balao.hide()
-			print("✅ Balão escondido através da raiz da cena!")
+			print("✅ Balão 1 escondido através da raiz da cena!")
 		
 		# Procurar em todos os CanvasLayers na cena
 		for canvas in root.find_children("*", "CanvasLayer", true, false):
@@ -172,4 +173,29 @@ func _esconder_balao_imediato():
 			if balao:
 				balao.visible = false
 				balao.hide()
-				print("✅ Balão encontrado e escondido em CanvasLayer!")
+				print("✅ Balão 1 encontrado e escondido em CanvasLayer!")
+
+func _esconder_balao2_imediato():
+	# Tentar encontrar e esconder o balão 2 diretamente
+	var balao2 = get_node_or_null("../CanvasLayer/BalaoFala2")
+	if balao2:
+		balao2.visible = false
+		balao2.hide()
+		print("✅ Balão 2 escondido!")
+	
+	# Também tentar através da raiz da cena atual
+	var root = get_tree().current_scene
+	if root:
+		balao2 = root.get_node_or_null("CanvasLayer/BalaoFala2")
+		if balao2:
+			balao2.visible = false
+			balao2.hide()
+			print("✅ Balão 2 escondido através da raiz da cena!")
+		
+		# Procurar em todos os CanvasLayers na cena
+		for canvas in root.find_children("*", "CanvasLayer", true, false):
+			balao2 = canvas.get_node_or_null("BalaoFala2")
+			if balao2:
+				balao2.visible = false
+				balao2.hide()
+				print("✅ Balão 2 encontrado e escondido em CanvasLayer!")

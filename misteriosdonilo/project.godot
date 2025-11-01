@@ -15,16 +15,16 @@ run/main_scene="res://Scene/TelaTitulo.tscn"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+GameManager="*res://scripts/GameManager.gd"
+MusicManager="*res://scripts/MusicManager.gd"
+
 [display]
 
 window/size/viewport_width=1024
 window/size/viewport_height=768
 window/stretch/mode="canvas_items"
-
-[autoload]
-
-GameManager="*res://scripts/GameManager.gd"
-MusicManager="*res://scripts/MusicManager.gd"
 
 [editor_plugins]
 

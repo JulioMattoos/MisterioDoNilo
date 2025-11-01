@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://dyrfqwevmyhb3" path="res://Caracters/Khepre/Khepre/Khepre_RightWalk.png" id="5_4rraq"]
 [ext_resource type="Texture2D" uid="uid://bygpu60u1erho" path="res://Caracters/Khepre/Khepre/Khepre_RightWalk1.png" id="6_up0aw"]
 [ext_resource type="Script" uid="uid://xaygdupxkb4b" path="res://Scene/paser.gd" id="7_0vn6r"]
-[ext_resource type="PackedScene" uid="uid://bdupuuuef8p65" path="res://Scene/Fase_1/Fase_1.tscn" id="8_0k1jd"]
+[ext_resource type="PackedScene" uid="uid://bdupuuuef8p65" path="res://scripts/Fase_3/Fase_3.tscn" id="8_0k1jd"]
 [ext_resource type="Texture2D" uid="uid://bydfudoeaxjc8" path="res://Scene/Paser.png" id="8_3bwm8"]
 [ext_resource type="Texture2D" uid="uid://dubtx88e17q4x" path="res://Caracters/Paser/Paser/DialogoPaser.png" id="9_44vhy"]
 
@@ -228,10 +228,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 803.0
-offset_top = 613.0
-offset_right = 2.0
-offset_bottom = -1.0
+offset_left = 763.0
+offset_top = 646.0
+offset_right = 6.0
+offset_bottom = 61.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("9_44vhy")
@@ -242,11 +242,9 @@ modulate = Color(0.817576, 0.229956, 0.276069, 1)
 self_modulate = Color(0.921569, 0, 0, 1)
 custom_minimum_size = Vector2(10, 10)
 layout_mode = 0
-offset_left = 91.0
-offset_top = 144.0
-offset_right = 309.0
-offset_bottom = 167.0
+offset_left = 117.0
+offset_top = 172.0
+offset_right = 335.0
+offset_bottom = 195.0
 scale = Vector2(0.3, 0.3)
 text = "Aperte espaço para iniciar!!"
-visible_characters = 25
-visible_ratio = 0.928571

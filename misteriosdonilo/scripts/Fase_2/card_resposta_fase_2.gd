@@ -91,22 +91,10 @@ func _processar_soltura():
 	for area in areas_sobrepostas:
 		print("   - Área sobreposta: ", area.name, " | Tipo: ", area.get_class())
 		
-		# Verificar se é AreaResposta_2 de múltiplas formas
-		var e_area_resposta = false
-		
-		if area is AreaResposta_2:
-			e_area_resposta = true
-			print("      ✅ Reconhecida como AreaResposta_2 (is)")
-		elif area.has_method("configurar") and "resultado_esperado" in area:
-			e_area_resposta = true
-			print("      ✅ Reconhecida como AreaResposta_2 (métodos)")
-		elif "AreaResposta" in area.name and "Fase2" in area.name:
-			e_area_resposta = true
-			print("      ✅ Reconhecida como AreaResposta_2 (nome)")
-		
-		if e_area_resposta:
+		# ⭐⭐ SIMPLIFICADO: Seguir a mesma lógica da Fase 1
+		if area is AreaResposta_2 or area.has_method("resultado_esperado"):
 			var distancia = global_position.distance_to(area.global_position)
-			print("      📏 Distância: ", distancia)
+			print("      ✅ Reconhecida como AreaResposta_2 - Distância: ", distancia)
 			
 			if distancia < menor_distancia:
 				menor_distancia = distancia
@@ -115,9 +103,11 @@ func _processar_soltura():
 	
 	if area_resposta_proxima:
 		print("🎯 Card ", valor, " solto perto da área '", area_resposta_proxima.name, "' - Distância: ", menor_distancia)
+		# ⭐⭐ CORREÇÃO: Processar imediatamente, depois animar visualmente
+		_emitir_sinal(area_resposta_proxima)
+		# Animar para a posição da área (opcional, apenas visual)
 		var tween = create_tween()
 		tween.tween_property(self, "global_position", area_resposta_proxima.global_position, 0.2)
-		tween.tween_callback(_emitir_sinal.bind(area_resposta_proxima))
 	else:
 		print("❌ Nenhuma área próxima encontrada!")
 		print("   Total de áreas sobrepostas: ", areas_sobrepostas.size())

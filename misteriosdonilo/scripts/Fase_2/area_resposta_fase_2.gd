@@ -139,17 +139,13 @@ func receber_card(card: Node):
 func _processar_resposta(_valor_card: int, _card):
 	# ⭐⭐ CORREÇÃO CRÍTICA: Verificar se o valor do card corresponde ao resultado esperado
 	var correto_para_esta_area: bool = (_valor_card == resultado_esperado)
-	
-	# ⭐⭐ MELHORIA: Atualizar flag e último card recebido SEMPRE
 	tem_card_correto = correto_para_esta_area
-	ultimo_card_recebido = _valor_card  # Atualizar sempre, mesmo se incorreto, para tracking
+	ultimo_card_recebido = _valor_card
 	
-	print("🔍 VALIDAÇÃO [", name, "]:")
+	print("🔍 VALIDAÇÃO:")
 	print("   Card valor: ", _valor_card)
 	print("   Área espera: ", resultado_esperado, " (", expressao, ")")
 	print("   Correto para esta área: ", correto_para_esta_area)
-	print("   Flag tem_card_correto atualizada para: ", tem_card_correto)
-	print("   ultimo_card_recebido atualizado para: ", ultimo_card_recebido)
 	
 	# ⭐⭐ CORREÇÃO: Só processar troca se for realmente correto
 	if correto_para_esta_area:

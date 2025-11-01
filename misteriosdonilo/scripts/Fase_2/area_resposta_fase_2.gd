@@ -30,6 +30,8 @@ func _inicializar_sprite_card_correto():
 	
 	if card_correto_sprite:
 		print("✅ Sprite encontrado para área: ", name)
+		# ⭐ CARREGAR TEXTURA DINAMICAMENTE baseado no resultado esperado
+		_carregar_textura_card_correto()
 		card_correto_sprite.visible = false  # Começar invisível
 	else:
 		print("❌ ERRO: CardCorretoSprite não encontrado na área: ", name)
@@ -38,11 +40,40 @@ func _inicializar_sprite_card_correto():
 		for child in get_children():
 			print("   - ", child.name, " (", child.get_class(), ")")
 
+# ⭐⭐ NOVA FUNÇÃO: Carregar textura do card correto
+func _carregar_textura_card_correto():
+	if not card_correto_sprite or resultado_esperado == 0:
+		return
+	
+	# Mapeamento de valores para texturas
+	var texturas_map = {
+		2: "res://imagens/cards_Fase_1/pg1_a5.png",
+		6: "res://imagens/cards_Fase_1/pg1_a3.png", 
+		28: "res://imagens/cards_Fase_1/pg2_a2.png",
+		40: "res://imagens/cards_Fase_1/pg2_a3.png",
+		48: "res://imagens/cards_Fase_1/pg2_a4.png",
+		# Adicionar mais valores conforme necessário
+	}
+	
+	if texturas_map.has(resultado_esperado):
+		var texture_path = texturas_map[resultado_esperado]
+		var texture = load(texture_path)
+		if texture:
+			card_correto_sprite.texture = texture
+			card_correto_sprite.scale = Vector2(0.06, 0.06)  # 0.05 (interno) * 1.2 (exterior) = 0.06
+			print("✅ Textura carregada para card correto: ", texture_path)
+		else:
+			print("❌ ERRO: Não foi possível carregar textura: ", texture_path)
+	else:
+		print("⚠️ AVISO: Textura não mapeada para valor: ", resultado_esperado)
+
 func configurar(_resultado_esperado: int, _expressao: String):
 	resultado_esperado = _resultado_esperado
 	expressao = _expressao
 	tem_card_correto = false
 	print("🎯 Área ", name, " configurada: ", expressao, " = ", resultado_esperado)
+	# ⭐ CARREGAR TEXTURA DEPOIS DE CONFIGURAR VALOR
+	_carregar_textura_card_correto()
 
 func _on_area_entered(area: Area2D):
 	print("=== ÁREA DETECTOU ENTRADA ===")
@@ -105,6 +136,15 @@ func _ativar_card_correto_especifico():
 	if card_correto_sprite and is_instance_valid(card_correto_sprite):
 		card_correto_sprite.visible = true
 		print("✅ Card correto interno ativado: ", name)
+		print("   📍 Posição: ", card_correto_sprite.global_position)
+		print("   🎨 Modulacao: ", card_correto_sprite.modulate)
+		print("   📦 Z-index: ", card_correto_sprite.z_index)
+		print("   👁️ Visible: ", card_correto_sprite.visible)
+		print("   🖼️ Texture: ", card_correto_sprite.texture)
+		# Verificar se está sendo escondido pelo pai
+		var pai = card_correto_sprite.get_parent()
+		if pai:
+			print("   👪 Pai: ", pai.name, " | Visível: ", pai.visible)
 		return
 	
 	# MÉTODO 2: Procurar card correto externo

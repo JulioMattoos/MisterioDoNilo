@@ -126,9 +126,9 @@ func conectar_areas_resposta():
 				print("ERRO: Área ", i, " não tem sinal resposta_recebida")
 
 func iniciar_jogo():
-	# ⭐ VERIFICAR SE NÍVEL 1 JÁ FOI CONCLUÍDO
-	if fase_concluida(1):
-		print("✅ Nível 1 já foi concluído! Redirecionando para Fase 2...")
+	# ⭐ VERIFICAR SE NÍVEL 1 JÁ FOI CONCLUÍDO NESTA SESSÃO
+	if Engine.has_singleton("GameManager") and GameManager.fase_concluida(1):
+		print("✅ Nível 1 já foi concluído nesta sessão! Redirecionando para Fase 2...")
 		get_tree().change_scene_to_file("res://Scene/Fase_2/Fase_2.tscn")
 		return
 	
@@ -529,35 +529,25 @@ func _esconder_cards_corretos():
 		print("✅ Card_Correto_Fase_3 escondido")
 		
 		
-# ⭐ FUNÇÃO: Salvar progresso do jogo
+# ⭐ FUNÇÃO: Salvar progresso do jogo (apenas na sessão atual)
 func salvar_progresso():
-	var config = ConfigFile.new()
-	var caminho_save = "user://progresso_jogo.save"
-	
-	# Carregar progresso existente
-	if config.load(caminho_save) != OK:
-		print("📝 Criando novo arquivo de progresso...")
-	
-	# Marcar nível 1 como concluído
-	config.set_value("progresso", "fase_1_completa", true)
-	
-	# Salvar arquivo
-	var resultado = config.save(caminho_save)
-	if resultado == OK:
-		print("✅ Progresso salvo com sucesso! Fase 1 marcada como concluída.")
+	# Usar GameManager singleton
+	if Engine.has_singleton("GameManager"):
+		GameManager.concluir_fase(1)
+		print("✅ Fase 1 marcada como concluída (sessão atual)")
 	else:
-		print("❌ Erro ao salvar progresso: ", resultado)
+		print("⚠️ GameManager não encontrado! Criando variável temporária...")
+		# Fallback: criar variável estática temporária
+		if not "fase_1_sessao_completa" in get_script().get_script_property_list():
+			set_meta("fase_1_sessao_completa", true)
+			print("✅ Fase 1 marcada como concluída (variável temporária)")
 
-# ⭐ FUNÇÃO: Verificar se fase foi concluída
+# ⭐ FUNÇÃO: Verificar se fase foi concluída (apenas na sessão atual)
 static func fase_concluida(numero_fase: int) -> bool:
-	var config = ConfigFile.new()
-	var caminho_save = "user://progresso_jogo.save"
-	
-	if config.load(caminho_save) != OK:
-		return false
-	
-	var chave = "fase_%d_completa" % numero_fase
-	return config.get_value("progresso", chave, false)
+	# Verificar via GameManager singleton primeiro
+	if Engine.has_singleton("GameManager"):
+		return GameManager.fase_concluida(numero_fase)
+	return false
 
 # ⭐ NOVA FUNÇÃO: Mostrar tela final do nível
 func mostrar_tela_final():

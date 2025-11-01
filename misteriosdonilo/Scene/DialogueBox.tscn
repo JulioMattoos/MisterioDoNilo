@@ -228,8 +228,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 804.0
-offset_top = 620.0
+offset_left = 796.0
+offset_top = 613.0
 offset_right = 1.0
 offset_bottom = -1.0
 grow_horizontal = 2
@@ -237,15 +237,18 @@ grow_vertical = 2
 texture = ExtResource("9_44vhy")
 expand_mode = 1
 
-[node name="texto" type="Label" parent="DialogueBox"]
-modulate = Color(0, 0, 0, 1)
+[node name="Label" type="Label" parent="DialogueBox/TextureRect"]
+modulate = Color(0.817576, 0.229956, 0.276069, 1)
+self_modulate = Color(0.921569, 0, 0, 1)
+custom_minimum_size = Vector2(10, 10)
 layout_mode = 0
-offset_left = 417.0
-offset_top = 731.0
-offset_right = 734.0
-offset_bottom = 768.0
-text = "APERTE ESPAÇO PARA CONTINUAR!!!"
-max_lines_visible = 27
+offset_left = 91.0
+offset_top = 144.0
+offset_right = 309.0
+offset_bottom = 167.0
+scale = Vector2(0.3, 0.3)
+text = "Aperte espaço para iniciar!!"
+visible_characters = 26
 
 [connection signal="body_entered" from="Paser/InteractionArea" to="Paser" method="_on_interaction_area_body_entered"]
 [connection signal="body_exited" from="Paser/InteractionArea" to="Paser" method="_on_interaction_area_body_exited"]

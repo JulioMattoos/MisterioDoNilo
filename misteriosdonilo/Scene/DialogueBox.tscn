@@ -248,11 +248,5 @@ offset_right = 309.0
 offset_bottom = 167.0
 scale = Vector2(0.3, 0.3)
 text = "Aperte espaço para iniciar!!"
-HEAD
-visible_characters = 26
+visible_characters = 25
 visible_ratio = 0.928571
-
-cf20bcc072d837d25bf6f05068375b7cea7c354d
-
-[connection signal="body_entered" from="Paser/InteractionArea" to="Paser" method="_on_interaction_area_body_entered"]
-[connection signal="body_exited" from="Paser/InteractionArea" to="Paser" method="_on_interaction_area_body_exited"]

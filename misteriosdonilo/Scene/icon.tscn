@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://pndd5tf6kjbv" path="res://Scene/DialogueBox.tscn" id="8_h4brd"]
 [ext_resource type="Texture2D" uid="uid://bydfudoeaxjc8" path="res://Scene/Paser.png" id="8_npxfr"]
 [ext_resource type="Script" uid="uid://xaygdupxkb4b" path="res://Scene/paser.gd" id="8_x76k5"]
-[ext_resource type="PackedScene" uid="uid://cgdvg6tiw3k8o" path="res://Scene/Fase_1/UI_Fase_1.tscn" id="9_h4brd"]
+[ext_resource type="PackedScene" uid="uid://cgdvg6tiw3k8o" path="res://scripts/Fase_3/UI_Fase_3.tscn" id="9_h4brd"]
 [ext_resource type="PackedScene" uid="uid://bc11toql33v4v" path="res://Scene/Fase_2/Fase_2.tscn" id="10_fase2"]
 [ext_resource type="Texture2D" uid="uid://dh8yuqindxx64" path="res://imagens/mapa/balao.png" id="11_balao"]
 [ext_resource type="Texture2D" uid="uid://qli2no6x7bke" path="res://imagens/mapa/balao2.png" id="12_balao2"]

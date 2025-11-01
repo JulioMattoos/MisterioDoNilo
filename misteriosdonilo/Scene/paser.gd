@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+# Nota: dialogue_box_mostrado agora está no GameManager
+
 # Variável para rastrear se o jogador está na área de interação.
 var player_in_range = false
 
@@ -53,6 +55,24 @@ func _on_interaction_area_body_exited(body):
 		player_in_range = false
 
 func show_dialogue():
+	# ⭐⭐ IMPORTANTE: Esconder o balão quando o DialogueBox aparecer
+	_esconder_balao_imediato()
+	
+	# ⭐⭐ Marcar que o DialogueBox foi mostrado nesta sessão (usar GameManager)
+	if Engine.has_singleton("GameManager"):
+		GameManager.dialogue_box_mostrado = true
+		print("✅ DialogueBox marcado como mostrado. Balão não aparecerá mais nesta sessão.")
+		print("📊 GameManager.dialogue_box_mostrado = ", GameManager.dialogue_box_mostrado)
+	else:
+		# Fallback: tentar via /root
+		var gm = get_node_or_null("/root/GameManager")
+		if gm:
+			gm.dialogue_box_mostrado = true
+			print("✅ DialogueBox marcado como mostrado (via /root). Balão não aparecerá mais nesta sessão.")
+			print("📊 GameManager.dialogue_box_mostrado = ", gm.dialogue_box_mostrado)
+		else:
+			print("❌ ERRO: GameManager não encontrado!")
+	
 	# Garante que a cena de diálogo existe antes de tentar instanciá-la.
 	if dialogue_box_scene != null:
 		# Define o estado do diálogo como ativo.
@@ -71,21 +91,43 @@ func change_scene():
 	if is_instance_valid(dialogue_instance):
 		dialogue_instance.queue_free()
 	
+
+
+	# ⭐⭐ IMPORTANTE: Esconder o balão IMEDIATAMENTE antes de trocar a cena
+	_esconder_balao_imediato()
+	
 	# Carregar a fase normalmente (sempre começar na fase 1)
+	var tree = get_tree()
+	if tree == null or not is_inside_tree():
+		print("❌ ERRO: Árvore da cena não está disponível!")
+		return
+	
 	if next_level_scene != null:
-		get_tree().call_deferred("change_scene_to_file", next_level_scene.resource_path)
+		tree.call_deferred("change_scene_to_file", next_level_scene.resource_path)
 	else:
 		print("Erro: A cena da próxima fase não foi atribuída!")
 
-# ⭐ FUNÇÃO: Verificar se fase 1 foi concluída
-func fase_1_completa() -> bool:
-	var config = ConfigFile.new()
-	var caminho_save = "user://progresso_jogo.save"
+func _esconder_balao_imediato():
+	# Tentar encontrar e esconder o balão diretamente
+	var balao = get_node_or_null("../CanvasLayer/BalaoFala")
+	if balao:
+		balao.visible = false
+		balao.hide()
+		print("✅ Balão escondido!")
 	
-	if config.load(caminho_save) != OK:
-		print("📝 Arquivo de progresso não encontrado. Fase 1 ainda não foi concluída.")
-		return false
-	
-	var fase_completa = config.get_value("progresso", "fase_1_completa", false)
-	print("📊 Status Fase 1: ", "Concluída" if fase_completa else "Não concluída")
-	return fase_completa
+	# Também tentar através da raiz da cena atual
+	var root = get_tree().current_scene
+	if root:
+		balao = root.get_node_or_null("CanvasLayer/BalaoFala")
+		if balao:
+			balao.visible = false
+			balao.hide()
+			print("✅ Balão escondido através da raiz da cena!")
+		
+		# Procurar em todos os CanvasLayers na cena
+		for canvas in root.find_children("*", "CanvasLayer", true, false):
+			balao = canvas.get_node_or_null("BalaoFala")
+			if balao:
+				balao.visible = false
+				balao.hide()
+				print("✅ Balão encontrado e escondido em CanvasLayer!")

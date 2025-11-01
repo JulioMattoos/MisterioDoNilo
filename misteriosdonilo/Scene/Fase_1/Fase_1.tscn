@@ -100,6 +100,15 @@ shape = SubResource("RectangleShape2D_i3oin")
 visible = false
 script = ExtResource("10_res67")
 
+[node name="FundoEscuro" type="ColorRect" parent="PopupDica"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.7)
+
 [node name="pergaminho" type="Sprite2D" parent="PopupDica"]
 position = Vector2(516.75, 383.5)
 scale = Vector2(0.532552, 0.710185)

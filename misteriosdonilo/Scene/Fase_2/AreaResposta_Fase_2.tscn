@@ -14,3 +14,4 @@ scale = Vector2(3, 3)
 shape = SubResource("RectangleShape2D_6ahln")
 
 [node name="CardCorretoSprite" type="Sprite2D" parent="."]
+position = Vector2(504.5, 362.5)

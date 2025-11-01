@@ -36,6 +36,19 @@ var cards_instanciados: Array = []  # ⭐ NOVO: Array para controlar cards criad
 func _ready():
 	print("Fase_1 carregada!")
 	
+	# ⭐⭐ VERIFICAR SE FASE JÁ FOI CONCLUÍDA ANTES DE INICIALIZAR
+	print("🔍 Verificando se Fase_1 já foi concluída...")
+	if Engine.has_singleton("GameManager"):
+		var concluida = GameManager.fase_concluida(1)
+		print("📊 Status da Fase_1: ", "CONCLUÍDA" if concluida else "NÃO CONCLUÍDA")
+		if concluida:
+			print("✅ Fase 1 já foi concluída! Redirecionando para Fase 2...")
+			await get_tree().process_frame
+			get_tree().change_scene_to_file("res://Scene/Fase_2/Fase_2.tscn")
+			return
+	else:
+		print("⚠️ GameManager singleton não encontrado!")
+	
 	# Configurar o array de áreas
 	areas_resposta = [area_resposta1, area_resposta2, area_resposta3]
 	
@@ -58,10 +71,17 @@ func _ready():
 		var cb = Callable(self, "iniciar_jogo")
 		if not ui_fase_1.is_connected("botao_iniciar_pressed", cb):
 			ui_fase_1.connect("botao_iniciar_pressed", cb)
+		print("✅ Conexão com UI_Fase_1 estabelecida")
 	else:
-		print("ERRO: UI_Fase_1 não encontrada!")
+		print("⚠️ ERRO: UI_Fase_1 não encontrada! Iniciando jogo automaticamente...")
+		# ⭐ CORREÇÃO: Se não há UI, iniciar jogo automaticamente
+		iniciar_jogo()
 	
-	esconder_elementos_jogo()
+	# ⭐ MOVER esconder_elementos_jogo() para dentro da condição de UI
+	# Se não há UI, não devemos esconder os elementos
+	if ui_fase_1:
+		esconder_elementos_jogo()
+	
 	conectar_areas_resposta()
 	
 	if tela_conclusao:
@@ -107,11 +127,13 @@ func esconder_elementos_jogo():
 			area.visible = false
 
 func mostrar_elementos_jogo():
+	print("🟢 MOSTRANDO ELEMENTOS DO JOGO...")
 	if container_cards:
 		container_cards.visible = true
 	for area in areas_resposta:
 		if area:
 			area.visible = true
+			print("   ✅ Área visível: ", area.name)
 
 func conectar_areas_resposta():
 	for i in range(areas_resposta.size()):
@@ -127,6 +149,7 @@ func conectar_areas_resposta():
 
 func iniciar_jogo():
 	print("Iniciando jogo...")
+	
 	jogo_iniciado = true
 	equacao_atual = 0
 	respostas_corretas = 0  # ⭐ RESETAR contador de respostas corretas
@@ -149,6 +172,11 @@ func iniciar_jogo():
 		ui_fase_1.atualizar_progresso(equacao_atual, equacoes.size())
 
 func criar_cards_dinamicamente():
+	# ⭐ VERIFICAR se container_cards existe
+	if not container_cards:
+		print("⚠️ ContainerCards não encontrado, pulando criação de cards dinâmicos")
+		return
+	
 	# Limpar cards anteriores
 	for card in container_cards.get_children():
 		card.queue_free()
@@ -259,7 +287,8 @@ func _processar_resposta(valor, correto_para_esta_area):
 		if respostas_corretas >= total_respostas:
 			print("🎊🎊🎊 TODOS OS 3 CARDS FORAM ACERTADOS! 🎊🎊🎊")
 			print("🎊 Chamando mostrar_tela_final() agora...")
-			mostrar_tela_final()
+			# ⭐ Aguardar para garantir que a transição aconteça corretamente
+			await mostrar_tela_final()
 		else:
 			print("⏳ Ainda faltam acertos. Cards acertados: ", respostas_corretas, "/", total_respostas)
 			if equacao_atual < equacoes.size():
@@ -306,9 +335,13 @@ func completar_fase():
 	print("⌨️ Aguardando tecla Espaço...")
 	await _aguardar_tecla_espaco()
 	
-	# Troca de cena para o mapa principal
+	# Troca de cena para o mapa principal (com verificação de segurança)
 	print("🗺️ Retornando ao mapa principal...")
-	get_tree().change_scene_to_file("res://Scene/icon.tscn")
+	var tree = get_tree()
+	if tree != null and is_inside_tree():
+		tree.call_deferred("change_scene_to_file", "res://Scene/icon.tscn")
+	else:
+		print("❌ ERRO: Árvore da cena não está disponível!")
 
 func voltar_ao_menu():
 	print("Voltando ao menu...")
@@ -334,7 +367,11 @@ func _aguardar_tecla_espaco() -> void:
 	
 	# Verificar a cada frame se a tecla foi pressionada
 	while true:
-		await get_tree().process_frame
+		var tree = get_tree()
+		if tree == null or not is_inside_tree():
+			print("❌ ERRO: Árvore da cena não está mais disponível!")
+			break
+		await tree.process_frame
 		
 		# Verificar através da flag (setada em _input)
 		if espaco_pressionado:
@@ -611,8 +648,10 @@ func mostrar_tela_final():
 			texture_rect_conclusao.show()
 	
 	# Aguarda alguns frames para garantir que tudo apareceu
-	await get_tree().process_frame
-	await get_tree().process_frame
+	var tree = get_tree()
+	if tree != null and is_inside_tree():
+		await tree.process_frame
+		await tree.process_frame
 	
 	# Resetar flag antes de aguardar
 	espaco_pressionado = false
@@ -621,11 +660,19 @@ func mostrar_tela_final():
 	print("⌨️ Aguardando tecla Espaço...")
 	await _aguardar_tecla_espaco()
 	
-	# Troca de cena para o mapa principal
+	# Troca de cena para o mapa principal (com verificação de segurança)
 	print("🗺️ Retornando ao mapa principal...")
-	get_tree().change_scene_to_file("res://Scene/icon.tscn")
+	tree = get_tree()
+	if tree != null and is_inside_tree():
+		tree.call_deferred("change_scene_to_file", "res://Scene/icon.tscn")
+	else:
+		print("❌ ERRO: Árvore da cena não está disponível!")
 
 
 func _on_voltar_ao_mapa_pressed() -> void:
 	print("🗺️ Botão 'Voltar ao Mapa' pressionado!")
-	get_tree().change_scene_to_file("res://Scene/icon.tscn")
+	var tree = get_tree()
+	if tree != null and is_inside_tree():
+		tree.call_deferred("change_scene_to_file", "res://Scene/icon.tscn")
+	else:
+		print("❌ ERRO: Árvore da cena não está disponível!")

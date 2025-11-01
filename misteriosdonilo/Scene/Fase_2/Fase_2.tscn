@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://bc11toql33v4v"]
+[gd_scene load_steps=16 format=3 uid="uid://bc11toql33v4v"]
 
 [ext_resource type="Script" uid="uid://b2t4inbhvb0np" path="res://scripts/Fase_2/fase_2.gd" id="1_n3b2c"]
 [ext_resource type="Texture2D" uid="uid://dutk7kavhe8eh" path="res://imagens/assets_Fase_2/2025-10-30_23h26_35.jpg" id="2_62mfm"]
@@ -10,6 +10,15 @@
 [ext_resource type="PackedScene" uid="uid://dpy8vaucybe1p" path="res://Scene/Fase_2/Card28Resposta_Fase_2.tscn" id="8_dhqrw"]
 [ext_resource type="PackedScene" uid="uid://di7i1vwn2g80p" path="res://Scene/Fase_2/Card40Resposta_Fase_2.tscn" id="9_3yg8f"]
 [ext_resource type="PackedScene" uid="uid://dqnw3mr4qw53p" path="res://Scene/Fase_2/Card48Resposta_Fase_2.tscn" id="10_b512p"]
+[ext_resource type="Script" path="res://Scene/Fase_1/area_pergaminho.gd" id="11_perg"]
+[ext_resource type="Script" uid="uid://dnj16rknwjes2" path="res://Scene/Fase_1/popup_dica.gd" id="12_popup"]
+[ext_resource type="Texture2D" uid="uid://dhptgd30sw4ia" path="res://imagens/assets_Fase_1/9.png" id="13_text"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_perg"]
+size = Vector2(110, 127)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_popup"]
+size = Vector2(112, 60)
 
 [node name="Fase_2" type="Node2D"]
 script = ExtResource("1_n3b2c")
@@ -102,3 +111,25 @@ position = Vector2(748, 415)
 scale = Vector2(1.2, 1.2)
 collision_layer = 32
 collision_mask = 0
+
+[node name="AreaPergaminho" type="Area2D" parent="."]
+script = ExtResource("11_perg")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AreaPergaminho"]
+position = Vector2(938, 680)
+shape = SubResource("RectangleShape2D_perg")
+
+[node name="PopupDica" type="CanvasLayer" parent="."]
+script = ExtResource("12_popup")
+
+[node name="pergaminho" type="Sprite2D" parent="PopupDica"]
+position = Vector2(512.5, 385)
+scale = Vector2(0.535938, 0.716667)
+texture = ExtResource("13_text")
+
+[node name="Area2D" type="Area2D" parent="PopupDica"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PopupDica/Area2D"]
+visible = false
+position = Vector2(74, 46)
+shape = SubResource("RectangleShape2D_popup")

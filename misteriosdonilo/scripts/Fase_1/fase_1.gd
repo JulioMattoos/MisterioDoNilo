@@ -38,8 +38,9 @@ func _ready():
 	
 	# ⭐⭐ VERIFICAR SE FASE JÁ FOI CONCLUÍDA ANTES DE INICIALIZAR
 	print("🔍 Verificando se Fase_1 já foi concluída...")
-	if Engine.has_singleton("GameManager"):
-		var concluida = GameManager.fase_concluida(1)
+	var gm = get_node_or_null("/root/GameManager")
+	if gm:
+		var concluida = gm.fase_concluida(1)
 		print("📊 Status da Fase_1: ", "CONCLUÍDA" if concluida else "NÃO CONCLUÍDA")
 		if concluida:
 			print("✅ Fase 1 já foi concluída! Redirecionando para Fase 2...")
@@ -282,13 +283,19 @@ func _processar_resposta(valor, correto_para_esta_area):
 		await get_tree().create_timer(1.0).timeout
 		equacao_atual += 1
 		
-		# Verificar se todas as 3 respostas foram acertadas
+		# Verificar se todas as 3 respostas foram acertadas com validação completa
 		print("🔍 VERIFICAÇÃO FINAL: respostas_corretas = ", respostas_corretas, ", total_respostas = ", total_respostas)
 		if respostas_corretas >= total_respostas:
-			print("🎊🎊🎊 TODOS OS 3 CARDS FORAM ACERTADOS! 🎊🎊🎊")
-			print("🎊 Chamando mostrar_tela_final() agora...")
-			# ⭐ Aguardar para garantir que a transição aconteça corretamente
-			await mostrar_tela_final()
+			# ⭐ VALIDAÇÃO COMPLETA: Verificar se fase está realmente finalizada
+			if validar_fase_finalizada():
+				print("🎊🎊🎊 TODOS OS 3 CARDS FORAM ACERTADOS E VALIDADOS! 🎊🎊🎊")
+				print("🎊 Chamando mostrar_tela_final() agora...")
+				# ⭐ Aguardar para garantir que a transição aconteça corretamente
+				await mostrar_tela_final()
+			else:
+				print("⚠️ VALIDAÇÃO FALHOU: Nem todas as áreas estão corretas!")
+				print("📊 Verificando áreas novamente...")
+				verificar_visibilidade_areas()
 		else:
 			print("⏳ Ainda faltam acertos. Cards acertados: ", respostas_corretas, "/", total_respostas)
 			if equacao_atual < equacoes.size():
@@ -540,6 +547,102 @@ func verificar_visibilidade_areas():
 		print("   ", i, ": Resultado=", resultado, " | Visível=", visivel)
 	
 	print("======================================")
+
+# ⭐⭐ FUNÇÃO: Validar se fase está realmente finalizada
+func validar_fase_finalizada() -> bool:
+	print("")
+	print("=== 🔍 VALIDAÇÃO COMPLETA DA FASE ===")
+	
+	# 1. Verificar contador de respostas corretas
+	if respostas_corretas < total_respostas:
+		print("❌ FALHA 1: Contador insuficiente (", respostas_corretas, "/", total_respostas, ")")
+		return false
+	print("✅ PASSO 1: Contador de respostas OK (", respostas_corretas, "/", total_respostas, ")")
+	
+	# 2. Verificar se todas as áreas existem
+	if areas_resposta.size() < total_respostas:
+		print("❌ FALHA 2: Número insuficiente de áreas (", areas_resposta.size(), ")")
+		return false
+	print("✅ PASSO 2: Número de áreas OK (", areas_resposta.size(), ")")
+	
+	# 3. Verificar se todas as áreas têm cards corretos visíveis e correspondem ao resultado esperado
+	var areas_corretas = 0
+	var valores_encontrados: Array = []
+	
+	for i in range(areas_resposta.size()):
+		var area = areas_resposta[i]
+		
+		if area == null:
+			print("❌ FALHA 3: Área ", i, " é nula")
+			return false
+		
+		# Verificar se área tem card correto visível
+		var tem_card_visivel = false
+		if area.has_method("tem_card_correto_visivel"):
+			tem_card_visivel = area.tem_card_correto_visivel()
+		elif area.has_method("esta_correta"):
+			tem_card_visivel = area.esta_correta()
+		else:
+			# Verificação manual
+			if area.has_node("CardCorretoSprite"):
+				var sprite = area.get_node("CardCorretoSprite")
+				tem_card_visivel = sprite.visible if sprite else false
+			elif "card_correto_sprite" in area:
+				var sprite = area.card_correto_sprite
+				tem_card_visivel = sprite.visible if sprite and is_instance_valid(sprite) else false
+		
+		# Verificar se o valor do card corresponde ao resultado esperado
+		var valor_correto = false
+		if "ultimo_card_recebido" in area and "resultado_esperado" in area:
+			var card_recebido = area.ultimo_card_recebido
+			var resultado_esperado = area.resultado_esperado
+			valor_correto = (card_recebido == resultado_esperado)
+			print("   Área ", i+1, ": Card=", card_recebido, " | Esperado=", resultado_esperado, " | Visível=", tem_card_visivel)
+			
+			if valor_correto and tem_card_visivel:
+				areas_corretas += 1
+				if not valores_encontrados.has(card_recebido):
+					valores_encontrados.append(card_recebido)
+			else:
+				print("   ⚠️ Área ", i+1, " NÃO está correta (valor ou visibilidade)")
+		else:
+			print("   ⚠️ Área ", i+1, " não tem propriedades necessárias")
+	
+	# 4. Verificar se todas as 3 áreas estão corretas
+	if areas_corretas < total_respostas:
+		print("❌ FALHA 4: Nem todas as áreas estão corretas (", areas_corretas, "/", total_respostas, ")")
+		return false
+	print("✅ PASSO 3: Todas as áreas têm cards corretos (", areas_corretas, "/", total_respostas, ")")
+	
+	# 5. Verificar se não há duplicatas
+	if valores_encontrados.size() != total_respostas:
+		print("❌ FALHA 5: Valores duplicados detectados (", valores_encontrados.size(), " valores únicos, esperados ", total_respostas, ")")
+		print("   Valores encontrados: ", valores_encontrados)
+		return false
+	print("✅ PASSO 4: Sem duplicatas (", valores_encontrados.size(), " valores únicos)")
+	
+	# 6. Verificar se os valores contados correspondem aos encontrados
+	var valores_ordenados = valores_ja_contados.duplicate()
+	valores_ordenados.sort()
+	var encontrados_ordenados = valores_encontrados.duplicate()
+	encontrados_ordenados.sort()
+	
+	var valores_coincidem = true
+	if valores_ordenados.size() != encontrados_ordenados.size():
+		valores_coincidem = false
+	else:
+		for j in range(valores_ordenados.size()):
+			if valores_ordenados[j] != encontrados_ordenados[j]:
+				valores_coincidem = false
+				break
+	
+	if not valores_coincidem:
+		print("⚠️ AVISO: Valores contados (", valores_ja_contados, ") não coincidem com encontrados (", valores_encontrados, ")")
+		print("   Continuando mesmo assim, pois as áreas estão corretas...")
+	
+	print("=== ✅ VALIDAÇÃO COMPLETA: FASE FINALIZADA ===")
+	print("")
+	return true
 	
 	
 func _esconder_cards_corretos():

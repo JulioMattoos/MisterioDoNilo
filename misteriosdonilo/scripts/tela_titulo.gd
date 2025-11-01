@@ -39,4 +39,3 @@ func iniciar_jogo():
 		tree.call_deferred("change_scene_to_file", "res://Scene/TelaIntroducao.tscn")
 	else:
 		print("❌ ERRO: Árvore da cena não está disponível!")
-

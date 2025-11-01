@@ -24,6 +24,7 @@ window/stretch/mode="canvas_items"
 [autoload]
 
 GameManager="*res://scripts/GameManager.gd"
+MusicManager="*res://scripts/MusicManager.gd"
 
 [editor_plugins]
 

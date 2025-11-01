@@ -20,9 +20,17 @@ var jogo_iniciado = false
 @onready var area_resposta2: AreaResposta_2 = $AreaResposta2Fase2
 @onready var area_resposta3: AreaResposta_2 = $AreaResposta3Fase2
 
+# Tela de conclusão
+@onready var tela_conclusao = $CanvasLayer/NivelConcluido
+@onready var texture_rect_conclusao = $CanvasLayer/NivelConcluido/TextureRect
+
 var areas_resposta: Array[AreaResposta_2] = []
 var cartas_corretas_fixadas: Array[CardResposta_2] = []
 var cards_instanciados: Array[CardResposta_2] = []
+var espaco_pressionado = false  # Flag para detectar tecla espaço
+var respostas_corretas = 0  # Contador de respostas corretas
+var total_respostas = 3  # Total de respostas esperadas
+var valores_ja_contados: Array = []  # Array para evitar contar a mesma resposta múltiplas vezes
 
 func _ready():
 	print("🎮 Fase_2 carregada!")
@@ -60,6 +68,15 @@ func _ready():
 		esconder_elementos_jogo()
 	
 	conectar_areas_resposta()
+	
+	# Esconder tela de conclusão no início
+	if tela_conclusao:
+		tela_conclusao.visible = false
+		tela_conclusao.hide()
+	
+	if texture_rect_conclusao:
+		texture_rect_conclusao.visible = false
+		texture_rect_conclusao.hide()
 
 func configurar_areas_resposta():
 	for i in range(equacoes.size()):
@@ -96,6 +113,8 @@ func iniciar_jogo():
 	print("🎮 Iniciando jogo Fase 2...")
 	jogo_iniciado = true
 	equacao_atual = 0
+	respostas_corretas = 0  # ⭐ RESETAR contador de respostas corretas
+	valores_ja_contados.clear()  # ⭐ LIMPAR array de valores já contados
 	cartas_corretas_fixadas.clear()
 	cards_instanciados.clear()
 	
@@ -219,43 +238,55 @@ func _processar_resposta(valor: int, correto_para_esta_area: bool):
 			card_solto.voltar_para_original()
 			return
 			
+		# ⭐ VERIFICAR SE ESTA RESPOSTA JÁ FOI CONTADA
+		if valores_ja_contados.has(valor):
+			print("⚠️ Este valor já foi contado antes! Pulando incremento...")
+			card_solto.voltar_para_original()
+			return
+		
 		print("🎉 RESPOSTA CORRETA CONFIRMADA!")
 		print("   Card: ", card_solto.name, " | Valor: ", card_solto.valor)
 		print("   Área: ", area_correta.name, " | Expressão: ", area_correta.expressao)
 		
-		ui_fase_2.mostrar_feedback("Correto! 🎉", true)
+		# ⭐ INCREMENTAR CONTADOR DE RESPOSTAS CORRETAS
+		respostas_corretas += 1
+		valores_ja_contados.append(valor)  # ⭐ Marcar este valor como já contado
+		print("✅ Respostas corretas INCREMENTADAS: ", respostas_corretas, "/", total_respostas)
+		print("📝 Valores já contados: ", valores_ja_contados)
+		
+		if ui_fase_2:
+			ui_fase_2.mostrar_feedback("Correto! 🎉", true)
 		
 		# ⭐⭐ EXECUTAR TROCA
 		_executar_troca_card(card_solto, area_correta)
 		
-		# Avançar equação
-		await get_tree().create_timer(1.5).timeout
-		equacao_atual += 1
+		# Aguardar um pouco
+		await get_tree().create_timer(1.0).timeout
 		
-		if equacao_atual < equacoes.size():
-			ui_fase_2.atualizar_progresso(equacao_atual, equacoes.size())
-			print("📈 Próxima equação: ", equacoes[equacao_atual]["expressao"])
+		# Verificar se todas as 3 respostas foram acertadas
+		print("🔍 VERIFICAÇÃO FINAL: respostas_corretas = ", respostas_corretas, ", total_respostas = ", total_respostas)
+		if respostas_corretas >= total_respostas:
+			print("🎊🎊🎊 TODOS OS 3 CARDS FORAM ACERTADOS! 🎊🎊🎊")
+			print("🎊 Chamando mostrar_tela_final() agora...")
+			await mostrar_tela_final()  # ⭐ Adicionar await para aguardar completa conclusão
 		else:
-			completar_fase()
+			print("⏳ Ainda faltam acertos. Cards acertados: ", respostas_corretas, "/", total_respostas)
+			# Avançar equação para feedback visual
+			equacao_atual += 1
+			if equacao_atual < equacoes.size() and ui_fase_2:
+				ui_fase_2.atualizar_progresso(equacao_atual, equacoes.size())
 	else:
 		print("❌ RESPOSTA INCORRETA CONFIRMADA!")
 		print("   Card: ", card_solto.valor)
 		print("   Área esperava: ", area_correta.resultado_esperado, " (", area_correta.expressao, ")")
-		ui_fase_2.mostrar_feedback("Tente novamente! ❌", false)
+		if ui_fase_2:
+			ui_fase_2.mostrar_feedback("Tente novamente! ❌", false)
 		card_solto.voltar_para_original()
 
 func liberar_todas_cartas():
 	for card in cards_instanciados:
 		if card and is_instance_valid(card):
 			card.liberar_card()
-
-func completar_fase():
-	print("🎊 FASE 2 COMPLETADA!")
-	ui_fase_2.mostrar_feedback("Parabéns! Fase 2 concluída! 🎉", true)
-	jogo_iniciado = false
-	
-	await get_tree().create_timer(3.0).timeout
-	voltar_ao_menu()
 
 func voltar_ao_menu():
 	print("Voltando ao menu...")
@@ -270,12 +301,21 @@ func voltar_ao_menu():
 	if ui_fase_2: 
 		ui_fase_2.mostrar_tela_inicial()
 
-# ⭐ NOVO: Função para debug
+# ⭐ NOVO: Função para debug e detectar tecla espaço
 func _input(event):
 	if event is InputEventKey and event.pressed:
+		# Detectar tecla Espaço apenas se a tela de conclusão estiver visível
+		if event.keycode == KEY_SPACE and tela_conclusao and tela_conclusao.visible:
+			espaco_pressionado = true
+			print("⌨️ Tecla Espaço detectada! Flag setada para: ", espaco_pressionado)
+		
+		# Debug (tecla D)
 		if event.keycode == KEY_D:
 			print("=== DEBUG INFO ===")
 			print("Equação atual: ", equacao_atual)
+			print("Respostas corretas: ", respostas_corretas, "/", total_respostas)
+			print("Valores já contados: ", valores_ja_contados)
+			print("Tela conclusão visível: ", tela_conclusao.visible if tela_conclusao else "N/A")
 			print("Cards instanciados: ", cards_instanciados.size())
 			print("Cards fixados: ", cartas_corretas_fixadas.size())
 			for card in cards_instanciados:
@@ -372,6 +412,77 @@ func verificar_visibilidade_areas():
 		print("   ", i+1, ": Resultado=", resultado, " | Visível=", visivel)
 	
 	print("======================================")
+
+# ⭐ NOVA FUNÇÃO: Mostrar tela final do nível
+func mostrar_tela_final():
+	print("🎊 FASE 2 COMPLETADA!")
+	jogo_iniciado = false
+	
+	# Salvar progresso
+	salvar_progresso()
+	
+	# Esconde UI do jogo
+	if ui_fase_2:
+		ui_fase_2.mostrar_feedback("Parabéns! Fase 2 concluída! 🎉", true)
+	else:
+		print("⚠️ ui_fase_2 é null! Não foi possível mostrar feedback.")
+	esconder_elementos_jogo()
+	
+	# Mostra a tela de conclusão com a imagem
+	print("📸 Tentando mostrar tela de conclusão...")
+	if tela_conclusao:
+		print("✅ Tela de conclusão encontrada! Tornando visível...")
+		tela_conclusao.visible = true
+		print("✅ Tela de conclusão agora está visível: ", tela_conclusao.visible)
+	else:
+		print("❌ ERRO: Tela de conclusão não encontrada!")
+	
+	# Aguarda um frame para garantir que a tela apareceu
+	await get_tree().process_frame
+	
+	# Aguarda o jogador apertar Espaço
+	print("⌨️ Aguardando tecla Espaço...")
+	await _aguardar_tecla_espaco()
+	
+	# Troca de cena para o mapa principal
+	print("🗺️ Retornando ao mapa principal...")
+	get_tree().change_scene_to_file("res://Scene/icon.tscn")
+
+# ⭐ FUNÇÃO: Aguardar tecla espaço
+func _aguardar_tecla_espaco() -> void:
+	print("⌛ Aguardando tecla Espaço para retornar...")
+	espaco_pressionado = false  # Resetar flag
+	
+	# Variável para detectar se foi apenas pressionada (não mantida)
+	var espaco_pressionado_anterior = false
+	
+	# Verificar a cada frame se a tecla foi pressionada
+	while true:
+		await get_tree().process_frame
+		
+		# Verificar através da flag (setada em _input)
+		if espaco_pressionado:
+			print("✅ Flag de tecla espaço detectada!")
+			break
+		
+		# Verificar diretamente pelo Input
+		var espaco_atual = Input.is_key_pressed(KEY_SPACE) or Input.is_action_pressed("ui_accept") or Input.is_action_pressed("interact")
+		
+		# Detectar quando a tecla é pressionada (não mantida)
+		if espaco_atual and not espaco_pressionado_anterior:
+			print("✅ Tecla Espaço pressionada (detectada no loop)!")
+			espaco_pressionado = true
+			break
+		
+		espaco_pressionado_anterior = espaco_atual
+	
+	print("✅ Tecla Espaço confirmada! Retornando ao mapa...")
+
+# ⭐ FUNÇÃO: Salvar progresso
+func salvar_progresso():
+	if Engine.has_singleton("GameManager"):
+		GameManager.concluir_fase(2)
+		print("✅ Fase 2 marcada como concluída (sessão atual)")
 	
 func _esconder_cards_corretos():
 	print("🔧 Escondendo todos os cards corretos...")

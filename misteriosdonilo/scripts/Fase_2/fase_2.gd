@@ -118,7 +118,8 @@ func iniciar_jogo():
 	cartas_corretas_fixadas.clear()
 	cards_instanciados.clear()
 	
-	# ⭐ GARANTIR INVISIBILIDADE NOVAMENTE
+	# ⭐ GARANTIR INVISIBILIDADE NOVAMENTE - Esconder cards corretos explicitamente
+	_esconder_cards_corretos()
 	garantir_cards_area_invisiveis()
 
 	if ui_fase_2:

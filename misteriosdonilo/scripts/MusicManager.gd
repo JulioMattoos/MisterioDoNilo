@@ -27,9 +27,9 @@ func _carregar_e_tocar_musica():
 		# Configurar o stream
 		audio_player.stream = audio_stream
 		
-		# ⭐⭐ Configurar volume para 15%
-		audio_player.volume_db = linear_to_db(0.15)
-		print("🔊 Volume configurado para 15%")
+		# ⭐⭐ Configurar volume para 5%
+		audio_player.volume_db = linear_to_db(0.05)
+		print("🔊 Volume configurado para 5%")
 		
 		# Tocar a música
 		audio_player.play()

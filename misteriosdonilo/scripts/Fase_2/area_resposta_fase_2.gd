@@ -80,36 +80,10 @@ func _on_area_entered(area: Area2D):
 	print("Área: ", name, " | Espera: ", resultado_esperado, " (", expressao, ")")
 	print("Objeto que entrou: ", area.name, " | Tipo: ", area.get_class())
 	
-	# ⭐⭐ MELHORIA: Múltiplas formas de verificar se é um CardResposta_2
-	var card: CardResposta_2 = null
-	
-	# Método 1: Verificação direta de tipo
+	# ⭐⭐ SIMPLIFICADO: Seguir a mesma lógica da Fase 1
 	if area is CardResposta_2:
-		card = area as CardResposta_2
-		print("✅ Card reconhecido via 'is CardResposta_2'")
-	
-	# Método 2: Verificar por método get_valor (caso especial)
-	elif area.has_method("get_valor"):
-		print("⚠️ Objeto tem método get_valor() mas não é reconhecido como CardResposta_2")
-		print("   Tentando usar mesmo assim...")
-		# Tentar fazer cast manual
-		if area.get_script() and area.get_script().resource_path.ends_with("card_resposta_fase_2.gd"):
-			card = area as CardResposta_2
-			print("✅ Card reconhecido via script path")
-	
-	# Método 3: Verificar por nome (fallback)
-	elif "Card" in area.name and "Fase_2" in area.name:
-		print("⚠️ Objeto parece ser um card pelo nome, tentando processar...")
-		if area.has_method("get_valor"):
-			# Criar um wrapper temporário
-			var valor_tentativo = area.call("get_valor")
-			if valor_tentativo is int:
-				print("✅ Valor obtido via call, processando resposta...")
-				_processar_resposta(valor_tentativo, area)
-				return
-	
-	# Processar se encontramos o card
-	if card != null:
+		var card: CardResposta_2 = area as CardResposta_2
+		
 		if not card.has_method("get_valor"):
 			push_error("CardResposta_2 não possui método get_valor()")
 			print("❌ Card não tem método get_valor()")
@@ -120,21 +94,22 @@ func _on_area_entered(area: Area2D):
 		_processar_resposta(valor_card, card)
 		return
 	
-	# Se chegou aqui, não reconheceu como card
 	print("❌ Objeto não reconhecido como card: ", area.name)
-	print("   Classe: ", area.get_class())
-	print("   Script: ", area.get_script().resource_path if area.get_script() else "Nenhum")
-	print("   Métodos disponíveis: get_valor=", area.has_method("get_valor"), " | valor=", "valor" in area)
 
 func receber_card(card: Node):
-	# ⭐⭐ NOVA FUNÇÃO: Receber card via método direto (usado pelo sistema de arrasto)
+	# ⭐⭐ FUNÇÃO: Receber card via método direto (usado pelo sistema de arrasto)
+	print("📥 receber_card() chamado - Objeto: ", card.name, " | Tipo: ", card.get_class())
+	
 	if card is CardResposta_2:
 		var card_typed: CardResposta_2 = card as CardResposta_2
-		var valor_card = card_typed.get_valor()
-		print("📥 Card recebido via receber_card(): ", card.name, " | Valor: ", valor_card)
-		_processar_resposta(valor_card, card_typed)
+		if card_typed.has_method("get_valor"):
+			var valor_card = card_typed.get_valor()
+			print("✅ Card recebido via receber_card(): ", card.name, " | Valor: ", valor_card)
+			_processar_resposta(valor_card, card_typed)
+		else:
+			print("❌ Card não tem método get_valor()")
 	else:
-		print("❌ Objeto recebido não é CardResposta_2: ", card.name)
+		print("❌ Objeto recebido não é CardResposta_2: ", card.name, " | Classe: ", card.get_class())
 
 func _processar_resposta(_valor_card: int, _card):
 	# ⭐⭐ CORREÇÃO CRÍTICA: Verificar se o valor do card corresponde ao resultado esperado
@@ -151,28 +126,28 @@ func _processar_resposta(_valor_card: int, _card):
 	if correto_para_esta_area:
 		print("🎯 RESPOSTA CORRETA! Ativando card específico...")
 		
-		# 1. Esconder o card arrastado (verificar se é Node válido)
-		if _card is Node:
-			var card_node: Node = _card as Node
-			print("🔴 Escondendo card arrastado: ", card_node.name if card_node.name else "Card")
-			card_node.visible = false
+		# 1. Esconder o card arrastado
+		if _card is CardResposta_2:
+			var card_node: CardResposta_2 = _card as CardResposta_2
+			print("🔴 Escondendo card arrastado: ", card_node.name)
+			# Usar método desaparecer() se disponível, senão esconder normalmente
+			if card_node.has_method("desaparecer"):
+				card_node.desaparecer()
+			else:
+				card_node.visible = false
+				await get_tree().create_timer(0.1).timeout
+				if is_instance_valid(card_node):
+					card_node.queue_free()
 		
 		# 2. MOSTRAR O CARD CORRETO ESPECÍFICO
 		_ativar_card_correto_especifico()
-		
-		# 3. Remover card arrastado após um pequeno delay
-		if _card is Node:
-			await get_tree().create_timer(0.1).timeout
-			var card_node: Node = _card as Node
-			if is_instance_valid(card_node):
-				card_node.queue_free()
 		
 		print("✅ Troca concluída!")
 	else:
 		print("❌ RESPOSTA INCORRETA! Card não corresponde ao esperado.")
 		# Se card incorreto, tentar fazer voltar para posição original
-		if _card is Node and _card.has_method("voltar_para_original"):
-			_card.call("voltar_para_original")
+		if _card is CardResposta_2 and _card.has_method("voltar_para_original"):
+			_card.voltar_para_original()
 	
 	# ⭐⭐ IMPORTANTE: Emitir sinal SEMPRE para que Fase_2.gd saiba o resultado
 	resposta_recebida.emit(_valor_card, correto_para_esta_area)
@@ -196,7 +171,7 @@ func _ativar_card_correto_especifico():
 			print("   👪 Pai: ", pai.name, " | Visível: ", pai.visible)
 		return
 	
-	# MÉTODO 2: Procurar card correto externo
+	# MÉTODO 2: Procurar card correto externo (Fase 2 usa Card_Correto_Fase_21, 22, 23)
 	var numero_area = ""
 	var regex = RegEx.new()
 	if regex.compile("\\d+") == OK:
@@ -208,7 +183,8 @@ func _ativar_card_correto_especifico():
 		print("❌ Não foi possível extrair número da área: ", name)
 		return
 	
-	var card_correto_path = "../../Card_Correto_Fase_%s" % numero_area
+	# Na Fase 2, os cards são: Card_Correto_Fase_21, Card_Correto_Fase_22, Card_Correto_Fase_23
+	var card_correto_path = "../Card_Correto_Fase_2%s" % numero_area
 	print("🧭 Procurando card no caminho: ", card_correto_path)
 	
 	var card_correto = get_node_or_null(card_correto_path)
@@ -232,7 +208,7 @@ func esconder_card_correto():
 	if card_correto_sprite and is_instance_valid(card_correto_sprite):
 		card_correto_sprite.visible = false
 	
-	# MÉTODO 2: Esconder card externo
+	# MÉTODO 2: Esconder card externo (Fase 2 usa Card_Correto_Fase_21, 22, 23)
 	var numero_area = ""
 	var regex = RegEx.new()
 	if regex.compile("\\d+") == OK:
@@ -241,17 +217,21 @@ func esconder_card_correto():
 			numero_area = result.get_string()
 	
 	if not numero_area.is_empty():
-		var card_correto_path = "../Card_Correto_Fase_%s" % numero_area
+		# Na Fase 2, os cards são: Card_Correto_Fase_21, Card_Correto_Fase_22, Card_Correto_Fase_23
+		var card_correto_path = "../Card_Correto_Fase_2%s" % numero_area
 		var card_correto = get_node_or_null(card_correto_path)
 		if card_correto:
 			card_correto.visible = false
+			print("✅ Card correto externo escondido: ", card_correto.name)
+		else:
+			print("⚠️ Card correto não encontrado no caminho: ", card_correto_path)
 
 func tem_card_correto_visivel() -> bool:
 	# Verificar sprite interno
 	if card_correto_sprite and is_instance_valid(card_correto_sprite):
 		return card_correto_sprite.visible
 	
-	# Verificar card externo
+	# Verificar card externo (Fase 2 usa Card_Correto_Fase_21, 22, 23)
 	var numero_area = ""
 	var regex = RegEx.new()
 	if regex.compile("\\d+") == OK:
@@ -260,7 +240,8 @@ func tem_card_correto_visivel() -> bool:
 			numero_area = result.get_string()
 	
 	if not numero_area.is_empty():
-		var card_correto_path = "../Card_Correto_Fase_%s" % numero_area
+		# Na Fase 2, os cards são: Card_Correto_Fase_21, Card_Correto_Fase_22, Card_Correto_Fase_23
+		var card_correto_path = "../Card_Correto_Fase_2%s" % numero_area
 		var card_correto = get_node_or_null(card_correto_path)
 		if card_correto:
 			return card_correto.visible

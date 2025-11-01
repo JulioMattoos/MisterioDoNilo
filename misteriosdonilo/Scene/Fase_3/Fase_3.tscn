@@ -2,16 +2,16 @@
 
 [ext_resource type="Script" uid="uid://b2t4inbhvb0np" path="res://scripts/Fase_3/fase_3.gd" id="1_6qwjd"]
 [ext_resource type="Texture2D" uid="uid://b58p4xy2ru508" path="res://imagens/assets_Fase_3/Fase_3.jpeg" id="2_6qwjd"]
-[ext_resource type="PackedScene" uid="uid://cvqhkirudawdw" path="res://Scene/Fase_1/AreaResposta_Fase_1.tscn" id="3_pvynm"]
+[ext_resource type="PackedScene" uid="uid://cvqhkirudawdw" path="res://scripts/Fase_3/AreaResposta_Fase_3.tscn" id="3_pvynm"]
 [ext_resource type="Script" uid="uid://dr80fpjlnfh1r" path="res://scripts/Fase_3/area_resposta_fase_3.gd" id="4_ohdg3"]
 [ext_resource type="Script" uid="uid://n8hbopem8bmh" path="res://scripts/Fase_3/card_resposta_fase_3.gd" id="6_jh57f"]
-[ext_resource type="Script" uid="uid://dnj16rknwjes2" path="res://Scene/Fase_1/popup_dica.gd" id="10_res67"]
+[ext_resource type="Script" uid="uid://dnj16rknwjes2" path="res://scripts/Fase_3/popup_dica.gd" id="10_res67"]
 [ext_resource type="Texture2D" uid="uid://dhptgd30sw4ia" path="res://imagens/assets_Fase_1/9.png" id="11_gnrma"]
 [ext_resource type="PackedScene" uid="uid://c1li540ntoj6d" path="res://scripts/Fase_3/Card28Resposta_Fase_3.tscn" id="11_ubv32"]
 [ext_resource type="PackedScene" uid="uid://veuveg8n8v5p" path="res://scripts/Fase_3/Card9Resposta_Fase_3.tscn" id="12_kckyr"]
-[ext_resource type="PackedScene" uid="uid://b7gajvccibqf4" path="res://Scene/Fase_1/Card5Resposta_Fase_1.tscn" id="13_jh57f"]
+[ext_resource type="PackedScene" uid="uid://b7gajvccibqf4" path="res://scripts/Fase_3/Card5Resposta_Fase_3.tscn" id="13_jh57f"]
 [ext_resource type="PackedScene" uid="uid://bcr20bxec5srd" path="res://scripts/Fase_3/Card3Resposta_Fase_3.tscn" id="14_btb6q"]
-[ext_resource type="PackedScene" uid="uid://rdmdk150aurm" path="res://Scene/Fase_1/Card2Resposta_Fase_1.tscn" id="15_ftp3i"]
+[ext_resource type="PackedScene" uid="uid://rdmdk150aurm" path="res://scripts/Fase_3/Card2Resposta_Fase_3.tscn" id="15_ftp3i"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_i3oin"]
 size = Vector2(110, 127)

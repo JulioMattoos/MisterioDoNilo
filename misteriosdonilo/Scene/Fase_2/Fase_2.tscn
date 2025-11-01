@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://di7i1vwn2g80p" path="res://Scene/Fase_2/Card40Resposta_Fase_2.tscn" id="9_3yg8f"]
 [ext_resource type="PackedScene" uid="uid://dqnw3mr4qw53p" path="res://Scene/Fase_2/Card48Resposta_Fase_2.tscn" id="10_b512p"]
 [ext_resource type="Script" uid="uid://d031w2sd00h5s" path="res://scripts/Fase_3/area_pergaminho.gd" id="11_perg"]
-[ext_resource type="Script" uid="uid://dnj16rknwjes2" path="res://Scene/Fase_1/popup_dica.gd" id="12_popup"]
+[ext_resource type="Script" uid="uid://dnj16rknwjes2" path="res://scripts/Fase_3/popup_dica.gd" id="12_popup"]
 [ext_resource type="Texture2D" uid="uid://dhptgd30sw4ia" path="res://imagens/assets_Fase_1/9.png" id="13_text"]
 [ext_resource type="Texture2D" uid="uid://boguo5mwev24p" path="res://imagens/assets_Fase_1/nivel concluido.png" id="14_concluido"]
 

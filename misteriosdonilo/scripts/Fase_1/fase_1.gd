@@ -292,7 +292,8 @@ func _processar_resposta(valor, correto_para_esta_area):
 		if respostas_corretas >= total_respostas:
 			print("🎊🎊🎊 TODOS OS 3 CARDS FORAM ACERTADOS! 🎊🎊🎊")
 			print("🎊 Chamando mostrar_tela_final() agora...")
-			mostrar_tela_final()
+			# ⭐ Aguardar para garantir que a transição aconteça corretamente
+			await mostrar_tela_final()
 		else:
 			print("⏳ Ainda faltam acertos. Cards acertados: ", respostas_corretas, "/", total_respostas)
 			if equacao_atual < equacoes.size():

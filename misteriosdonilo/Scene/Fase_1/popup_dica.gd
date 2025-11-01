@@ -15,12 +15,12 @@ func _ready():
 		$FundoEscuro.gui_input.connect(_on_fundo_escuro_click)
 
 # Função chamada ao clicar na Area2D (botão voltar)
-func _on_voltar_click(viewport, event, shape_idx):
+func _on_voltar_click(_viewport, event, _shape_idx):
 	if event is InputEventMouseButton and event.pressed:
 		visible = false
 
 # Função adicional para inputs na Area2D
-func _on_area2d_input(viewport, event, shape_idx):
+func _on_area2d_input(_viewport, event, _shape_idx):
 	if event is InputEventMouseButton and event.pressed:
 		print("Area2D clicada!")
 		# Aqui você pode colocar qualquer ação ao clicar no pergaminho

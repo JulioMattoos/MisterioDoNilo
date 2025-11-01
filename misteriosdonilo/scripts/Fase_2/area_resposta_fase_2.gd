@@ -78,13 +78,41 @@ func configurar(_resultado_esperado: int, _expressao: String):
 func _on_area_entered(area: Area2D):
 	print("=== ÁREA DETECTOU ENTRADA ===")
 	print("Área: ", name, " | Espera: ", resultado_esperado, " (", expressao, ")")
+	print("Objeto que entrou: ", area.name, " | Tipo: ", area.get_class())
 	
-	# Verificar se é um CardResposta_2
+	# ⭐⭐ MELHORIA: Múltiplas formas de verificar se é um CardResposta_2
+	var card: CardResposta_2 = null
+	
+	# Método 1: Verificação direta de tipo
 	if area is CardResposta_2:
-		var card: CardResposta_2 = area
-		
+		card = area as CardResposta_2
+		print("✅ Card reconhecido via 'is CardResposta_2'")
+	
+	# Método 2: Verificar por método get_valor (caso especial)
+	elif area.has_method("get_valor"):
+		print("⚠️ Objeto tem método get_valor() mas não é reconhecido como CardResposta_2")
+		print("   Tentando usar mesmo assim...")
+		# Tentar fazer cast manual
+		if area.get_script() and area.get_script().resource_path.ends_with("card_resposta_fase_2.gd"):
+			card = area as CardResposta_2
+			print("✅ Card reconhecido via script path")
+	
+	# Método 3: Verificar por nome (fallback)
+	elif "Card" in area.name and "Fase_2" in area.name:
+		print("⚠️ Objeto parece ser um card pelo nome, tentando processar...")
+		if area.has_method("get_valor"):
+			# Criar um wrapper temporário
+			var valor_tentativo = area.call("get_valor")
+			if valor_tentativo is int:
+				print("✅ Valor obtido via call, processando resposta...")
+				_processar_resposta(valor_tentativo, area)
+				return
+	
+	# Processar se encontramos o card
+	if card != null:
 		if not card.has_method("get_valor"):
 			push_error("CardResposta_2 não possui método get_valor()")
+			print("❌ Card não tem método get_valor()")
 			return
 		
 		var valor_card: int = card.get_valor()
@@ -92,9 +120,23 @@ func _on_area_entered(area: Area2D):
 		_processar_resposta(valor_card, card)
 		return
 	
-	print("Objeto não reconhecido como card: ", area.name)
+	# Se chegou aqui, não reconheceu como card
+	print("❌ Objeto não reconhecido como card: ", area.name)
+	print("   Classe: ", area.get_class())
+	print("   Script: ", area.get_script().resource_path if area.get_script() else "Nenhum")
+	print("   Métodos disponíveis: get_valor=", area.has_method("get_valor"), " | valor=", "valor" in area)
 
-func _processar_resposta(_valor_card: int, _card: CardResposta_2):
+func receber_card(card: Node):
+	# ⭐⭐ NOVA FUNÇÃO: Receber card via método direto (usado pelo sistema de arrasto)
+	if card is CardResposta_2:
+		var card_typed: CardResposta_2 = card as CardResposta_2
+		var valor_card = card_typed.get_valor()
+		print("📥 Card recebido via receber_card(): ", card.name, " | Valor: ", valor_card)
+		_processar_resposta(valor_card, card_typed)
+	else:
+		print("❌ Objeto recebido não é CardResposta_2: ", card.name)
+
+func _processar_resposta(_valor_card: int, _card):
 	# ⭐⭐ CORREÇÃO CRÍTICA: Verificar se o valor do card corresponde ao resultado esperado
 	var correto_para_esta_area: bool = (_valor_card == resultado_esperado)
 	
@@ -113,21 +155,28 @@ func _processar_resposta(_valor_card: int, _card: CardResposta_2):
 	if correto_para_esta_area:
 		print("🎯 RESPOSTA CORRETA! Ativando card específico...")
 		
-		# 1. Esconder o card arrastado
-		print("🔴 Escondendo card arrastado: ", _card.name)
-		_card.visible = false
+		# 1. Esconder o card arrastado (verificar se é Node válido)
+		if _card is Node:
+			var card_node: Node = _card as Node
+			print("🔴 Escondendo card arrastado: ", card_node.name if card_node.name else "Card")
+			card_node.visible = false
 		
 		# 2. MOSTRAR O CARD CORRETO ESPECÍFICO
 		_ativar_card_correto_especifico()
 		
 		# 3. Remover card arrastado após um pequeno delay
-		await get_tree().create_timer(0.1).timeout
-		if is_instance_valid(_card):
-			_card.queue_free()
+		if _card is Node:
+			await get_tree().create_timer(0.1).timeout
+			var card_node: Node = _card as Node
+			if is_instance_valid(card_node):
+				card_node.queue_free()
 		
 		print("✅ Troca concluída!")
 	else:
 		print("❌ RESPOSTA INCORRETA! Card não corresponde ao esperado.")
+		# Se card incorreto, tentar fazer voltar para posição original
+		if _card is Node and _card.has_method("voltar_para_original"):
+			_card.call("voltar_para_original")
 	
 	# ⭐⭐ IMPORTANTE: Emitir sinal SEMPRE para que Fase_2.gd saiba o resultado
 	resposta_recebida.emit(_valor_card, correto_para_esta_area)

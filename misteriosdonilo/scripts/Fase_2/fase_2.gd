@@ -198,24 +198,32 @@ func _on_card_dropped(valor: int):
 	print("Card dropped (fallback): ", valor)
 
 func _processar_resposta(valor: int, correto_para_esta_area: bool):
-	print("=== 🔍 PROCESSANDO RESPOSTA ===")
-	print("Valor recebido: ", valor)
-	print("Correto para esta área? ", correto_para_esta_area)
+	print("")
+	print("╔════════════════════════════════════════════════╗")
+	print("║  🔍 PROCESSANDO RESPOSTA                       ║")
+	print("╚════════════════════════════════════════════════╝")
+	print("📥 Valor recebido: ", valor)
+	print("✅ Correto para esta área? ", correto_para_esta_area)
+	print("📊 Estado ANTES: respostas_corretas = ", respostas_corretas, "/", total_respostas)
+	print("📋 Valores já contados ANTES: ", valores_ja_contados)
 	
 	# Buscar card solto
 	var card_solto: CardResposta_2 = null
 	var area_correta: AreaResposta_2 = null
 	
-	# BUSCAR CARD SOLTO
+	# BUSCAR CARD SOLTO (pode já ter sido removido, mas ainda processamos a resposta)
 	for card in cards_instanciados:
 		if card and is_instance_valid(card) and card.valor == valor:
 			card_solto = card
 			print("🎯 Card solto encontrado: ", card.name, " - Valor: ", card.valor)
 			break
 	
+	# ⭐⭐ CORREÇÃO: Se card não encontrado, ainda processamos pois a área já confirmou que está correto
 	if card_solto == null:
-		print("❌ Card solto não encontrado!")
-		return
+		print("⚠️ Card solto não encontrado na lista (pode já ter sido removido pela área)")
+		print("🔄 Continuando processamento pois a área confirmou que está correto...")
+		# Criar um card "fantasma" apenas para o processamento
+		card_solto = null  # Vamos processar sem o card
 	
 	# ⭐⭐ CORREÇÃO: Buscar área correta baseada no resultado esperado
 	print("📍 Procurando área correta...")
@@ -227,50 +235,129 @@ func _processar_resposta(valor: int, correto_para_esta_area: bool):
 	
 	if area_correta == null:
 		print("❌ Nenhuma área correta encontrada para o valor ", valor)
-		card_solto.voltar_para_original()
+		if card_solto:
+			card_solto.voltar_para_original()
 		return
 	
 	# ⭐⭐ VALIDAÇÃO FINAL: Usar a informação da área
 	if correto_para_esta_area:
-		# Verificar se o card já foi usado
-		if cartas_corretas_fixadas.has(card_solto):
-			print("⚠️ Card já foi usado corretamente antes")
-			card_solto.voltar_para_original()
-			return
-			
-		# ⭐ VERIFICAR SE ESTA RESPOSTA JÁ FOI CONTADA
+		# ⭐ VERIFICAR SE ESTA RESPOSTA JÁ FOI CONTADA (ANTES de outras verificações)
 		if valores_ja_contados.has(valor):
 			print("⚠️ Este valor já foi contado antes! Pulando incremento...")
+			if card_solto:
+				card_solto.voltar_para_original()
+			return
+		
+		# Verificar se o card já foi usado (só se card_solto existe)
+		if card_solto and cartas_corretas_fixadas.has(card_solto):
+			print("⚠️ Card já foi usado corretamente antes")
+			if card_solto:
 			card_solto.voltar_para_original()
 			return
 		
 		print("🎉 RESPOSTA CORRETA CONFIRMADA!")
+		if card_solto:
 		print("   Card: ", card_solto.name, " | Valor: ", card_solto.valor)
+		else:
+			print("   Card: (removido pela área) | Valor: ", valor)
 		print("   Área: ", area_correta.name, " | Expressão: ", area_correta.expressao)
 		
 		# ⭐ INCREMENTAR CONTADOR DE RESPOSTAS CORRETAS
+		print("")
+		print("╔════════════════════════════════════════════════╗")
+		print("║  ➕ INCREMENTANDO CONTADOR                      ║")
+		print("╚════════════════════════════════════════════════╝")
 		respostas_corretas += 1
 		valores_ja_contados.append(valor)  # ⭐ Marcar este valor como já contado
 		print("✅ Respostas corretas INCREMENTADAS: ", respostas_corretas, "/", total_respostas)
-		print("📝 Valores já contados: ", valores_ja_contados)
+		print("📝 Valores já contados AGORA: ", valores_ja_contados)
+		print("🎯 Valor adicionado: ", valor)
+		print("🔢 Total de respostas necessárias: ", total_respostas)
 		
 		if ui_fase_2:
 			ui_fase_2.mostrar_feedback("Correto! 🎉", true)
 		
-		# ⭐⭐ EXECUTAR TROCA
+		# ⭐⭐ EXECUTAR TROCA (só se card existe)
+		if card_solto:
 		_executar_troca_card(card_solto, area_correta)
 		
 		# Aguardar um pouco
 		await get_tree().create_timer(1.0).timeout
 		
-		# Verificar se todas as 3 respostas foram acertadas
-		print("🔍 VERIFICAÇÃO FINAL: respostas_corretas = ", respostas_corretas, ", total_respostas = ", total_respostas)
+		# Verificar se todas as 3 respostas foram acertadas com validação completa
+		print("")
+		print("╔════════════════════════════════════════════════╗")
+		print("║  🔍 VERIFICAÇÃO DE CONCLUSÃO DA FASE 2         ║")
+		print("╚════════════════════════════════════════════════╝")
+		print("📊 CONTADOR ATUAL: respostas_corretas = ", respostas_corretas, "/", total_respostas)
+		print("🎯 CONDITION CHECK: respostas_corretas (", respostas_corretas, ") >= total_respostas (", total_respostas, ") = ", respostas_corretas >= total_respostas)
+		print("📋 Valores contados: ", valores_ja_contados)
+		
 		if respostas_corretas >= total_respostas:
-			print("🎊🎊🎊 TODOS OS 3 CARDS FORAM ACERTADOS! 🎊🎊🎊")
-			print("🎊 Chamando mostrar_tela_final() agora...")
+			print("")
+			print("✅✅✅ CONTADOR ATINGIU O LIMITE! ✅✅✅")
+			print("🔄 Iniciando validação completa da fase...")
+			# ⭐ VALIDAÇÃO COMPLETA: Verificar se fase está realmente finalizada
+			print("📞 CHAMANDO validar_fase_finalizada()...")
+			var validacao_ok = validar_fase_finalizada()
+			print("")
+			print("╔════════════════════════════════════════════════╗")
+			print("║  📊 RESULTADO DA VALIDAÇÃO                     ║")
+			print("╚════════════════════════════════════════════════╝")
+			print("✅ Validação passou? ", validacao_ok)
+			print("📊 Status: ", "PASSOU ✅" if validacao_ok else "FALHOU ❌")
+			
+			if validacao_ok:
+				print("")
+				print("")
+				print("╔═══════════════════════════════════════════════════════════════╗")
+				print("║                                                               ║")
+				print("║        🎊🎊🎊 FASE 2 FINALIZADA COM SUCESSO! 🎊🎊🎊        ║")
+				print("║                                                               ║")
+				print("║   ✅ TODOS OS 3 CARDS FORAM ACERTADOS E VALIDADOS! ✅       ║")
+				print("║                                                               ║")
+				print("╚═══════════════════════════════════════════════════════════════╝")
+				print("")
+				print("🎊 Iniciando processo de finalização da fase...")
+				print("📞 CHAMANDO mostrar_tela_final()...")
 			await mostrar_tela_final()  # ⭐ Adicionar await para aguardar completa conclusão
+				print("✅ mostrar_tela_final() CONCLUÍDO!")
+			else:
+				print("")
+				print("⚠️⚠️⚠️ VALIDAÇÃO FALHOU! ⚠️⚠️⚠️")
+				print("📊 Verificando áreas novamente...")
+				verificar_visibilidade_areas()
+				# ⭐⭐ FALLBACK: Se validação falhar mas contador está OK, tentar validar novamente após delay
+				print("")
+				print("🔄 FALLBACK: Tentando validar novamente após delay...")
+				print("⏳ Aguardando 0.5 segundos...")
+				await get_tree().create_timer(0.5).timeout
+				print("📞 Chamando validar_fase_finalizada() novamente (RETRY)...")
+				var validacao_retry = validar_fase_finalizada()
+				print("📊 Resultado do RETRY: ", "PASSOU ✅" if validacao_retry else "FALHOU ❌")
+				if validacao_retry:
+					print("")
+					print("")
+					print("╔═══════════════════════════════════════════════════════════════╗")
+					print("║                                                               ║")
+					print("║        🎊🎊🎊 FASE 2 FINALIZADA COM SUCESSO! 🎊🎊🎊        ║")
+					print("║                                                               ║")
+					print("║      ✅ VALIDAÇÃO RETRY PASSOU - FASE COMPLETA! ✅          ║")
+					print("║                                                               ║")
+					print("╚═══════════════════════════════════════════════════════════════╝")
+					print("")
+					print("📞 Chamando mostrar_tela_final()...")
+					await mostrar_tela_final()
+					print("✅ mostrar_tela_final() CONCLUÍDO!")
+				else:
+					print("")
+					print("❌❌❌ Validação retry também falhou! ❌❌❌")
+					print("⚠️ Verifique os logs acima para identificar o problema.")
 		else:
-			print("⏳ Ainda faltam acertos. Cards acertados: ", respostas_corretas, "/", total_respostas)
+			print("")
+			print("⏳⏳⏳ AINDA FALTAM ACERTOS ⏳⏳⏳")
+			print("📊 Cards acertados: ", respostas_corretas, "/", total_respostas)
+			print("🔢 Faltam: ", total_respostas - respostas_corretas, " cards")
 			# Avançar equação para feedback visual
 			equacao_atual += 1
 			if equacao_atual < equacoes.size() and ui_fase_2:
@@ -413,13 +500,186 @@ func verificar_visibilidade_areas():
 	
 	print("======================================")
 
+# ⭐⭐ FUNÇÃO: Validar se fase está realmente finalizada
+func validar_fase_finalizada() -> bool:
+	print("")
+	print("╔════════════════════════════════════════════════╗")
+	print("║  🔍 INICIANDO VALIDAÇÃO COMPLETA DA FASE 2     ║")
+	print("╚════════════════════════════════════════════════╝")
+	
+	# 1. Verificar contador de respostas corretas
+	print("")
+	print("📍 PASSO 1: Verificando contador de respostas...")
+	print("   - respostas_corretas: ", respostas_corretas)
+	print("   - total_respostas: ", total_respostas)
+	print("   - Condição: respostas_corretas >= total_respostas? ", respostas_corretas >= total_respostas)
+	if respostas_corretas < total_respostas:
+		print("❌ FALHA 1: Contador insuficiente (", respostas_corretas, "/", total_respostas, ")")
+		print("❌ VALIDAÇÃO INTERROMPIDA NO PASSO 1")
+		return false
+	print("✅ PASSO 1: Contador de respostas OK (", respostas_corretas, "/", total_respostas, ")")
+	
+	# 2. Verificar se todas as áreas existem
+	print("")
+	print("📍 PASSO 2: Verificando número de áreas...")
+	print("   - areas_resposta.size(): ", areas_resposta.size())
+	print("   - total_respostas: ", total_respostas)
+	if areas_resposta.size() < total_respostas:
+		print("❌ FALHA 2: Número insuficiente de áreas (", areas_resposta.size(), ")")
+		print("❌ VALIDAÇÃO INTERROMPIDA NO PASSO 2")
+		return false
+	print("✅ PASSO 2: Número de áreas OK (", areas_resposta.size(), ")")
+	
+	# 3. Verificar se todas as áreas têm cards corretos visíveis e correspondem ao resultado esperado
+	print("")
+	print("📍 PASSO 3: Verificando cada área individualmente...")
+	print("   - Total de áreas para verificar: ", areas_resposta.size())
+	var areas_corretas = 0
+	var valores_encontrados: Array = []
+	
+	for i in range(areas_resposta.size()):
+		var area = areas_resposta[i]
+		
+		if area == null:
+			print("❌ FALHA 3: Área ", i, " é nula")
+			return false
+		
+		# Obter informações da área
+		var resultado_esperado = area.resultado_esperado
+		var card_recebido = area.ultimo_card_recebido if "ultimo_card_recebido" in area else -1
+		var tem_card_correto_flag = area.tem_card_correto if "tem_card_correto" in area else false
+		
+		# Verificar se área tem card correto visível (múltiplos métodos)
+		var tem_card_visivel = false
+		if area.has_method("tem_card_correto_visivel"):
+			tem_card_visivel = area.tem_card_correto_visivel()
+		elif area.has_method("esta_correta"):
+			tem_card_visivel = area.esta_correta()
+		else:
+			# Verificação manual do sprite
+			if "card_correto_sprite" in area and area.card_correto_sprite:
+				tem_card_visivel = area.card_correto_sprite.visible
+		
+		# Verificar se o valor corresponde
+		var valor_correto = (card_recebido == resultado_esperado) and (card_recebido != -1)
+		
+		# Debug detalhado
+		print("   Área ", i+1, " (", area.name, "):")
+		print("      - Resultado esperado: ", resultado_esperado)
+		print("      - Card recebido: ", card_recebido)
+		print("      - Tem card correto (flag): ", tem_card_correto_flag)
+		print("      - Card visível: ", tem_card_visivel)
+		print("      - Valor correto: ", valor_correto)
+		
+		# Validação: deve ter card visível E valor correto OU flag tem_card_correto
+		var area_valida = false
+		
+		# Se tem a flag tem_card_correto, considerar válida mesmo se visibilidade falhar
+		if tem_card_correto_flag:
+			area_valida = true
+			print("      ✅ Área ", i+1, " VÁLIDA: Flag tem_card_correto = true")
+		elif tem_card_visivel:
+			# Se temos visibilidade, verificar se o valor está correto
+			if valor_correto:
+				area_valida = true
+				print("      ✅ Área ", i+1, " VÁLIDA: Card visível e valor correto")
+			elif card_recebido == -1:
+				# Se não temos informação do card mas está visível, aceitar (pode ser caso especial)
+				area_valida = true
+				print("      ⚠️ Área ", i+1, " VÁLIDA (sem info do card, mas visível): ", resultado_esperado)
+			else:
+				print("      ❌ Área ", i+1, " INVÁLIDA: Card visível mas valor incorreto (", card_recebido, " != ", resultado_esperado, ")")
+		else:
+			print("      ❌ Área ", i+1, " INVÁLIDA: Card não está visível e flag = false")
+		
+		if area_valida:
+			areas_corretas += 1
+			if not valores_encontrados.has(resultado_esperado):
+				valores_encontrados.append(resultado_esperado)
+	
+	# 4. Verificar se todas as 3 áreas estão corretas
+	print("")
+	print("📍 PASSO 4: Verificando total de áreas corretas...")
+	print("   - areas_corretas: ", areas_corretas)
+	print("   - total_respostas esperado: ", total_respostas)
+	if areas_corretas < total_respostas:
+		print("❌ FALHA 4: Nem todas as áreas estão corretas (", areas_corretas, "/", total_respostas, ")")
+		print("❌ VALIDAÇÃO INTERROMPIDA NO PASSO 4")
+		return false
+	print("✅ PASSO 4: Todas as áreas têm cards corretos (", areas_corretas, "/", total_respostas, ")")
+	
+	# 5. Verificar se não há duplicatas
+	print("")
+	print("📍 PASSO 5: Verificando duplicatas...")
+	print("   - valores_encontrados.size(): ", valores_encontrados.size())
+	print("   - total_respostas: ", total_respostas)
+	print("   - valores_encontrados: ", valores_encontrados)
+	if valores_encontrados.size() != total_respostas:
+		print("❌ FALHA 5: Valores duplicados detectados (", valores_encontrados.size(), " valores únicos, esperados ", total_respostas, ")")
+		print("❌ VALIDAÇÃO INTERROMPIDA NO PASSO 5")
+		return false
+	print("✅ PASSO 5: Sem duplicatas (", valores_encontrados.size(), " valores únicos)")
+	
+	# 6. Verificar se os valores contados correspondem aos encontrados
+	var valores_ordenados = valores_ja_contados.duplicate()
+	valores_ordenados.sort()
+	var encontrados_ordenados = valores_encontrados.duplicate()
+	encontrados_ordenados.sort()
+	
+	var valores_coincidem = true
+	if valores_ordenados.size() != encontrados_ordenados.size():
+		valores_coincidem = false
+	else:
+		for j in range(valores_ordenados.size()):
+			if valores_ordenados[j] != encontrados_ordenados[j]:
+				valores_coincidem = false
+				break
+	
+	if not valores_coincidem:
+		print("⚠️ AVISO: Valores contados (", valores_ja_contados, ") não coincidem com encontrados (", valores_encontrados, ")")
+		print("   Continuando mesmo assim, pois as áreas estão corretas...")
+	
+	print("")
+	print("╔════════════════════════════════════════════════╗")
+	print("║  ✅ VALIDAÇÃO COMPLETA: FASE 2 FINALIZADA     ║")
+	print("╚════════════════════════════════════════════════╝")
+	print("🎊 Todas as verificações passaram!")
+	print("📊 Resumo:")
+	print("   - Contador: ", respostas_corretas, "/", total_respostas)
+	print("   - Áreas corretas: ", areas_corretas, "/", total_respostas)
+	print("   - Valores únicos: ", valores_encontrados)
+	print("✅ RETORNANDO TRUE - Fase pode ser finalizada!")
+	print("")
+	return true
+
 # ⭐ NOVA FUNÇÃO: Mostrar tela final do nível
 func mostrar_tela_final():
-	print("🎊 FASE 2 COMPLETADA!")
+	print("")
+	print("")
+	print("╔═══════════════════════════════════════════════════════════════╗")
+	print("║                                                               ║")
+	print("║          ╔═══════════════════════════════════════╗          ║")
+	print("║          ║                                         ║          ║")
+	print("║          ║    ✅ FASE 2 OFICIALMENTE FINALIZADA ✅    ║          ║")
+	print("║          ║                                         ║          ║")
+	print("║          ╚═══════════════════════════════════════╝          ║")
+	print("║                                                               ║")
+	print("╚═══════════════════════════════════════════════════════════════╝")
+	print("")
+	print("🎊🎊🎊 PARABÉNS! VOCÊ COMPLETOU A FASE 2! 🎊🎊🎊")
+	print("")
+	print("📊 Status:")
+	print("   - Respostas corretas: ", respostas_corretas, "/", total_respostas)
+	print("   - Valores acertados: ", valores_ja_contados)
+	print("   - Fase validada: ✅ SIM")
+	print("")
+	print("📊 Marcando jogo_iniciado = false")
 	jogo_iniciado = false
 	
 	# Salvar progresso
+	print("💾 Salvando progresso...")
 	salvar_progresso()
+	print("✅ Progresso salvo!")
 	
 	# Esconde UI do jogo
 	if ui_fase_2:
@@ -440,9 +700,29 @@ func mostrar_tela_final():
 	# Aguarda um frame para garantir que a tela apareceu
 	await get_tree().process_frame
 	
+	print("")
+	print("╔═══════════════════════════════════════════════════════════════╗")
+	print("║                                                               ║")
+	print("║           🎉 TELA FINAL EXIBIDA COM SUCESSO! 🎉             ║")
+	print("║                                                               ║")
+	print("║     Aguardando tecla Espaço para retornar ao mapa...        ║")
+	print("║                                                               ║")
+	print("╚═══════════════════════════════════════════════════════════════╝")
+	print("")
+	
 	# Aguarda o jogador apertar Espaço
 	print("⌨️ Aguardando tecla Espaço...")
 	await _aguardar_tecla_espaco()
+	
+	print("")
+	print("╔═══════════════════════════════════════════════════════════════╗")
+	print("║                                                               ║")
+	print("║              ✅ FASE 2 COMPLETAMENTE FINALIZADA ✅           ║")
+	print("║                                                               ║")
+	print("║              Retornando ao mapa principal...                 ║")
+	print("║                                                               ║")
+	print("╚═══════════════════════════════════════════════════════════════╝")
+	print("")
 	
 	# Troca de cena para o mapa principal
 	print("🗺️ Retornando ao mapa principal...")
@@ -480,8 +760,9 @@ func _aguardar_tecla_espaco() -> void:
 
 # ⭐ FUNÇÃO: Salvar progresso
 func salvar_progresso():
-	if Engine.has_singleton("GameManager"):
-		GameManager.concluir_fase(2)
+	var gm = get_node_or_null("/root/GameManager")
+	if gm:
+		gm.concluir_fase(2)
 		print("✅ Fase 2 marcada como concluída (sessão atual)")
 	
 func _esconder_cards_corretos():

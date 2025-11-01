@@ -12,7 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://cgdvg6tiw3k8o" path="res://Scene/Fase_1/UI_Fase_1.tscn" id="9_h4brd"]
 [ext_resource type="PackedScene" uid="uid://bc11toql33v4v" path="res://Scene/Fase_2/Fase_2.tscn" id="10_fase2"]
 [ext_resource type="Texture2D" uid="uid://dh8yuqindxx64" path="res://imagens/mapa/balao.png" id="11_balao"]
-[ext_resource type="Script" uid="uid://br284x10ol8ng" path="res://scripts/controlador_mapa.gd" id="12_controlador"]
+[ext_resource type="Script" path="res://scripts/controlador_mapa.gd" id="12_controlador"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tr34o"]
 
@@ -193,7 +193,7 @@ shape = SubResource("RectangleShape2D_tr34o")
 
 [node name="SkinKhepre" type="AnimatedSprite2D" parent="Khepre"]
 position = Vector2(-7.56979e-06, -3.57628e-06)
-scale = Vector2(0.2, 0.2)
+scale = Vector2(0.1, 0.1)
 sprite_frames = SubResource("SpriteFrames_rxos1")
 animation = &"walk_down"
 

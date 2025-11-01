@@ -48,10 +48,17 @@ func _ready():
 		var cb = Callable(self, "iniciar_jogo")
 		if not ui_fase_2.botao_iniciar_pressed.is_connected(cb):
 			ui_fase_2.botao_iniciar_pressed.connect(cb)
+		print("✅ Conexão com UI_Fase_2 estabelecida")
 	else:
-		print("ERRO: UI_Fase_2 não encontrada!")
+		print("⚠️ ERRO: UI_Fase_2 não encontrada! Iniciando jogo automaticamente...")
+		# ⭐ CORREÇÃO: Se não há UI, iniciar jogo automaticamente
+		iniciar_jogo()
 	
-	esconder_elementos_jogo()
+	# ⭐ MOVER esconder_elementos_jogo() para dentro da condição de UI
+	# Se não há UI, não devemos esconder os elementos
+	if ui_fase_2:
+		esconder_elementos_jogo()
+	
 	conectar_areas_resposta()
 
 func configurar_areas_resposta():
@@ -69,11 +76,13 @@ func esconder_elementos_jogo():
 			area.visible = false
 
 func mostrar_elementos_jogo():
+	print("🟢 MOSTRANDO ELEMENTOS DO JOGO...")
 	if container_cards:
 		container_cards.visible = true
 	for area in areas_resposta:
 		if area:
 			area.visible = true
+			print("   ✅ Área visível: ", area.name)
 
 func conectar_areas_resposta():
 	for i in range(areas_resposta.size()):
@@ -104,6 +113,11 @@ func iniciar_jogo():
 		ui_fase_2.atualizar_progresso(equacao_atual, equacoes.size())
 
 func criar_cards_dinamicamente():
+	# ⭐ VERIFICAR se container_cards existe
+	if not container_cards:
+		print("⚠️ ContainerCards não encontrado, pulando criação de cards dinâmicos")
+		return
+	
 	# Limpar cards anteriores
 	for card in container_cards.get_children():
 		card.queue_free()

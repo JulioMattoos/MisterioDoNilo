@@ -30,6 +30,8 @@ func _inicializar_sprite_card_correto():
 	
 	if card_correto_sprite:
 		print("✅ Sprite encontrado para área: ", name)
+		# ⭐ CARREGAR TEXTURA DINAMICAMENTE baseado no resultado esperado
+		_carregar_textura_card_correto()
 		card_correto_sprite.visible = false  # Começar invisível
 	else:
 		print("❌ ERRO: CardCorretoSprite não encontrado na área: ", name)
@@ -38,10 +40,40 @@ func _inicializar_sprite_card_correto():
 		for child in get_children():
 			print("   - ", child.name, " (", child.get_class(), ")")
 
+# ⭐⭐ NOVA FUNÇÃO: Carregar textura do card correto
+func _carregar_textura_card_correto():
+	if not card_correto_sprite or resultado_esperado == 0:
+		return
+	
+	# Mapeamento de valores para texturas
+	var texturas_map = {
+		2: "res://imagens/cards_Fase_1/pg1_a5.png",
+		3: "res://imagens/cards_Fase_1/pg1_a3.png",
+		5: "res://imagens/cards_Fase_1/pg1_a1.png",
+		6: "res://imagens/cards_Fase_1/pg1_a3.png",
+		9: "res://imagens/cards_Fase_1/pg1_a4.png",
+		# Adicionar mais valores conforme necessário
+	}
+	
+	if texturas_map.has(resultado_esperado):
+		var texture_path = texturas_map[resultado_esperado]
+		var texture = load(texture_path)
+		if texture:
+			card_correto_sprite.texture = texture
+			card_correto_sprite.scale = Vector2(0.06, 0.06)  # 0.05 (interno) * 1.2 (exterior) = 0.06
+			print("✅ Textura carregada para card correto: ", texture_path)
+		else:
+			print("❌ ERRO: Não foi possível carregar textura: ", texture_path)
+	else:
+		print("⚠️ AVISO: Textura não mapeada para valor: ", resultado_esperado)
+
 func configurar(_resultado_esperado: int, _expressao: String):
 	resultado_esperado = _resultado_esperado
 	expressao = _expressao
 	tem_card_correto = false
+	print("🎯 Área ", name, " configurada: ", expressao, " = ", resultado_esperado)
+	# ⭐ CARREGAR TEXTURA DEPOIS DE CONFIGURAR VALOR
+	_carregar_textura_card_correto()
 
 func _on_area_entered(area: Area2D):
 	print("=== ÁREA DETECTOU ENTRADA ===")
@@ -91,13 +123,32 @@ func _processar_resposta(_valor_card: int, _card: Object):
 func _ativar_card_correto_especifico():
 	print("🔍 Ativando card correto específico para: ", name)
 	
-	# Procura automaticamente o card correto pelo número da área
+	# MÉTODO 1: Tentar usar o sprite interno primeiro
+	if card_correto_sprite and is_instance_valid(card_correto_sprite):
+		card_correto_sprite.visible = true
+		print("✅ Card correto interno ativado: ", name)
+		print("   📍 Posição: ", card_correto_sprite.global_position)
+		print("   🎨 Modulacao: ", card_correto_sprite.modulate)
+		print("   📦 Z-index: ", card_correto_sprite.z_index)
+		print("   👁️ Visible: ", card_correto_sprite.visible)
+		print("   🖼️ Texture: ", card_correto_sprite.texture)
+		# Verificar se está sendo escondido pelo pai
+		var pai = card_correto_sprite.get_parent()
+		if pai:
+			print("   👪 Pai: ", pai.name, " | Visível: ", pai.visible)
+		return
+	
+	# MÉTODO 2: Procurar card correto externo
 	var numero_area = ""
 	var regex = RegEx.new()
 	if regex.compile("\\d+") == OK:
 		var result = regex.search(name)
 		if result:
 			numero_area = result.get_string()
+	
+	if numero_area.is_empty():
+		print("❌ Não foi possível extrair número da área: ", name)
+		return
 	
 	var card_correto_path = "../Card_Correto_Fase_%s" % numero_area
 	print("🧭 Procurando card no caminho: ", card_correto_path)
@@ -106,20 +157,55 @@ func _ativar_card_correto_especifico():
 	
 	if card_correto:
 		card_correto.visible = true
-		print("✅ Card correto ativado: ", card_correto.name)
+		print("✅ Card correto externo ativado: ", card_correto.name)
 	else:
 		print("❌ Card correto não encontrado para área: ", name)
 
+# ✅ MÉTODO PARA MOSTRAR CARD CORRETO
+func mostrar_card_correto():
+	print("🟢 Mostrando card correto na área: ", name)
+	_ativar_card_correto_especifico()
 
 func esconder_card_correto():
-	if card_correto_sprite:
+	print("🔲 Escondendo card correto na área: ", name)
+	
+	# MÉTODO 1: Esconder sprite interno
+	if card_correto_sprite and is_instance_valid(card_correto_sprite):
 		card_correto_sprite.visible = false
-		tem_card_correto = false
-		print("🔲 Card correto escondido na área: ", name)
+	
+	# MÉTODO 2: Esconder card externo
+	var numero_area = ""
+	var regex = RegEx.new()
+	if regex.compile("\\d+") == OK:
+		var result = regex.search(name)
+		if result:
+			numero_area = result.get_string()
+	
+	if not numero_area.is_empty():
+		var card_correto_path = "../Card_Correto_Fase_%s" % numero_area
+		var card_correto = get_node_or_null(card_correto_path)
+		if card_correto:
+			card_correto.visible = false
 
 func tem_card_correto_visivel() -> bool:
-	if card_correto_sprite:
+	# Verificar sprite interno
+	if card_correto_sprite and is_instance_valid(card_correto_sprite):
 		return card_correto_sprite.visible
+	
+	# Verificar card externo
+	var numero_area = ""
+	var regex = RegEx.new()
+	if regex.compile("\\d+") == OK:
+		var result = regex.search(name)
+		if result:
+			numero_area = result.get_string()
+	
+	if not numero_area.is_empty():
+		var card_correto_path = "../Card_Correto_Fase_%s" % numero_area
+		var card_correto = get_node_or_null(card_correto_path)
+		if card_correto:
+			return card_correto.visible
+	
 	return false
 
 func get_posicao_card_correto() -> Vector2:

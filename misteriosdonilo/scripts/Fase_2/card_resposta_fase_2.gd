@@ -81,26 +81,50 @@ func _terminar_arrasto():
 func _processar_soltura():
 	print("🔄 Soltando card: ", name, " - Valor: ", valor)
 	
+	# ⭐⭐ MELHORIA: Buscar áreas de forma mais robusta
 	var areas_sobrepostas = get_overlapping_areas()
 	var area_resposta_proxima = null
-	var menor_distancia = 100.0
+	var menor_distancia = 200.0  # Aumentar distância máxima
+	
+	print("🔍 Áreas sobrepostas encontradas: ", areas_sobrepostas.size())
 	
 	for area in areas_sobrepostas:
+		print("   - Área sobreposta: ", area.name, " | Tipo: ", area.get_class())
+		
+		# Verificar se é AreaResposta_2 de múltiplas formas
+		var e_area_resposta = false
+		
 		if area is AreaResposta_2:
+			e_area_resposta = true
+			print("      ✅ Reconhecida como AreaResposta_2 (is)")
+		elif area.has_method("configurar") and "resultado_esperado" in area:
+			e_area_resposta = true
+			print("      ✅ Reconhecida como AreaResposta_2 (métodos)")
+		elif "AreaResposta" in area.name and "Fase2" in area.name:
+			e_area_resposta = true
+			print("      ✅ Reconhecida como AreaResposta_2 (nome)")
+		
+		if e_area_resposta:
 			var distancia = global_position.distance_to(area.global_position)
-			print("📏 Área encontrada a distância: ", distancia)
+			print("      📏 Distância: ", distancia)
 			
 			if distancia < menor_distancia:
 				menor_distancia = distancia
 				area_resposta_proxima = area
+				print("      ✅ Área mais próxima atualizada!")
 	
 	if area_resposta_proxima:
-		print("🎯 Card ", valor, " solto perto da área - Distância: ", menor_distancia)
+		print("🎯 Card ", valor, " solto perto da área '", area_resposta_proxima.name, "' - Distância: ", menor_distancia)
 		var tween = create_tween()
 		tween.tween_property(self, "global_position", area_resposta_proxima.global_position, 0.2)
 		tween.tween_callback(_emitir_sinal.bind(area_resposta_proxima))
 	else:
-		print("❌ Nenhuma área próxima - voltando para posição original")
+		print("❌ Nenhuma área próxima encontrada!")
+		print("   Total de áreas sobrepostas: ", areas_sobrepostas.size())
+		if areas_sobrepostas.size() > 0:
+			print("   Áreas encontradas (mas não reconhecidas):")
+			for area in areas_sobrepostas:
+				print("      - ", area.name, " (", area.get_class(), ")")
 		voltar_para_original()
 
 func _emitir_sinal(area: AreaResposta_2):

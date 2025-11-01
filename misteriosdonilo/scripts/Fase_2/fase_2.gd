@@ -1,5 +1,4 @@
 extends Node2D
-
 # Configuração das equações - FASE 2 (Multiplicação e Divisão)
 var equacoes = [
 	{"expressao": "4 × 7", "resultado": 28, "area_index": 1},
@@ -10,8 +9,11 @@ var equacoes = [
 var equacao_atual = 0
 var jogo_iniciado = false
 
-@onready var ui_fase_2: UiFase2 = $UI_Fase_2
-@onready var container_cards = $ContainerCards_Fase_2
+@export var ui_fase_2_path: NodePath
+@export var container_cards_path: NodePath
+
+@onready var ui_fase_2: UiFase2 = get_node_or_null(ui_fase_2_path)
+@onready var container_cards: Node = get_node_or_null(container_cards_path)
 
 # Array para armazenar as áreas de resposta
 @onready var area_resposta1: AreaResposta_2 = $AreaResposta1Fase2
@@ -360,16 +362,16 @@ func verificar_visibilidade_areas():
 func _esconder_cards_corretos():
 	print("🔧 Escondendo todos os cards corretos...")
 	
-	var card1 = get_node_or_null("Card_Correto_Fase_1")
-	var card2 = get_node_or_null("Card_Correto_Fase_2") 
-	var card3 = get_node_or_null("Card_Correto_Fase_3")
+	var card1 = get_node_or_null("Card_Correto_Fase_21")
+	var card2 = get_node_or_null("Card_Correto_Fase_22") 
+	var card3 = get_node_or_null("Card_Correto_Fase_23")
 	
 	if card1:
 		card1.visible = false
-		print("✅ Card_Correto_Fase_1 escondido")
+		print("✅ Card_Correto_Fase_21 escondido")
 	if card2:
 		card2.visible = false
-		print("✅ Card_Correto_Fase_2 escondido")
+		print("✅ Card_Correto_Fase_22 escondido")
 	if card3:
 		card3.visible = false
-		print("✅ Card_Correto_Fase_3 escondido")
+		print("✅ Card_Correto_Fase_23 escondido")

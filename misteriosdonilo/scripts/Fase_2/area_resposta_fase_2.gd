@@ -119,7 +119,7 @@ func _ativar_card_correto_especifico():
 		print("❌ Não foi possível extrair número da área: ", name)
 		return
 	
-	var card_correto_path = "../Card_Correto_Fase_%s" % numero_area
+	var card_correto_path = "../../Card_Correto_Fase_%s" % numero_area
 	print("🧭 Procurando card no caminho: ", card_correto_path)
 	
 	var card_correto = get_node_or_null(card_correto_path)
@@ -129,6 +129,7 @@ func _ativar_card_correto_especifico():
 		print("✅ Card correto externo ativado: ", card_correto.name)
 	else:
 		print("❌ Card correto não encontrado para área: ", name)
+		
 
 # ✅ MÉTODO PARA MOSTRAR CARD CORRETO
 func mostrar_card_correto():

@@ -38,3 +38,6 @@ interact={
 2d_physics/layer_1="Cards"
 2d_physics/layer_2="AreasResposta"
 2d_physics/layer_3="CardsCorretos"
+2d_physics/layer_4="Cards_Fase2"
+2d_physics/layer_5="AreasRespostas_Fase2"
+2d_physics/layer_6="CardsCorretos_Fase2"

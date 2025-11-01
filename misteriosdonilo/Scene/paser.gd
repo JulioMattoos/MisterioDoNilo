@@ -71,8 +71,31 @@ func change_scene():
 	if is_instance_valid(dialogue_instance):
 		dialogue_instance.queue_free()
 	
-	# Garante que a próxima cena existe antes de tentar carregá-la.
+	# ⭐ VERIFICAR PROGRESSO: Se fase 1 já foi concluída, ir direto para fase 2
+	var fase_1_completa = fase_1_completa()
+	
+	if fase_1_completa:
+		print("✅ Fase 1 já foi concluída! Redirecionando para Fase 2...")
+		# Carregar Fase 2 diretamente
+		var fase_2_path = "res://Scene/Fase_2/Fase_2.tscn"
+		get_tree().call_deferred("change_scene_to_file", fase_2_path)
+		return
+	
+	# Se fase 1 não foi concluída, carregar a fase normal
 	if next_level_scene != null:
 		get_tree().call_deferred("change_scene_to_file", next_level_scene.resource_path)
 	else:
 		print("Erro: A cena da próxima fase não foi atribuída!")
+
+# ⭐ FUNÇÃO: Verificar se fase 1 foi concluída
+func fase_1_completa() -> bool:
+	var config = ConfigFile.new()
+	var caminho_save = "user://progresso_jogo.save"
+	
+	if config.load(caminho_save) != OK:
+		print("📝 Arquivo de progresso não encontrado. Fase 1 ainda não foi concluída.")
+		return false
+	
+	var fase_completa = config.get_value("progresso", "fase_1_completa", false)
+	print("📊 Status Fase 1: ", "Concluída" if fase_completa else "Não concluída")
+	return fase_completa

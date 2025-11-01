@@ -126,6 +126,12 @@ func conectar_areas_resposta():
 				print("ERRO: Área ", i, " não tem sinal resposta_recebida")
 
 func iniciar_jogo():
+	# ⭐ VERIFICAR SE NÍVEL 1 JÁ FOI CONCLUÍDO
+	if fase_concluida(1):
+		print("✅ Nível 1 já foi concluído! Redirecionando para Fase 2...")
+		get_tree().change_scene_to_file("res://Scene/Fase_2/Fase_2.tscn")
+		return
+	
 	print("Iniciando jogo...")
 	jogo_iniciado = true
 	equacao_atual = 0
@@ -523,10 +529,43 @@ func _esconder_cards_corretos():
 		print("✅ Card_Correto_Fase_3 escondido")
 		
 		
+# ⭐ FUNÇÃO: Salvar progresso do jogo
+func salvar_progresso():
+	var config = ConfigFile.new()
+	var caminho_save = "user://progresso_jogo.save"
+	
+	# Carregar progresso existente
+	if config.load(caminho_save) != OK:
+		print("📝 Criando novo arquivo de progresso...")
+	
+	# Marcar nível 1 como concluído
+	config.set_value("progresso", "fase_1_completa", true)
+	
+	# Salvar arquivo
+	var resultado = config.save(caminho_save)
+	if resultado == OK:
+		print("✅ Progresso salvo com sucesso! Fase 1 marcada como concluída.")
+	else:
+		print("❌ Erro ao salvar progresso: ", resultado)
+
+# ⭐ FUNÇÃO: Verificar se fase foi concluída
+static func fase_concluida(numero_fase: int) -> bool:
+	var config = ConfigFile.new()
+	var caminho_save = "user://progresso_jogo.save"
+	
+	if config.load(caminho_save) != OK:
+		return false
+	
+	var chave = "fase_%d_completa" % numero_fase
+	return config.get_value("progresso", chave, false)
+
 # ⭐ NOVA FUNÇÃO: Mostrar tela final do nível
 func mostrar_tela_final():
 	print("🎉 Nível 1 Concluído! Mostrando tela de conclusão...")
 	jogo_iniciado = false
+	
+	# ⭐ SALVAR PROGRESSO
+	salvar_progresso()
 	
 	# Esconde elementos do jogo
 	esconder_elementos_jogo()

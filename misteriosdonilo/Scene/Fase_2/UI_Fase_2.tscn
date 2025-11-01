@@ -1,11 +1,11 @@
 [gd_scene load_steps=2 format=3 uid="uid://df3fr12skxa4x"]
 
-[ext_resource type="Script" uid="uid://m6kb522vrckk" path="res://scripts/Fase_1/ui_fase_1.gd" id="1_uy78y"]
+[ext_resource type="Script" uid="uid://cuyp2brp2d58x" path="res://scripts/Fase_2/ui_fase_2.gd" id="1_upxhk"]
 
-[node name="UiFase1" type="Control"]
+[node name="UiFase2" type="Control"]
 layout_mode = 3
 anchors_preset = 0
-script = ExtResource("1_uy78y")
+script = ExtResource("1_upxhk")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(512, 384)

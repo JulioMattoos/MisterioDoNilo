@@ -1,12 +1,12 @@
 [gd_scene load_steps=3 format=3 uid="uid://bg6v6vkpja07x"]
 
-[ext_resource type="Script" uid="uid://bh5u055tc5rlt" path="res://scripts/Fase_1/area_resposta_fase_1.gd" id="1_f6vsp"]
+[ext_resource type="Script" uid="uid://dr80fpjlnfh1r" path="res://scripts/Fase_2/area_resposta_fase_2.gd" id="1_mms3q"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6ahln"]
 size = Vector2(31, 31)
 
 [node name="AreaRespostaFase2" type="Area2D" groups=["area_resposta"]]
-script = ExtResource("1_f6vsp")
+script = ExtResource("1_mms3q")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(504.5, 362.5)

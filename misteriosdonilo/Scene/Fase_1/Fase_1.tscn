@@ -34,12 +34,12 @@ texture = ExtResource("2_5osw5")
 [node name="ContainerCards_Fase_1" type="Node2D" parent="."]
 position = Vector2(-408, 930)
 
-[node name="AreaResposta2Fase1" parent="." instance=ExtResource("3_pvynm")]
-position = Vector2(237, -78)
-collision_layer = 2
-
 [node name="AreaResposta1Fase1" parent="." instance=ExtResource("3_pvynm")]
 position = Vector2(237, -220)
+collision_layer = 2
+
+[node name="AreaResposta2Fase1" parent="." instance=ExtResource("3_pvynm")]
+position = Vector2(237, -78)
 collision_layer = 2
 
 [node name="AreaResposta3Fase1" parent="." instance=ExtResource("3_pvynm")]
@@ -100,6 +100,7 @@ shape = SubResource("RectangleShape2D_i3oin")
 script = ExtResource("10_res67")
 
 [node name="pergaminho" type="Sprite2D" parent="PopupDica"]
+visible = false
 position = Vector2(516.75, 383.5)
 scale = Vector2(0.532552, 0.710185)
 texture = ExtResource("11_gnrma")

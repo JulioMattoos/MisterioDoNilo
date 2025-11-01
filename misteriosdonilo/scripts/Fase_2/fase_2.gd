@@ -118,8 +118,7 @@ func iniciar_jogo():
 	cartas_corretas_fixadas.clear()
 	cards_instanciados.clear()
 	
-	# ⭐ GARANTIR INVISIBILIDADE NOVAMENTE - Esconder cards corretos explicitamente
-	_esconder_cards_corretos()
+	# ⭐ GARANTIR INVISIBILIDADE NOVAMENTE
 	garantir_cards_area_invisiveis()
 
 	if ui_fase_2:
@@ -203,26 +202,51 @@ func _processar_resposta(valor: int, correto_para_esta_area: bool):
 	print("Valor recebido: ", valor)
 	print("Correto para esta área? ", correto_para_esta_area)
 	
-	# ⭐⭐ CORREÇÃO: Se a resposta está correta, processar diretamente
-	# O card já foi processado e removido pela área
+	# Buscar card solto
+	var card_solto: CardResposta_2 = null
+	var area_correta: AreaResposta_2 = null
+	
+	# BUSCAR CARD SOLTO
+	for card in cards_instanciados:
+		if card and is_instance_valid(card) and card.valor == valor:
+			card_solto = card
+			print("🎯 Card solto encontrado: ", card.name, " - Valor: ", card.valor)
+			break
+	
+	if card_solto == null:
+		print("❌ Card solto não encontrado!")
+		return
+	
+	# ⭐⭐ CORREÇÃO: Buscar área correta baseada no resultado esperado
+	print("📍 Procurando área correta...")
+	for area in areas_resposta:
+		if area and area.resultado_esperado == valor:
+			area_correta = area
+			print("🎯 Área CORRETA identificada: ", area.name, " - Espera: ", area.resultado_esperado)
+			break
+	
+	if area_correta == null:
+		print("❌ Nenhuma área correta encontrada para o valor ", valor)
+		card_solto.voltar_para_original()
+		return
+	
+	# ⭐⭐ VALIDAÇÃO FINAL: Usar a informação da área
 	if correto_para_esta_area:
-		print("🎉 Resposta CORRETA detectada!")
-		
+		# Verificar se o card já foi usado
+		if cartas_corretas_fixadas.has(card_solto):
+			print("⚠️ Card já foi usado corretamente antes")
+			card_solto.voltar_para_original()
+			return
+			
 		# ⭐ VERIFICAR SE ESTA RESPOSTA JÁ FOI CONTADA
 		if valores_ja_contados.has(valor):
 			print("⚠️ Este valor já foi contado antes! Pulando incremento...")
+			card_solto.voltar_para_original()
 			return
 		
-		# Buscar a área que recebeu este card corretamente
-		var area_correta = null
-		for area in areas_resposta:
-			if area and area.resultado_esperado == valor:
-				area_correta = area
-				print("🎯 Área CORRETA identificada: ", area.name)
-				break
-		
-		if area_correta == null:
-			print("⚠️ Área correta não encontrada, mas resposta está correta. Continuando...")
+		print("🎉 RESPOSTA CORRETA CONFIRMADA!")
+		print("   Card: ", card_solto.name, " | Valor: ", card_solto.valor)
+		print("   Área: ", area_correta.name, " | Expressão: ", area_correta.expressao)
 		
 		# ⭐ INCREMENTAR CONTADOR DE RESPOSTAS CORRETAS
 		respostas_corretas += 1
@@ -233,6 +257,9 @@ func _processar_resposta(valor: int, correto_para_esta_area: bool):
 		if ui_fase_2:
 			ui_fase_2.mostrar_feedback("Correto! 🎉", true)
 		
+		# ⭐⭐ EXECUTAR TROCA
+		_executar_troca_card(card_solto, area_correta)
+		
 		# Aguardar um pouco
 		await get_tree().create_timer(1.0).timeout
 		
@@ -241,8 +268,7 @@ func _processar_resposta(valor: int, correto_para_esta_area: bool):
 		if respostas_corretas >= total_respostas:
 			print("🎊🎊🎊 TODOS OS 3 CARDS FORAM ACERTADOS! 🎊🎊🎊")
 			print("🎊 Chamando mostrar_tela_final() agora...")
-			# ⭐ Aguardar para garantir que a transição aconteça corretamente
-			await mostrar_tela_final()
+			await mostrar_tela_final()  # ⭐ Adicionar await para aguardar completa conclusão
 		else:
 			print("⏳ Ainda faltam acertos. Cards acertados: ", respostas_corretas, "/", total_respostas)
 			# Avançar equação para feedback visual
@@ -250,9 +276,12 @@ func _processar_resposta(valor: int, correto_para_esta_area: bool):
 			if equacao_atual < equacoes.size() and ui_fase_2:
 				ui_fase_2.atualizar_progresso(equacao_atual, equacoes.size())
 	else:
-		print("❌ Resposta INCORRETA!")
+		print("❌ RESPOSTA INCORRETA CONFIRMADA!")
+		print("   Card: ", card_solto.valor)
+		print("   Área esperava: ", area_correta.resultado_esperado, " (", area_correta.expressao, ")")
 		if ui_fase_2:
-			ui_fase_2.mostrar_feedback("Tente novamente!", false)
+			ui_fase_2.mostrar_feedback("Tente novamente! ❌", false)
+		card_solto.voltar_para_original()
 
 func liberar_todas_cartas():
 	for card in cards_instanciados:
@@ -389,88 +418,35 @@ func mostrar_tela_final():
 	print("🎊 FASE 2 COMPLETADA!")
 	jogo_iniciado = false
 	
-	# ⭐ SALVAR PROGRESSO
+	# Salvar progresso
 	salvar_progresso()
 	
-	# ⭐⭐ Marcar fase 2 como concluída no GameManager
-	var gm = get_node_or_null("/root/GameManager")
-	if gm:
-		gm.concluir_fase(2)
-		print("✅ Fase 2 marcada como concluída no GameManager.")
-	else:
-		print("⚠️ GameManager não encontrado via /root")
-	
-	# Esconde elementos do jogo
-	esconder_elementos_jogo()
+	# Esconde UI do jogo
 	if ui_fase_2:
 		ui_fase_2.mostrar_feedback("Parabéns! Fase 2 concluída! 🎉", true)
 	else:
-		print("⚠️ ui_fase_2 é null! Não foi possível mostrar feedback de conclusão.")
+		print("⚠️ ui_fase_2 é null! Não foi possível mostrar feedback.")
+	esconder_elementos_jogo()
 	
-	# Mostra a tela de conclusão (Control)
+	# Mostra a tela de conclusão com a imagem
+	print("📸 Tentando mostrar tela de conclusão...")
 	if tela_conclusao:
 		print("✅ Tela de conclusão encontrada! Tornando visível...")
 		tela_conclusao.visible = true
-		tela_conclusao.show()  # ⭐ FORÇAR mostrar
-		print("✅ Tela de conclusão visível: ", tela_conclusao.visible)
-		
-		# Forçar processamento
-		tela_conclusao.process_mode = Node.PROCESS_MODE_ALWAYS
+		print("✅ Tela de conclusão agora está visível: ", tela_conclusao.visible)
 	else:
-		print("❌ ERRO: Tela de conclusão (Control) não encontrada!")
-		return
+		print("❌ ERRO: Tela de conclusão não encontrada!")
 	
-	# Garante que o TextureRect também está visível
-	if texture_rect_conclusao:
-		print("✅ TextureRect encontrado! Tornando visível...")
-		texture_rect_conclusao.visible = true
-		texture_rect_conclusao.show()  # ⭐ FORÇAR mostrar
-		print("✅ TextureRect visível: ", texture_rect_conclusao.visible)
-		
-		# ⭐⭐ FORÇAR CARREGAMENTO DA IMAGEM CORRETA (Fase 2)
-		print("🔄 Carregando textura 'concluido2.png' para Fase 2...")
-		var texture_path = "res://Scene/Fase_2/concluido2.png"
-		var texture = load(texture_path)
-		if texture:
-			texture_rect_conclusao.texture = texture
-			print("✅ Textura 'concluido2.png' carregada e aplicada com sucesso!")
-		else:
-			print("❌ ERRO: Não foi possível carregar a textura de: ", texture_path)
-	else:
-		print("❌ ERRO: TextureRect não encontrado!")
-		# Tentar buscar novamente
-		texture_rect_conclusao = get_node_or_null("CanvasLayer/NivelConcluido/TextureRect")
-		if texture_rect_conclusao:
-			print("✅ TextureRect encontrado via get_node_or_null!")
-			texture_rect_conclusao.visible = true
-			texture_rect_conclusao.show()
-			# ⭐⭐ CARREGAR IMAGEM CORRETA
-			var texture_path = "res://Scene/Fase_2/concluido2.png"
-			var texture = load(texture_path)
-			if texture:
-				texture_rect_conclusao.texture = texture
-				print("✅ Textura 'concluido2.png' carregada e aplicada!")
-	
-	# Aguarda alguns frames para garantir que tudo apareceu
-	var tree = get_tree()
-	if tree != null and is_inside_tree():
-		await tree.process_frame
-		await tree.process_frame
-	
-	# Resetar flag antes de aguardar
-	espaco_pressionado = false
+	# Aguarda um frame para garantir que a tela apareceu
+	await get_tree().process_frame
 	
 	# Aguarda o jogador apertar Espaço
 	print("⌨️ Aguardando tecla Espaço...")
 	await _aguardar_tecla_espaco()
 	
-	# Troca de cena para o mapa principal (com verificação de segurança)
+	# Troca de cena para o mapa principal
 	print("🗺️ Retornando ao mapa principal...")
-	tree = get_tree()
-	if tree != null and is_inside_tree():
-		tree.call_deferred("change_scene_to_file", "res://Scene/icon.tscn")
-	else:
-		print("❌ ERRO: Árvore da cena não está disponível!")
+	get_tree().change_scene_to_file("res://Scene/icon.tscn")
 
 # ⭐ FUNÇÃO: Aguardar tecla espaço
 func _aguardar_tecla_espaco() -> void:

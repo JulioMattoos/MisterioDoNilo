@@ -59,15 +59,15 @@ shape = SubResource("RectangleShape2D_i3oin")
 script = ExtResource("10_res67")
 
 [node name="pergaminho" type="Sprite2D" parent="PopupDica"]
-position = Vector2(1659, 373)
-scale = Vector2(0.532552, 0.710185)
+visible = false
+position = Vector2(522.87506, 388.75)
+scale = Vector2(0.5417968, 0.7189814)
 texture = ExtResource("11_gnrma")
 
 [node name="Area2D" type="Area2D" parent="PopupDica"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PopupDica/Area2D"]
-visible = false
-position = Vector2(74, 46)
+position = Vector2(92, 46)
 shape = SubResource("RectangleShape2D_rsbfn")
 
 [node name="Card28Resposta_Fase_3" parent="." instance=ExtResource("11_ubv32")]

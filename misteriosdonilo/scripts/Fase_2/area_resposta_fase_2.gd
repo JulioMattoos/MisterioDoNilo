@@ -2,7 +2,7 @@ extends Area2D
 class_name AreaResposta_2
 
 signal resposta_recebida(valor: int, correto_para_esta_area: bool)
-signal card_entrou_na_area(area: AreaResposta_2, card: CardResposta_2)
+signal card_entrou_na_area(area: AreaResposta_2, card: Object)
 
 var resultado_esperado: int = 2
 var expressao: String = ""
@@ -13,9 +13,9 @@ var card_correto_sprite: Sprite2D
 var ultimo_card_recebido: int = -1
 
 func _ready():
-	# Conectar sinais - ✅ CORREÇÃO: usar Callable corretamente
-	if not area_entered.is_connected(_on_area_entered):
-		area_entered.connect(_on_area_entered)
+	# Conectar sinais
+	if not is_connected("area_entered", _on_area_entered):
+		connect("area_entered", _on_area_entered)
 	
 	# ⭐ INICIALIZAR SPRITE DO CARD CORRETO
 	_inicializar_sprite_card_correto()
@@ -45,14 +45,14 @@ func _carregar_textura_card_correto():
 	if not card_correto_sprite or resultado_esperado == 0:
 		return
 	
-	# Mapeamento de valores para texturas
+	# Mapeamento de valores para texturas - FASE 2
+	# Deve corresponder exatamente às imagens dos cards de alternativa
 	var texturas_map = {
 		2: "res://imagens/cards_Fase_1/pg1_a5.png",
-		6: "res://imagens/cards_Fase_1/pg1_a3.png", 
-		28: "res://imagens/cards_Fase_1/pg2_a2.png",
-		40: "res://imagens/cards_Fase_1/pg2_a3.png",
-		48: "res://imagens/cards_Fase_1/pg2_a4.png",
-		# Adicionar mais valores conforme necessário
+		6: "res://imagens/cards_Fase_1/pg1_a4.png", 
+		28: "res://imagens/cards_Fase_2/pg2_a2.png",
+		40: "res://imagens/cards_Fase_2/pg2_a5.png",
+		48: "res://imagens/cards_Fase_2/pg2_a4.png"
 	}
 	
 	if texturas_map.has(resultado_esperado):
@@ -60,7 +60,7 @@ func _carregar_textura_card_correto():
 		var texture = load(texture_path)
 		if texture:
 			card_correto_sprite.texture = texture
-			card_correto_sprite.scale = Vector2(0.06, 0.06)  # 0.05 (interno) * 1.2 (exterior) = 0.06
+			card_correto_sprite.scale = Vector2(0.06, 0.06)  # MESMA ESCALA DA FASE 1
 			print("✅ Textura carregada para card correto: ", texture_path)
 		else:
 			print("❌ ERRO: Não foi possível carregar textura: ", texture_path)
@@ -77,107 +77,49 @@ func configurar(_resultado_esperado: int, _expressao: String):
 
 func _on_area_entered(area: Area2D):
 	print("=== ÁREA DETECTOU ENTRADA ===")
-	print("Área: ", name, " | Espera: ", resultado_esperado, " (", expressao, ")")
-	print("Objeto que entrou: ", area.name, " | Tipo: ", area.get_class())
 	
-	# ⭐⭐ MELHORIA: Múltiplas formas de verificar se é um CardResposta_2
-	var card: CardResposta_2 = null
-	
-	# Método 1: Verificação direta de tipo
+	# Verificar se é um CardResposta_2
 	if area is CardResposta_2:
-		card = area as CardResposta_2
-		print("✅ Card reconhecido via 'is CardResposta_2'")
-	
-	# Método 2: Verificar por método get_valor (caso especial)
-	elif area.has_method("get_valor"):
-		print("⚠️ Objeto tem método get_valor() mas não é reconhecido como CardResposta_2")
-		print("   Tentando usar mesmo assim...")
-		# Tentar fazer cast manual
-		if area.get_script() and area.get_script().resource_path.ends_with("card_resposta_fase_2.gd"):
-			card = area as CardResposta_2
-			print("✅ Card reconhecido via script path")
-	
-	# Método 3: Verificar por nome (fallback)
-	elif "Card" in area.name and "Fase_2" in area.name:
-		print("⚠️ Objeto parece ser um card pelo nome, tentando processar...")
-		if area.has_method("get_valor"):
-			# Criar um wrapper temporário
-			var valor_tentativo = area.call("get_valor")
-			if valor_tentativo is int:
-				print("✅ Valor obtido via call, processando resposta...")
-				_processar_resposta(valor_tentativo, area)
-				return
-	
-	# Processar se encontramos o card
-	if card != null:
+		var card: CardResposta_2 = area
+		
 		if not card.has_method("get_valor"):
 			push_error("CardResposta_2 não possui método get_valor()")
-			print("❌ Card não tem método get_valor()")
 			return
 		
 		var valor_card: int = card.get_valor()
-		print("📥 Card entrou na área: ", card.name, " | Valor: ", valor_card)
 		_processar_resposta(valor_card, card)
 		return
 	
-	# Se chegou aqui, não reconheceu como card
-	print("❌ Objeto não reconhecido como card: ", area.name)
-	print("   Classe: ", area.get_class())
-	print("   Script: ", area.get_script().resource_path if area.get_script() else "Nenhum")
-	print("   Métodos disponíveis: get_valor=", area.has_method("get_valor"), " | valor=", "valor" in area)
+	print("Objeto não reconhecido como card: ", area.name)
 
-func receber_card(card: Node):
-	# ⭐⭐ NOVA FUNÇÃO: Receber card via método direto (usado pelo sistema de arrasto)
-	if card is CardResposta_2:
-		var card_typed: CardResposta_2 = card as CardResposta_2
-		var valor_card = card_typed.get_valor()
-		print("📥 Card recebido via receber_card(): ", card.name, " | Valor: ", valor_card)
-		_processar_resposta(valor_card, card_typed)
-	else:
-		print("❌ Objeto recebido não é CardResposta_2: ", card.name)
-
-func _processar_resposta(_valor_card: int, _card):
-	# ⭐⭐ CORREÇÃO CRÍTICA: Verificar se o valor do card corresponde ao resultado esperado
+func _processar_resposta(_valor_card: int, _card: Object):
 	var correto_para_esta_area: bool = (_valor_card == resultado_esperado)
 	tem_card_correto = correto_para_esta_area
 	ultimo_card_recebido = _valor_card
 	
-	print("🔍 VALIDAÇÃO:")
-	print("   Card valor: ", _valor_card)
-	print("   Área espera: ", resultado_esperado, " (", expressao, ")")
-	print("   Correto para esta área: ", correto_para_esta_area)
+	print("Card valor: ", _valor_card)
+	print("Área espera: ", resultado_esperado, " (", expressao, ")")
+	print("Correto para esta área: ", correto_para_esta_area)
 	
-	# ⭐⭐ CORREÇÃO: Só processar troca se for realmente correto
+	# ⭐⭐ PASSO 3 ADICIONADO AQUI: ATIVAR CARD CORRETO ESPECÍFICO
 	if correto_para_esta_area:
 		print("🎯 RESPOSTA CORRETA! Ativando card específico...")
 		
-		# 1. Esconder o card arrastado (verificar se é Node válido)
-		if _card is Node:
-			var card_node: Node = _card as Node
-			print("🔴 Escondendo card arrastado: ", card_node.name if card_node.name else "Card")
-			card_node.visible = false
+		# 1. Esconder o card arrastado
+		if _card is CardResposta_2:
+			print("🔴 Escondendo card arrastado: ", _card.name)
+			_card.visible = false
+			_card.queue_free()
 		
 		# 2. MOSTRAR O CARD CORRETO ESPECÍFICO
 		_ativar_card_correto_especifico()
 		
-		# 3. Remover card arrastado após um pequeno delay
-		if _card is Node:
-			await get_tree().create_timer(0.1).timeout
-			var card_node: Node = _card as Node
-			if is_instance_valid(card_node):
-				card_node.queue_free()
-		
 		print("✅ Troca concluída!")
-	else:
-		print("❌ RESPOSTA INCORRETA! Card não corresponde ao esperado.")
-		# Se card incorreto, tentar fazer voltar para posição original
-		if _card is Node and _card.has_method("voltar_para_original"):
-			_card.call("voltar_para_original")
 	
-	# ⭐⭐ IMPORTANTE: Emitir sinal SEMPRE para que Fase_2.gd saiba o resultado
+	# Emitir sinal normalmente
 	resposta_recebida.emit(_valor_card, correto_para_esta_area)
 
-# ⭐⭐ FUNÇÃO PARA ATIVAR CARD CORRETO
+# ⭐⭐ E ADICIONE ESTA FUNÇÃO NO MESMO SCRIPT (AreaResposta.gd):
 func _ativar_card_correto_especifico():
 	print("🔍 Ativando card correto específico para: ", name)
 	
@@ -211,7 +153,7 @@ func _ativar_card_correto_especifico():
 		print("❌ Não foi possível extrair número da área: ", name)
 		return
 	
-	var card_correto_path = "../../Card_Correto_Fase_%s" % numero_area
+	var card_correto_path = "../Card_Correto_Fase_%s" % numero_area
 	print("🧭 Procurando card externo no caminho: ", card_correto_path)
 	
 	var card_correto = get_node_or_null(card_correto_path)
@@ -224,7 +166,6 @@ func _ativar_card_correto_especifico():
 		print("   📍 Posição: ", card_correto.global_position)
 	else:
 		print("❌ Card correto não encontrado para área: ", name)
-		
 
 # ✅ MÉTODO PARA MOSTRAR CARD CORRETO
 func mostrar_card_correto():
@@ -274,7 +215,7 @@ func tem_card_correto_visivel() -> bool:
 	return false
 
 func get_posicao_card_correto() -> Vector2:
-	if card_correto_sprite and is_instance_valid(card_correto_sprite):
+	if card_correto_sprite:
 		return card_correto_sprite.global_position
 	return global_position
 

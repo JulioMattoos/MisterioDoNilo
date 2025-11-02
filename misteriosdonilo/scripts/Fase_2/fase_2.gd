@@ -9,11 +9,8 @@ var equacoes = [
 var equacao_atual = 0
 var jogo_iniciado = false
 
-@export var ui_fase_2_path: NodePath
-@export var container_cards_path: NodePath
-
-@onready var ui_fase_2: UiFase2 = get_node_or_null(ui_fase_2_path)
-@onready var container_cards: Node = get_node_or_null(container_cards_path)
+@onready var ui_fase_2 = get_node_or_null("UI_Fase_2")
+@onready var container_cards: Node = $ContainerCards_Fase_2
 
 # Array para armazenar as áreas de resposta
 @onready var area_resposta1: AreaResposta_2 = $AreaResposta1Fase2
@@ -43,7 +40,7 @@ func _ready():
 	
 	# Verificar se todos os nodes existem
 	if not ui_fase_2:
-		push_error("UI_Fase_2 não encontrada!")
+		print("⚠️ UI_Fase_2 não encontrada - jogo funcionará sem interface de menu")
 	if not container_cards:
 		push_error("ContainerCards_Fase_2 não encontrada!")
 	
@@ -52,20 +49,17 @@ func _ready():
 	# ⭐⭐ GARANTIR QUE CARDS ESTÃO INVISÍVEIS
 	garantir_cards_area_invisiveis()
 	
-	if ui_fase_2:
+	if ui_fase_2 and ui_fase_2.has_signal("botao_iniciar_pressed"):
 		var cb = Callable(self, "iniciar_jogo")
 		if not ui_fase_2.botao_iniciar_pressed.is_connected(cb):
 			ui_fase_2.botao_iniciar_pressed.connect(cb)
 		print("✅ Conexão com UI_Fase_2 estabelecida")
-	else:
-		print("⚠️ ERRO: UI_Fase_2 não encontrada! Iniciando jogo automaticamente...")
-		# ⭐ CORREÇÃO: Se não há UI, iniciar jogo automaticamente
-		iniciar_jogo()
-	
-	# ⭐ MOVER esconder_elementos_jogo() para dentro da condição de UI
-	# Se não há UI, não devemos esconder os elementos
-	if ui_fase_2:
 		esconder_elementos_jogo()
+	else:
+		print("⚠️ UI_Fase_2 não encontrada! Iniciando jogo automaticamente...")
+		# ⭐ Se não há UI, iniciar jogo automaticamente após um delay
+		await get_tree().create_timer(0.5).timeout
+		iniciar_jogo()
 	
 	conectar_areas_resposta()
 	
@@ -125,11 +119,49 @@ func iniciar_jogo():
 		ui_fase_2.mostrar_jogo()
 
 	mostrar_elementos_jogo()
-	criar_cards_dinamicamente()
+	
+	# ⭐⭐ FASE 2: Usar cards que já existem na cena em vez de criar novos
+	carregar_cards_existentes()
+	
+	# ⭐⭐ FASE 2: Aguardar criação dos cards antes de liberar
+	await get_tree().process_frame
+	
 	liberar_todas_cartas()
 
 	if ui_fase_2:
 		ui_fase_2.atualizar_progresso(equacao_atual, equacoes.size())
+
+func carregar_cards_existentes():
+	print("📦 Carregando cards existentes da cena...")
+	
+	# Pegar os cards que já estão na cena (filhos diretos do Fase_2)
+	var card_names = [
+		"Card28Resposta_Fase_2",
+		"Card40Resposta_Fase_2", 
+		"Card2Resposta_Fase_2",
+		"Card48Resposta_Fase_2",
+		"Card6Resposta_Fase_2"
+	]
+	
+	for card_name in card_names:
+		var card = get_node_or_null(card_name)
+		
+		if card and card is CardResposta_2:
+			# Garantir visibilidade
+			card.visible = true
+			card.modulate = Color.WHITE
+			
+			# Conectar sinal do card
+			var cb = Callable(self, "_on_card_dropped")
+			if not card.resposta_arrastada.is_connected(cb):
+				card.resposta_arrastada.connect(cb)
+			
+			cards_instanciados.append(card)
+			print("✅ Card carregado: ", card.name, " - Valor: ", card.valor)
+		else:
+			print("❌ Card não encontrado: ", card_name)
+	
+	print("📊 Total de cards carregados: ", cards_instanciados.size())
 
 func criar_cards_dinamicamente():
 	# ⭐ VERIFICAR se container_cards existe
@@ -152,6 +184,9 @@ func criar_cards_dinamicamente():
 		40: preload("res://Scene/Fase_2/Card40Resposta_Fase_2.tscn"),
 		48: preload("res://Scene/Fase_2/Card48Resposta_Fase_2.tscn")
 	}
+	
+	# ⭐⭐ FASE 2: Lista de valores corretos (os que devem aparecer quando acertados)
+	var valores_corretos = [2, 28, 48]  # Respostas das 3 equações da Fase 2
 
 	for i in range(valores_cards.size()):
 		var valor = valores_cards[i]
@@ -173,6 +208,11 @@ func criar_cards_dinamicamente():
 			card.position = Vector2(200 + i * 120, 500)
 			card.posicao_original = card.position
 			
+			# ⭐⭐ FASE 2: Tornar cards INVISÍVEIS no início
+			card.visible = false
+			card.modulate.a = 0  # Transparente para animação suave
+			print("🔒 Card ", card.valor, " criado INVISÍVEL (Fase 2)")
+			
 			# Conectar sinal do card
 			var cb = Callable(self, "_on_card_dropped")
 			if not card.resposta_arrastada.is_connected(cb):
@@ -180,7 +220,7 @@ func criar_cards_dinamicamente():
 			
 			cards_instanciados.append(card)
 			
-			print("✅ Card criado: ", card.name, " - Valor: ", card.valor, " - Posição: ", card.position)
+			print("✅ Card criado: ", card.name, " - Valor: ", card.valor, " - Posição: ", card.position, " - Visível: ", card.visible)
 		else:
 			print("ERRO: Card instanciado não é do tipo CardResposta_2")
 
@@ -202,86 +242,39 @@ func _processar_resposta(valor: int, correto_para_esta_area: bool):
 	print("Valor recebido: ", valor)
 	print("Correto para esta área? ", correto_para_esta_area)
 	
-	# Buscar card solto
-	var card_solto: CardResposta_2 = null
-	var area_correta: AreaResposta_2 = null
-	
-	# BUSCAR CARD SOLTO
-	for card in cards_instanciados:
-		if card and is_instance_valid(card) and card.valor == valor:
-			card_solto = card
-			print("🎯 Card solto encontrado: ", card.name, " - Valor: ", card.valor)
-			break
-	
-	if card_solto == null:
-		print("❌ Card solto não encontrado!")
-		return
-	
-	# ⭐⭐ CORREÇÃO: Buscar área correta baseada no resultado esperado
-	print("📍 Procurando área correta...")
-	for area in areas_resposta:
-		if area and area.resultado_esperado == valor:
-			area_correta = area
-			print("🎯 Área CORRETA identificada: ", area.name, " - Espera: ", area.resultado_esperado)
-			break
-	
-	if area_correta == null:
-		print("❌ Nenhuma área correta encontrada para o valor ", valor)
-		card_solto.voltar_para_original()
-		return
-	
-	# ⭐⭐ VALIDAÇÃO FINAL: Usar a informação da área
+	# ⭐ SIMPLIFICADO COMO FASE 1
 	if correto_para_esta_area:
-		# Verificar se o card já foi usado
-		if cartas_corretas_fixadas.has(card_solto):
-			print("⚠️ Card já foi usado corretamente antes")
-			card_solto.voltar_para_original()
-			return
-			
-		# ⭐ VERIFICAR SE ESTA RESPOSTA JÁ FOI CONTADA
+		# Verificar se esta resposta já foi contada
 		if valores_ja_contados.has(valor):
-			print("⚠️ Este valor já foi contado antes! Pulando incremento...")
-			card_solto.voltar_para_original()
+			print("⚠️ Este valor já foi contado antes!")
 			return
 		
-		print("🎉 RESPOSTA CORRETA CONFIRMADA!")
-		print("   Card: ", card_solto.name, " | Valor: ", card_solto.valor)
-		print("   Área: ", area_correta.name, " | Expressão: ", area_correta.expressao)
+		print("🎉 RESPOSTA CORRETA!")
 		
-		# ⭐ INCREMENTAR CONTADOR DE RESPOSTAS CORRETAS
+		# Incrementar contador
 		respostas_corretas += 1
-		valores_ja_contados.append(valor)  # ⭐ Marcar este valor como já contado
-		print("✅ Respostas corretas INCREMENTADAS: ", respostas_corretas, "/", total_respostas)
-		print("📝 Valores já contados: ", valores_ja_contados)
+		valores_ja_contados.append(valor)
+		print("✅ Respostas corretas: ", respostas_corretas, "/", total_respostas)
 		
 		if ui_fase_2:
 			ui_fase_2.mostrar_feedback("Correto! 🎉", true)
 		
-		# ⭐⭐ EXECUTAR TROCA
-		_executar_troca_card(card_solto, area_correta)
-		
 		# Aguardar um pouco
 		await get_tree().create_timer(1.0).timeout
 		
-		# Verificar se todas as 3 respostas foram acertadas
-		print("🔍 VERIFICAÇÃO FINAL: respostas_corretas = ", respostas_corretas, ", total_respostas = ", total_respostas)
+		# Avançar equação
+		equacao_atual += 1
+		if equacao_atual < equacoes.size() and ui_fase_2:
+			ui_fase_2.atualizar_progresso(equacao_atual, equacoes.size())
+		
+		# Verificar se todas as respostas foram acertadas
 		if respostas_corretas >= total_respostas:
-			print("🎊🎊🎊 TODOS OS 3 CARDS FORAM ACERTADOS! 🎊🎊🎊")
-			print("🎊 Chamando mostrar_tela_final() agora...")
-			await mostrar_tela_final()  # ⭐ Adicionar await para aguardar completa conclusão
-		else:
-			print("⏳ Ainda faltam acertos. Cards acertados: ", respostas_corretas, "/", total_respostas)
-			# Avançar equação para feedback visual
-			equacao_atual += 1
-			if equacao_atual < equacoes.size() and ui_fase_2:
-				ui_fase_2.atualizar_progresso(equacao_atual, equacoes.size())
+			print("🎊 FASE 2 COMPLETADA!")
+			await mostrar_tela_final()
 	else:
-		print("❌ RESPOSTA INCORRETA CONFIRMADA!")
-		print("   Card: ", card_solto.valor)
-		print("   Área esperava: ", area_correta.resultado_esperado, " (", area_correta.expressao, ")")
+		print("❌ RESPOSTA INCORRETA!")
 		if ui_fase_2:
 			ui_fase_2.mostrar_feedback("Tente novamente! ❌", false)
-		card_solto.voltar_para_original()
 
 func liberar_todas_cartas():
 	for card in cards_instanciados:
@@ -322,57 +315,6 @@ func _input(event):
 				if card and is_instance_valid(card):
 					print(" - ", card.name, " | Valor: ", card.valor, " | Fixado: ", cartas_corretas_fixadas.has(card))
 
-# ⭐ FUNÇÃO DE TROCA MELHORADA
-func _executar_troca_card(card_arrastado: CardResposta_2, area_resposta: AreaResposta_2):
-	print("")
-	print("🔄 INICIANDO TROCA DE CARD")
-	print("   Card: ", card_arrastado.name, " (", card_arrastado.valor, ")")
-	print("   Área: ", area_resposta.name, " (", area_resposta.expressao, ")")
-	
-	# 1. VERIFICAR SE A ÁREA TEM O MÉTODO
-	if not area_resposta.has_method("mostrar_card_correto"):
-		print("❌ ERRO: Área não tem método mostrar_card_correto()")
-		card_arrastado.voltar_para_original()
-		return
-	
-	# 2. DEBUG: Verificar estado antes da troca
-	print("📊 ESTADO ANTES DA TROCA:")
-	print("   - Card arrastado visível: ", card_arrastado.visible)
-	print("   - Card fixo visível: ", area_resposta.tem_card_correto_visivel())
-	
-	# 3. MOSTRAR CARD FIXO NA ÁREA (PRIMEIRO)
-	print("🎯 Ativando card fixo na área...")
-	area_resposta.mostrar_card_correto()
-	
-	# 4. VERIFICAR SE O CARD FIXO FICOU VISÍVEL
-	var ficou_visivel = area_resposta.tem_card_correto_visivel()
-	print("   ✅ Card fixo ficou visível? ", ficou_visivel)
-		
-	if not ficou_visivel:
-		print("❌ ALERTA: Card fixo NÃO ficou visível!")
-	
-	# 5. REMOVER CARD ARRASTADO
-	print("✨ Removendo card arrastado...")
-	if card_arrastado.has_method("desaparecer"):
-		card_arrastado.desaparecer()
-	else:
-		# Fallback
-		card_arrastado.visible = false
-		card_arrastado.set_process_input(false)
-		await get_tree().process_frame
-		if is_instance_valid(card_arrastado):
-			card_arrastado.queue_free()
-	
-	# 6. ATUALIZAR CONTROLE DE ESTADO
-	cartas_corretas_fixadas.append(card_arrastado)
-	if cards_instanciados.has(card_arrastado):
-		cards_instanciados.erase(card_arrastado)
-	
-	print("✅ TROCA CONCLUÍDA!")
-	print("   - Card arrastado: REMOVIDO")
-	print("   - Card fixo: ATIVADO na área")
-	print("")
-	
 func garantir_cards_area_invisiveis():
 	print("🔒 GARANTINDO CARDS DAS ÁREAS INVISÍVEIS...")
 	
@@ -424,24 +366,50 @@ func mostrar_tela_final():
 	# Esconde UI do jogo
 	if ui_fase_2:
 		ui_fase_2.mostrar_feedback("Parabéns! Fase 2 concluída! 🎉", true)
-	else:
-		print("⚠️ ui_fase_2 é null! Não foi possível mostrar feedback.")
 	esconder_elementos_jogo()
 	
 	# Mostra a tela de conclusão com a imagem
 	print("📸 Tentando mostrar tela de conclusão...")
 	if tela_conclusao:
-		print("✅ Tela de conclusão encontrada! Tornando visível...")
+		print("✅ Tela de conclusão encontrada!")
 		tela_conclusao.visible = true
-		print("✅ Tela de conclusão agora está visível: ", tela_conclusao.visible)
+		tela_conclusao.show()
+		tela_conclusao.z_index = 100
+		print("   Visível: ", tela_conclusao.visible)
+		print("   Z-index: ", tela_conclusao.z_index)
+		
+		# Verificar TextureRect
+		if texture_rect_conclusao:
+			print("✅ TextureRect encontrado!")
+			texture_rect_conclusao.visible = true
+			texture_rect_conclusao.show()
+			print("   Visível: ", texture_rect_conclusao.visible)
+			print("   Textura: ", texture_rect_conclusao.texture)
+			print("   Tamanho: ", texture_rect_conclusao.size)
+			
+			# Se não tiver textura, tentar carregar
+			if not texture_rect_conclusao.texture:
+				print("⚠️ Textura não carregada! Tentando carregar...")
+				var texture = load("res://Scene/Fase_2/concluido2.png")
+				if texture:
+					texture_rect_conclusao.texture = texture
+					print("✅ Textura carregada manualmente!")
+				else:
+					print("❌ ERRO: Não foi possível carregar a textura!")
+		else:
+			print("❌ ERRO: TextureRect não encontrado!")
 	else:
 		print("❌ ERRO: Tela de conclusão não encontrada!")
 	
-	# Aguarda um frame para garantir que a tela apareceu
+	# Aguarda alguns frames
+	await get_tree().process_frame
+	await get_tree().process_frame
 	await get_tree().process_frame
 	
+	print("🖼️ Imagem de conclusão deveria estar visível agora!")
+	print("   Pressione ESPAÇO para continuar...")
+	
 	# Aguarda o jogador apertar Espaço
-	print("⌨️ Aguardando tecla Espaço...")
 	await _aguardar_tecla_espaco()
 	
 	# Troca de cena para o mapa principal
@@ -500,3 +468,4 @@ func _esconder_cards_corretos():
 	if card3:
 		card3.visible = false
 		print("✅ Card_Correto_Fase_23 escondido")
+

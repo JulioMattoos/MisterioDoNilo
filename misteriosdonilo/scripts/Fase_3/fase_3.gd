@@ -1,10 +1,10 @@
 extends Node2D
 
-# Configuração das equações - FASE 2 (Multiplicação e Divisão)
+# Configuração das equações - FASE 3 (Multiplicação e Divisão)
 var equacoes = [
-	{"expressao": "4 × 5 + 8", "resultado": 28, "area_index": 1},
-	{"expressao": "3 × 5 - 6", "resultado": 9, "area_index": 2},
-	{"expressao": "8 × 5 ÷ 8", "resultado": 5, "area_index": 3}
+	{"expressao": "4 × 7 - 16", "resultado": 12, "area_index": 1},
+	{"expressao": "27 ÷ 3", "resultado": 9, "area_index": 2},
+	{"expressao": "8 × 4", "resultado": 32, "area_index": 3}
 ]
 
 var equacao_atual = 0
@@ -109,13 +109,13 @@ func criar_cards_dinamicamente():
 	await get_tree().process_frame
 
 	# ⭐ CARDS DA FASE 3 (Multiplicação e Divisão)
-	var valores_cards = [5, 8, 28, 40, 48]
+	var valores_cards = [8, 12, 36, 32, 9]
 	var cenas_cards = {
-		5: preload("res://Scene/Fase_3/Card5Resposta_Fase_3.tscn"),
-		9: preload("res://Scene/Fase_3/Card9Resposta_Fase_3.tscn"),
-		28: preload("res://Scene/Fase_3/Card28Resposta_Fase_3.tscn"),
-		40: preload("res://Scene/Fase_3/Card40Resposta_Fase_3.tscn"),
-		48: preload("res://Scene/Fase_3/Card48Resposta_Fase_3.tscn")
+		8: preload("res://Scene/Fase_3/Card8Resposta_Fase_3.tscn"),
+		12: preload("res://Scene/Fase_3/Card12Resposta_Fase_3.tscn"),
+		36: preload("res://Scene/Fase_3/Card36Resposta_Fase_3.tscn"),
+		32: preload("res://Scene/Fase_3/Card32Resposta_Fase_3.tscn"),
+		9: preload("res://Scene/Fase_3/Card9Resposta_Fase_3.tscn")
 	}
 
 	for i in range(valores_cards.size()):

@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://card36fase3"]
+
+[ext_resource type="Script" path="res://scripts/Fase_3/card_resposta_fase_3.gd" id="1_card36"]
+[ext_resource type="Texture2D" path="res://imagens/cards_Fase_3/pg3-a3.png" id="2_card36"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_card36"]
+size = Vector2(155, 153)
+
+[node name="Card36Resposta_Fase_3" type="Area2D"]
+script = ExtResource("1_card36")
+
+[node name="SpriteCard_Fase_3" type="Sprite2D" parent="."]
+scale = Vector2(0.05, 0.05)
+texture = ExtResource("2_card36")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-0.5, 0.5)
+scale = Vector2(0.53, 0.53)
+shape = SubResource("RectangleShape2D_card36")
+
+[connection signal="input_event" from="." to="." method="_on_input_event"]
+

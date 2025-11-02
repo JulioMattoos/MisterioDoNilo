@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cnk7twbqvmcip"
-path="res://.godot/imported/pg3-a2.png-fba9e68f63b7eea80114f448c04c7de4.ctex"
+uid="uid://b4imshfrlkkgx"
+path="res://.godot/imported/concluido3_1.png-114020af8132fd3a8a8c380ad0643294.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://imagens/cards_Fase_3/pg3-a2.png"
-dest_files=["res://.godot/imported/pg3-a2.png-fba9e68f63b7eea80114f448c04c7de4.ctex"]
+source_file="res://Scene/Fase_3.1/concluido3_1.png"
+dest_files=["res://.godot/imported/concluido3_1.png-114020af8132fd3a8a8c380ad0643294.ctex"]
 
 [params]
 

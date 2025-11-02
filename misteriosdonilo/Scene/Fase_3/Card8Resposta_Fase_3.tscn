@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://card8fase3"]
 
-[ext_resource type="Script" path="res://scripts/Fase_3/card_resposta_fase_3.gd" id="1_card8"]
-[ext_resource type="Texture2D" path="res://imagens/cards_Fase_3/pg3-a1.png" id="2_card8"]
+[ext_resource type="Script" uid="uid://n8hbopem8bmh" path="res://scripts/Fase_3/card_resposta_fase_3.gd" id="1_card8"]
+[ext_resource type="Texture2D" uid="uid://d1lkolabyno4s" path="res://imagens/cards_Fase_3_1/pg3-a1.png" id="2_card8"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_card8"]
 size = Vector2(155, 153)

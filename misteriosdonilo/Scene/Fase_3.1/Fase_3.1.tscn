@@ -1,0 +1,169 @@
+[gd_scene load_steps=17 format=3 uid="uid://wo8mbjcofeh2"]
+
+[ext_resource type="Script" uid="uid://ckqjgv5d47s8" path="res://scripts/Fase_3_1/fase_3_1.gd" id="1_y7t5o"]
+[ext_resource type="Texture2D" uid="uid://b17armm0grbbw" path="res://imagens/assets_Fase_3/Fase_3.jpg" id="2_d47wv"]
+[ext_resource type="PackedScene" uid="uid://c5yo2vpk5ob2e" path="res://Scene/Fase_3.1/AreaResposta_Fase_3_1.tscn" id="3_rd2pb"]
+[ext_resource type="Script" uid="uid://byw65ooe2rvb7" path="res://scripts/Fase_3_1/area_resposta_fase_3_1.gd" id="4_d47wv"]
+[ext_resource type="PackedScene" uid="uid://4me0y7nk6sxf" path="res://Scene/Fase_3.1/Card36Resposta_Fase_3_1.tscn" id="4_e3q0x"]
+[ext_resource type="PackedScene" uid="uid://cvlf1sdabbbeh" path="res://Scene/Fase_3.1/Card9Resposta_Fase_3_1.tscn" id="5_2f376"]
+[ext_resource type="Script" uid="uid://cgt8236b883gd" path="res://scripts/Fase_3_1/card_resposta_fase_3_1.gd" id="6_e3q0x"]
+[ext_resource type="PackedScene" uid="uid://cr15o1km21e81" path="res://Scene/Fase_3.1/Card8Resposta_Fase_3_1.tscn" id="6_pfxnj"]
+[ext_resource type="PackedScene" uid="uid://3v413s6nyg1t" path="res://Scene/Fase_3.1/Card12Resposta_Fase_3_1.tscn" id="7_3pyti"]
+[ext_resource type="PackedScene" uid="uid://otjjhl88fem7" path="res://Scene/Fase_3.1/Card32Resposta_Fase_3_1.tscn" id="8_axlal"]
+[ext_resource type="Script" uid="uid://d031w2sd00h5s" path="res://scripts/Fase_3/area_pergaminho.gd" id="9_3e5w5"]
+[ext_resource type="Script" uid="uid://dnj16rknwjes2" path="res://scripts/Fase_3/popup_dica.gd" id="10_yh6et"]
+[ext_resource type="Texture2D" uid="uid://d07suu7725cy6" path="res://imagens/assets_Fase_1/9.jpg" id="11_30wsk"]
+[ext_resource type="Texture2D" uid="uid://b4imshfrlkkgx" path="res://Scene/Fase_3.1/concluido3_1.png" id="12_y7t5o"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_perg"]
+size = Vector2(83, 92)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_popup"]
+size = Vector2(112, 60)
+
+[node name="Fase_3_1" type="Node2D"]
+script = ExtResource("1_y7t5o")
+
+[node name="Camera_Fase_3_1" type="Camera2D" parent="."]
+position = Vector2(512, 384)
+
+[node name="Background_Fase_3_1" type="Sprite2D" parent="."]
+position = Vector2(510.49997, 384.99997)
+scale = Vector2(1.4585714, 1.5319998)
+texture = ExtResource("2_d47wv")
+
+[node name="ContainerCards_Fase_3_1" type="Node2D" parent="."]
+position = Vector2(-400, 771)
+
+[node name="AreaResposta1Fase3_1" parent="." instance=ExtResource("3_rd2pb")]
+position = Vector2(857, 180)
+collision_layer = 16
+collision_mask = 8
+script = ExtResource("4_d47wv")
+
+[node name="AreaResposta2Fase3_1" parent="." instance=ExtResource("3_rd2pb")]
+position = Vector2(857, 305)
+collision_layer = 16
+collision_mask = 8
+script = ExtResource("4_d47wv")
+
+[node name="AreaResposta3Fase3_1" parent="." instance=ExtResource("3_rd2pb")]
+position = Vector2(854, 421)
+collision_layer = 16
+collision_mask = 8
+script = ExtResource("4_d47wv")
+
+[node name="Card36Resposta_Fase_3_1" parent="." instance=ExtResource("4_e3q0x")]
+position = Vector2(450, 670)
+scale = Vector2(1.2, 1.2)
+collision_layer = 8
+collision_mask = 16
+script = ExtResource("6_e3q0x")
+
+[node name="Card9Resposta_Fase_3_1" parent="." instance=ExtResource("5_2f376")]
+position = Vector2(720.00006, 673)
+scale = Vector2(1.2, 1.2)
+collision_layer = 8
+collision_mask = 16
+script = ExtResource("6_e3q0x")
+
+[node name="Card8Resposta_Fase_3_1" parent="." instance=ExtResource("6_pfxnj")]
+position = Vector2(200, 670)
+scale = Vector2(1.2, 1.2)
+collision_layer = 8
+collision_mask = 16
+script = ExtResource("6_e3q0x")
+
+[node name="Card12Resposta_Fase_3_1" parent="." instance=ExtResource("7_3pyti")]
+position = Vector2(325, 670)
+scale = Vector2(1.2, 1.2)
+collision_layer = 8
+collision_mask = 16
+script = ExtResource("6_e3q0x")
+
+[node name="Card32Resposta_Fase_3_1" parent="." instance=ExtResource("8_axlal")]
+position = Vector2(575, 670)
+scale = Vector2(1.2, 1.2)
+collision_layer = 8
+collision_mask = 16
+script = ExtResource("6_e3q0x")
+
+[node name="Card_Correto_Fase_31" parent="." instance=ExtResource("7_3pyti")]
+position = Vector2(861, 180)
+scale = Vector2(1.2, 1.2)
+collision_layer = 8
+collision_mask = 16
+script = ExtResource("6_e3q0x")
+
+[node name="Card_Correto_Fase_32" parent="." instance=ExtResource("5_2f376")]
+position = Vector2(861, 302)
+scale = Vector2(1.2, 1.2)
+collision_layer = 8
+collision_mask = 16
+script = ExtResource("6_e3q0x")
+
+[node name="Card_Correto_Fase_33" parent="." instance=ExtResource("4_e3q0x")]
+position = Vector2(855.00006, 417)
+scale = Vector2(1.2, 1.2)
+collision_layer = 8
+collision_mask = 16
+script = ExtResource("6_e3q0x")
+
+[node name="AreaPergaminho" type="Area2D" parent="."]
+script = ExtResource("9_3e5w5")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AreaPergaminho"]
+position = Vector2(908, 618)
+shape = SubResource("RectangleShape2D_perg")
+
+[node name="PopupDica" type="CanvasLayer" parent="."]
+visible = false
+script = ExtResource("10_yh6et")
+
+[node name="pergaminho" type="Sprite2D" parent="PopupDica"]
+position = Vector2(504.26172, 386.40045)
+scale = Vector2(1.5135376, 1.6063981)
+texture = ExtResource("11_30wsk")
+
+[node name="Area2D" type="Area2D" parent="PopupDica"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PopupDica/Area2D"]
+visible = false
+position = Vector2(97, 48)
+shape = SubResource("RectangleShape2D_popup")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 100
+
+[node name="NivelConcluido" type="Control" parent="CanvasLayer"]
+visible = false
+z_index = 100
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/NivelConcluido"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/NivelConcluido"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -7.0
+offset_top = -7.0
+offset_right = 5.0
+offset_bottom = 5.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("12_y7t5o")
+expand_mode = 1

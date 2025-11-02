@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d1lkolabyno4s"
-path="res://.godot/imported/pg3-a1.png-02f5a1684f79da934b9f615d954ca5c1.ctex"
+path="res://.godot/imported/pg3-a1.png-bd6d6c0664ccd1a10f62d04d331a27a3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://imagens/cards_Fase_3/pg3-a1.png"
-dest_files=["res://.godot/imported/pg3-a1.png-02f5a1684f79da934b9f615d954ca5c1.ctex"]
+source_file="res://imagens/cards_Fase_3_1/pg3-a1.png"
+dest_files=["res://.godot/imported/pg3-a1.png-bd6d6c0664ccd1a10f62d04d331a27a3.ctex"]
 
 [params]
 

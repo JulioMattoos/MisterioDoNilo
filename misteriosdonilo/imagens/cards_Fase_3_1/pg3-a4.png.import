@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bpk6quj5mgugp"
-path="res://.godot/imported/card_vazio.png-1e11ed19f66914a92ba5b10867d985bd.ctex"
+uid="uid://c1cpt75sgf2g7"
+path="res://.godot/imported/pg3-a4.png-2aebbb775e28e5cbc76088e7c8116e5a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://imagens/cards_Fase_3/card_vazio.png"
-dest_files=["res://.godot/imported/card_vazio.png-1e11ed19f66914a92ba5b10867d985bd.ctex"]
+source_file="res://imagens/cards_Fase_3_1/pg3-a4.png"
+dest_files=["res://.godot/imported/pg3-a4.png-2aebbb775e28e5cbc76088e7c8116e5a.ctex"]
 
 [params]
 

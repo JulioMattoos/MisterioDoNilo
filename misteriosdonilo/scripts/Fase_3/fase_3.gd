@@ -37,6 +37,9 @@ func _ready():
 	if not container_cards:
 		push_error("ContainerCards_Fase_3 não encontrada!")
 	
+	# ⭐⭐ PRIMEIRO: Esconder elementos do jogo antes de mostrar UI
+	esconder_elementos_jogo()
+	
 	# Configurar cada área com sua equação específica
 	configurar_areas_resposta()
 	# ⭐⭐ GARANTIR QUE CARDS ESTÃO INVISÍVEIS
@@ -44,12 +47,18 @@ func _ready():
 	
 	if ui_fase_3:
 		var cb = Callable(self, "iniciar_jogo")
-		if not ui_fase_3.botao_iniciar_pressed.is_connected(cb):
-			ui_fase_3.botao_iniciar_pressed.connect(cb)
+		if not ui_fase_3.is_connected("botao_iniciar_pressed", cb):
+			ui_fase_3.connect("botao_iniciar_pressed", cb)
+		print("✅ Conexão com UI_Fase_3 estabelecida")
+		# ⭐ Garantir que a UI esteja visível
+		if ui_fase_3:
+			ui_fase_3.mostrar_tela_inicial()
 	else:
-		print("ERRO: UI_Fase_3 não encontrada!")
+		print("⚠️ UI_Fase_3 não encontrada! Iniciando jogo automaticamente...")
+		if get_tree():
+			await get_tree().create_timer(0.5).timeout
+		iniciar_jogo()
 	
-	esconder_elementos_jogo()
 	conectar_areas_resposta()
 
 func configurar_areas_resposta():
@@ -88,12 +97,19 @@ func iniciar_jogo():
 	cartas_corretas_fixadas.clear()
 	cards_instanciados.clear()
 	
+	# ⭐⭐ PRIMEIRO: Esconder a UI antes de mostrar os elementos do jogo
+	if ui_fase_3:
+		ui_fase_3.mostrar_jogo()
+		print("✅ UI escondida")
+	
+	# Aguardar um frame para garantir que a UI foi escondida
+	if get_tree():
+		await get_tree().process_frame
+	
 	# ⭐ GARANTIR INVISIBILIDADE NOVAMENTE
 	garantir_cards_area_invisiveis()
 
-	if ui_fase_3:
-		ui_fase_3.mostrar_jogo()
-
+	# Agora mostrar os elementos do jogo
 	mostrar_elementos_jogo()
 	criar_cards_dinamicamente()
 	liberar_todas_cartas()

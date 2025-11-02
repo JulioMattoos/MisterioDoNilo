@@ -92,6 +92,12 @@ func _on_area_entered(area: Area2D):
 	
 	print("Objeto não reconhecido como card: ", area.name)
 
+# ⭐⭐ ADICIONADO: Método receber_card que o card tenta chamar
+func receber_card(card: CardResposta_2):
+	print("📥 Área recebeu card diretamente: ", card.name, " - Valor: ", card.get_valor())
+	var valor_card: int = card.get_valor()
+	_processar_resposta(valor_card, card)
+
 func _processar_resposta(_valor_card: int, _card: Object):
 	var correto_para_esta_area: bool = (_valor_card == resultado_esperado)
 	tem_card_correto = correto_para_esta_area

@@ -49,10 +49,10 @@ func _ready():
 	# ⭐⭐ GARANTIR QUE CARDS ESTÃO INVISÍVEIS
 	garantir_cards_area_invisiveis()
 	
-	if ui_fase_3_1 and ui_fase_3_1.has_signal("botao_iniciar_pressed"):
+	if ui_fase_3_1:
 		var cb = Callable(self, "iniciar_jogo")
-		if not ui_fase_3_1.botao_iniciar_pressed.is_connected(cb):
-			ui_fase_3_1.botao_iniciar_pressed.connect(cb)
+		if not ui_fase_3_1.is_connected("botao_iniciar_pressed", cb):
+			ui_fase_3_1.connect("botao_iniciar_pressed", cb)
 		print("✅ Conexão com UI_Fase_3_1 estabelecida")
 		esconder_elementos_jogo()
 	else:

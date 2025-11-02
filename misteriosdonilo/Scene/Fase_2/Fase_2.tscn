@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://bc11toql33v4v"]
+[gd_scene load_steps=16 format=3 uid="uid://bc11toql33v4v"]
 
 [ext_resource type="Script" uid="uid://dyll7j31aw0ti" path="res://scripts/Fase_2/fase_2.gd" id="1_n3b2c"]
 [ext_resource type="Texture2D" uid="uid://dutk7kavhe8eh" path="res://imagens/assets_Fase_2/2025-10-30_23h26_35.jpg" id="2_62mfm"]
@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://d07suu7725cy6" path="res://imagens/assets_Fase_1/9.jpg" id="11_ud4fh"]
 [ext_resource type="Script" uid="uid://dnj16rknwjes2" path="res://scripts/Fase_3/popup_dica.gd" id="12_popup"]
 [ext_resource type="Texture2D" uid="uid://bsmc8pi2ji2aw" path="res://Scene/Fase_2/concluido2.png" id="14_concluido"]
+[ext_resource type="PackedScene" uid="uid://df3fr12skxa4x" path="res://Scene/Fase_2/UI_Fase_2.tscn" id="15_ui_fase2"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_perg"]
 size = Vector2(83, 92)
@@ -29,6 +30,8 @@ position = Vector2(512, 384)
 position = Vector2(504, 387)
 scale = Vector2(1.05676, 1.17737)
 texture = ExtResource("2_62mfm")
+
+[node name="UI_Fase_2" parent="." instance=ExtResource("15_ui_fase2")]
 
 [node name="ContainerCards_Fase_2" type="Node2D" parent="."]
 position = Vector2(-400, 771)
@@ -117,8 +120,8 @@ visible = false
 script = ExtResource("12_popup")
 
 [node name="pergaminho" type="Sprite2D" parent="PopupDica"]
-position = Vector2(504.26172, 386.40045)
-scale = Vector2(1.5135376, 1.6063981)
+position = Vector2(504.262, 386.4)
+scale = Vector2(1.51354, 1.6064)
 texture = ExtResource("11_ud4fh")
 
 [node name="Area2D" type="Area2D" parent="PopupDica"]

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dutk7kavhe8eh"
-path="res://.godot/imported/2025-10-30_23h26_35.jpg-e27c8dcd6c8157ab6f4d10e7684bda58.ctex"
+uid="uid://qvq4vjmpj76p"
+path="res://.godot/imported/jogo.icon.png-95074da183ee075062d7532251afd10c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://imagens/assets_Fase_2/2025-10-30_23h26_35.jpg"
-dest_files=["res://.godot/imported/2025-10-30_23h26_35.jpg-e27c8dcd6c8157ab6f4d10e7684bda58.ctex"]
+source_file="res://web/jogo.icon.png"
+dest_files=["res://.godot/imported/jogo.icon.png-95074da183ee075062d7532251afd10c.ctex"]
 
 [params]
 

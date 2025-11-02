@@ -9,8 +9,8 @@ anchors_preset = 0
 script = ExtResource("1_ljqpy")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(511.00006, 382)
-scale = Vector2(1.4600003, 1.528)
+position = Vector2(511, 382)
+scale = Vector2(1.46, 1.528)
 texture = ExtResource("2_jclib")
 
 [node name="TelaInicial_Fase_1" type="Control" parent="."]

@@ -49,10 +49,10 @@ func _ready():
 	# ⭐⭐ GARANTIR QUE CARDS ESTÃO INVISÍVEIS
 	garantir_cards_area_invisiveis()
 	
-	if ui_fase_2 and ui_fase_2.has_signal("botao_iniciar_pressed"):
+	if ui_fase_2:
 		var cb = Callable(self, "iniciar_jogo")
-		if not ui_fase_2.botao_iniciar_pressed.is_connected(cb):
-			ui_fase_2.botao_iniciar_pressed.connect(cb)
+		if not ui_fase_2.is_connected("botao_iniciar_pressed", cb):
+			ui_fase_2.connect("botao_iniciar_pressed", cb)
 		print("✅ Conexão com UI_Fase_2 estabelecida")
 		esconder_elementos_jogo()
 	else:
@@ -86,6 +86,9 @@ func esconder_elementos_jogo():
 	for area in areas_resposta:
 		if area:
 			area.visible = false
+	
+	# ⭐⭐ NOVO: Esconder cards que estão diretamente na cena
+	esconder_cards_da_cena()
 
 func mostrar_elementos_jogo():
 	print("🟢 MOSTRANDO ELEMENTOS DO JOGO...")
@@ -113,12 +116,19 @@ func iniciar_jogo():
 	cartas_corretas_fixadas.clear()
 	cards_instanciados.clear()
 	
+	# ⭐⭐ PRIMEIRO: Esconder a UI antes de mostrar os elementos do jogo
+	if ui_fase_2:
+		ui_fase_2.mostrar_jogo()
+		print("✅ UI escondida")
+	
+	# Aguardar um frame para garantir que a UI foi escondida
+	if get_tree():
+		await get_tree().process_frame
+	
 	# ⭐ GARANTIR INVISIBILIDADE NOVAMENTE
 	garantir_cards_area_invisiveis()
 
-	if ui_fase_2:
-		ui_fase_2.mostrar_jogo()
-
+	# Agora mostrar os elementos do jogo
 	mostrar_elementos_jogo()
 	
 	# ⭐⭐ FASE 2: Usar cards que já existem na cena em vez de criar novos
@@ -484,3 +494,21 @@ func _esconder_cards_corretos():
 	if card3:
 		card3.visible = false
 		print("✅ Card_Correto_Fase_23 escondido")
+
+# ⭐⭐ NOVA FUNÇÃO: Esconder cards da cena diretamente
+func esconder_cards_da_cena():
+	print("🔒 Escondendo cards da cena...")
+	
+	var card_names = [
+		"Card28Resposta_Fase_2",
+		"Card40Resposta_Fase_2", 
+		"Card2Resposta_Fase_2",
+		"Card48Resposta_Fase_2",
+		"Card6Resposta_Fase_2"
+	]
+	
+	for card_name in card_names:
+		var card = get_node_or_null(card_name)
+		if card and card is CardResposta_2:
+			card.visible = false
+			print("✅ Card escondido: ", card_name)

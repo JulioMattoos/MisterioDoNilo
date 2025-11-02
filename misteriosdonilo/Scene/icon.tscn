@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://pndd5tf6kjbv" path="res://Scene/DialogueBox.tscn" id="8_h4brd"]
 [ext_resource type="Texture2D" uid="uid://bydfudoeaxjc8" path="res://Scene/Paser.png" id="8_npxfr"]
 [ext_resource type="Script" uid="uid://xaygdupxkb4b" path="res://Scene/paser.gd" id="8_x76k5"]
-[ext_resource type="PackedScene" uid="uid://cgdvg6tiw3k8o" path="res://scripts/Fase_3/UI_Fase_3.tscn" id="9_h4brd"]
+[ext_resource type="PackedScene" uid="uid://cgdvg6tiw3k8o" path="res://Scene/Fase_1/UI_Fase_1.tscn" id="9_h4brd"]
 [ext_resource type="PackedScene" uid="uid://bc11toql33v4v" path="res://Scene/Fase_2/Fase_2.tscn" id="10_fase2"]
 [ext_resource type="PackedScene" uid="uid://wo8mbjcofeh2" path="res://Scene/Fase_3.1/Fase_3.1.tscn" id="11_8vfqo"]
 [ext_resource type="Texture2D" uid="uid://dh8yuqindxx64" path="res://imagens/mapa/balao.png" id="11_balao"]
@@ -195,8 +195,8 @@ script = ExtResource("2_otv2m")
 shape = SubResource("RectangleShape2D_tr34o")
 
 [node name="SkinKhepre" type="AnimatedSprite2D" parent="Khepre"]
-position = Vector2(1.9073486e-06, 1.5258789e-05)
-scale = Vector2(0.14848486, 0.14848484)
+position = Vector2(1.90735e-06, 1.52588e-05)
+scale = Vector2(0.148485, 0.148485)
 sprite_frames = SubResource("SpriteFrames_rxos1")
 animation = &"walk_down"
 

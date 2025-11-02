@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://wo8mbjcofeh2"]
+[gd_scene load_steps=18 format=3 uid="uid://wo8mbjcofeh2"]
 
 [ext_resource type="Script" uid="uid://ckqjgv5d47s8" path="res://scripts/Fase_3_1/fase_3_1.gd" id="1_y7t5o"]
 [ext_resource type="Texture2D" uid="uid://b17armm0grbbw" path="res://imagens/assets_Fase_3/Fase_3.jpg" id="2_d47wv"]
@@ -14,6 +14,7 @@
 [ext_resource type="Script" uid="uid://dnj16rknwjes2" path="res://scripts/Fase_3/popup_dica.gd" id="10_yh6et"]
 [ext_resource type="Texture2D" uid="uid://d07suu7725cy6" path="res://imagens/assets_Fase_1/9.jpg" id="11_30wsk"]
 [ext_resource type="Texture2D" uid="uid://b4imshfrlkkgx" path="res://Scene/Fase_3.1/concluido3_1.png" id="12_y7t5o"]
+[ext_resource type="PackedScene" uid="uid://b8p0apqff75yt" path="res://Scene/Fase_3.1/UI_Fase_3_1.tscn" id="13_ui_fase3_1"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_perg"]
 size = Vector2(77.5, 84)
@@ -28,9 +29,11 @@ script = ExtResource("1_y7t5o")
 position = Vector2(512, 384)
 
 [node name="Background_Fase_3_1" type="Sprite2D" parent="."]
-position = Vector2(510.49997, 384.99997)
-scale = Vector2(1.4585714, 1.5319998)
+position = Vector2(510.5, 385)
+scale = Vector2(1.45857, 1.532)
 texture = ExtResource("2_d47wv")
+
+[node name="UI_Fase_3_1" parent="." instance=ExtResource("13_ui_fase3_1")]
 
 [node name="ContainerCards_Fase_3_1" type="Node2D" parent="."]
 position = Vector2(-400, 771)
@@ -121,8 +124,8 @@ visible = false
 script = ExtResource("10_yh6et")
 
 [node name="pergaminho" type="Sprite2D" parent="PopupDica"]
-position = Vector2(504.26172, 386.40045)
-scale = Vector2(1.5135376, 1.6063981)
+position = Vector2(504.262, 386.4)
+scale = Vector2(1.51354, 1.6064)
 texture = ExtResource("11_30wsk")
 
 [node name="Area2D" type="Area2D" parent="PopupDica"]

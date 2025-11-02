@@ -1,50 +1,47 @@
-[gd_scene load_steps=2 format=3 uid="uid://b8p0apqff75yt"]
+[gd_scene load_steps=3 format=3 uid="uid://b8p0apqff75yt"]
 
-[ext_resource type="Script" uid="uid://cuyp2brp2d58x" path="res://scripts/Fase_3/ui_fase_3.gd" id="1_a3axx"]
+[ext_resource type="Script" uid="uid://bwgyklss3aslf" path="res://scripts/Fase_3_1/ui_fase_3_1.gd" id="1_ui_fase3_1"]
+[ext_resource type="Texture2D" uid="uid://cdgyrijqi7b4f" path="res://imagens/mapa/ui_fase_3.png" id="2_ui_fase3_1"]
 
 [node name="UiFase3_1" type="Control"]
+z_index = 100
 layout_mode = 3
-anchors_preset = 0
-script = ExtResource("1_a3axx")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ui_fase3_1")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(512, 384)
-scale = Vector2(0.533333, 0.711111)
+z_index = 1
+position = Vector2(511, 382)
+scale = Vector2(1.46, 1.528)
+texture = ExtResource("2_ui_fase3_1")
 
 [node name="TelaInicial_Fase_3_1" type="Control" parent="."]
+z_index = 20
 layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -512.0
-offset_right = -512.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
-
-[node name="LabelTitulo_Fase_3_1" type="Label" parent="TelaInicial_Fase_3_1"]
-layout_mode = 0
-offset_left = 512.0
-offset_right = 1540.0
-offset_bottom = 145.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 36
-text = "FASE 3 
-"
-horizontal_alignment = 1
-vertical_alignment = 1
+grow_vertical = 2
 
 [node name="BotaoIniciar_Fase_3_1" type="Button" parent="TelaInicial_Fase_3_1"]
+z_index = 30
 clip_contents = true
 layout_mode = 0
-offset_left = 589.0
-offset_top = 668.0
-offset_right = 828.0
-offset_bottom = 749.0
+offset_left = 626.0
+offset_top = 660.0
+offset_right = 865.0
+offset_bottom = 741.0
 theme_override_font_sizes/font_size = 24
-text = "INICIAR JOGO"
+text = "INICIAR FASE"
 
 [node name="TelaVitoria_Fase_3_1" type="Control" parent="."]
 visible = false
+layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
@@ -67,4 +64,4 @@ offset_bottom = 410.0
 theme_override_font_sizes/font_size = 24
 text = "PRÓXIMA FASE"
 
-[connection signal="pressed" from="TelaInicial_Fase_3_1/BotaoIniciar_Fase_3_1" to="." method="_on_botao_iniciar_fase_1_pressed"]
+[connection signal="pressed" from="TelaInicial_Fase_3_1/BotaoIniciar_Fase_3_1" to="." method="_on_botao_iniciar_pressed"]

@@ -20,13 +20,17 @@ func _ready():
 	if posicao_original == Vector2.ZERO:
 		posicao_original = global_position
 	
+	# ⭐⭐ CORREÇÃO FASE 2: Garantir collision layers corretos desde o início
+	collision_layer = 8
+	collision_mask = 16
+	
 	# Conectar input_event - ✅ CORREÇÃO: sintaxe corrigida
 	if not input_event.is_connected(_on_input_event):
 		input_event.connect(_on_input_event)
 	
 	input_pickable = true
 	
-	print("✅ Card carregado - Nome: ", name, " - Valor: ", valor)
+	print("✅ Card carregado - Nome: ", name, " - Valor: ", valor, " | Layer: ", collision_layer, " | Mask: ", collision_mask)
 
 # ⭐ NOVO: Método para extrair valor do nome
 func _extrair_valor_do_nome():
@@ -97,10 +101,10 @@ func _processar_soltura():
 		if area is AreaResposta_2:
 			e_area_resposta = true
 			print("      ✅ Reconhecida como AreaResposta_2 (is)")
-		elif area.has_method("configurar") and "resultado_esperado" in area:
+		elif area.has_method("configurar") and area.has_method("receber_card"):
 			e_area_resposta = true
 			print("      ✅ Reconhecida como AreaResposta_2 (métodos)")
-		elif "AreaResposta" in area.name and "Fase2" in area.name:
+		elif "AreaResposta" in area.name and ("Fase2" in area.name or "Fase_2" in area.name):
 			e_area_resposta = true
 			print("      ✅ Reconhecida como AreaResposta_2 (nome)")
 		
@@ -149,21 +153,21 @@ func fixar_na_posicao_atual():
 	fixado = true
 	_arrastando = false
 	modulate = Color(0.7, 0.7, 0.7)
-	collision_layer = 0
-	collision_mask = 0
+	# ⭐⭐ Manter collision layers mesmo quando fixado, apenas desativar input
+	# collision_layer = 0
+	# collision_mask = 0
 	input_pickable = false
 	print("📌 Card ", name, " FIXADO! - Valor: ", valor)
 
 func liberar_card():
-	if not fixado:
-		return
-		
+	# ⭐⭐ CORREÇÃO: Sempre garantir collision layers corretos, mesmo se não estiver fixado
 	fixado = false
 	modulate = Color.WHITE
-	collision_layer = 1
-	collision_mask = 1
+	# ⭐⭐ CORREÇÃO FASE 2: Usar collision layers corretos (8 para cards, 16 para áreas)
+	collision_layer = 8
+	collision_mask = 16
 	input_pickable = true
-	print("🔓 Card ", name, " liberado - Valor: ", valor)
+	print("🔓 Card ", name, " liberado - Valor: ", valor, " | Layer: ", collision_layer, " | Mask: ", collision_mask)
 
 func _process(_delta: float):
 	if _arrastando:

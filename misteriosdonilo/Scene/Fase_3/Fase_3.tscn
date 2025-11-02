@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://bdupuuuef8p65"]
+[gd_scene load_steps=17 format=3 uid="uid://bdupuuuef8p65"]
 
 [ext_resource type="Script" uid="uid://b2t4inbhvb0np" path="res://scripts/Fase_3/fase_3.gd" id="1_6qwjd"]
 [ext_resource type="Texture2D" uid="uid://b17armm0grbbw" path="res://imagens/assets_Fase_3/Fase_3.jpg" id="2_ohdg3"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://card36fase3" path="res://Scene/Fase_3/Card36Resposta_Fase_3.tscn" id="10_card36"]
 [ext_resource type="PackedScene" uid="uid://card32fase3" path="res://Scene/Fase_3/Card32Resposta_Fase_3.tscn" id="11_card32"]
 [ext_resource type="PackedScene" uid="uid://veuveg8n8v5p" path="res://Scene/Fase_3/Card9Resposta_Fase_3.tscn" id="12_card9"]
+[ext_resource type="PackedScene" uid="uid://cgdvg6tiw3k8o" path="res://Scene/Fase_3/UI_Fase_3.tscn" id="13_ui_fase3"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_i3oin"]
 size = Vector2(88, 93.5)
@@ -30,6 +31,8 @@ position = Vector2(512, 384)
 position = Vector2(516.49994, 387.5)
 scale = Vector2(1.4842856, 1.546)
 texture = ExtResource("2_ohdg3")
+
+[node name="UI_Fase_3" parent="." instance=ExtResource("13_ui_fase3")]
 
 [node name="ContainerCards_Fase_3" type="Node2D" parent="."]
 position = Vector2(-408, 930)

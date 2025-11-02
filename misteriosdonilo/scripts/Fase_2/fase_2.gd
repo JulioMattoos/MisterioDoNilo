@@ -460,9 +460,13 @@ func _aguardar_tecla_espaco() -> void:
 
 # ⭐ FUNÇÃO: Salvar progresso
 func salvar_progresso():
-	if Engine.has_singleton("GameManager"):
-		GameManager.concluir_fase(2)
+	var gm = get_node_or_null("/root/GameManager")
+	if gm:
+		gm.concluir_fase(2)
 		print("✅ Fase 2 marcada como concluída (sessão atual)")
+		print("📊 GameManager.fase_2_completa = ", gm.fase_2_completa)
+	else:
+		print("❌ ERRO: GameManager não encontrado ao salvar progresso da Fase 2!")
 	
 func _esconder_cards_corretos():
 	print("🔧 Escondendo todos os cards corretos...")

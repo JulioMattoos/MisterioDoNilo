@@ -15,10 +15,12 @@ var dialogue_instance = null
 @export var dialogue_box_scene : PackedScene
 @export var next_level_scene : PackedScene
 @export var fase_2_scene : PackedScene  # ⭐⭐ Cena da fase 2
+@export var fase_3_scene : PackedScene  # ⭐⭐ Cena da fase 3
 
 # ⭐⭐ Posições do Paser: posição inicial e posição após fase 1
 var posicao_inicial: Vector2
 var posicao_fase_2: Vector2 = Vector2(265, -71)  # ⭐⭐ Posição após concluir fase 1
+var posicao_fase_3: Vector2 = Vector2(-194, 290)  # ⭐⭐ Posição após concluir fase 2
 
 # ⭐⭐ Referência ao texto "Aperte Espaço"
 var texto_aperte_espaco: Label = null
@@ -131,6 +133,7 @@ func show_dialogue():
 	# ⭐⭐ IMPORTANTE: Esconder os balões quando o DialogueBox aparecer
 	_esconder_balao_imediato()
 	_esconder_balao2_imediato()
+	_esconder_balao3_imediato()
 	
 	# ⭐⭐ Esconder balão acima do Paser e texto "Aperte Espaço" quando DialogueBox aparecer
 	if balao_fala_paser:
@@ -179,23 +182,50 @@ func change_scene():
 	var cena_para_carregar = null
 	var gm = get_node_or_null("/root/GameManager")
 	
+	print("=== 🎮 DECISÃO DE FASE ===")
 	if gm:
-		if gm.fase_concluida(1):
+		print("📊 Estado do GameManager:")
+		print("   fase_1_completa = ", gm.fase_1_completa)
+		print("   fase_2_completa = ", gm.fase_2_completa)
+		print("   fase_concluida(1) = ", gm.fase_concluida(1))
+		print("   fase_concluida(2) = ", gm.fase_concluida(2))
+		print("🔍 Verificando cenas disponíveis:")
+		print("   next_level_scene (Fase 1) = ", next_level_scene)
+		print("   fase_2_scene = ", fase_2_scene)
+		print("   fase_3_scene = ", fase_3_scene)
+		
+		if gm.fase_concluida(2):
+			# ⭐⭐⭐ Se fase 2 foi concluída, carregar fase 3
+			print("🎯 Fase 2 concluída detectada!")
+			if fase_3_scene != null:
+				cena_para_carregar = fase_3_scene.resource_path
+				print("✅ Carregando Fase 3 (fase 2 já foi concluída)")
+				print("   Caminho: ", cena_para_carregar)
+			else:
+				print("⚠️ Fase 3 não configurada! Carregando Fase 1 como fallback.")
+				cena_para_carregar = next_level_scene.resource_path if next_level_scene else null
+		elif gm.fase_concluida(1):
 			# Se fase 1 foi concluída, carregar fase 2
+			print("🎯 Fase 1 concluída detectada!")
 			if fase_2_scene != null:
 				cena_para_carregar = fase_2_scene.resource_path
 				print("✅ Carregando Fase 2 (fase 1 já foi concluída)")
+				print("   Caminho: ", cena_para_carregar)
 			else:
 				print("⚠️ Fase 2 não configurada! Carregando Fase 1 como fallback.")
 				cena_para_carregar = next_level_scene.resource_path if next_level_scene else null
 		else:
 			# Se fase 1 ainda não foi concluída, carregar fase 1
+			print("🎯 Nenhuma fase concluída detectada!")
 			cena_para_carregar = next_level_scene.resource_path if next_level_scene else null
 			print("✅ Carregando Fase 1 (ainda não concluída)")
 	else:
 		# Fallback: sempre carregar fase 1 se GameManager não estiver disponível
+		print("❌ GameManager não encontrado!")
 		cena_para_carregar = next_level_scene.resource_path if next_level_scene else null
 		print("⚠️ GameManager não encontrado. Carregando Fase 1 como padrão.")
+	
+	print("==========================")
 	
 	# Carregar a fase
 	var tree = get_tree()
@@ -257,10 +287,28 @@ func _criar_balao_fala_paser():
 		print("✅ Balão de fala encontrado e VISÍVEL!")
 
 func _verificar_e_mover_paser():
-	# Verificar se fase 1 foi concluída e mover Paser para nova posição
+	# Verificar se fase 1 ou 2 foram concluídas e mover Paser para nova posição
 	var gm = get_node_or_null("/root/GameManager")
 	if gm:
-		if gm.fase_concluida(1):
+		if gm.fase_concluida(2):
+			# ⭐⭐ Se fase 2 foi concluída, mover Paser para a posição da fase 3
+			global_position = posicao_fase_3
+			
+			# ⭐⭐ Garantir que balão de fala está visível (sempre visível)
+			if balao_fala_paser:
+				balao_fala_paser.visible = true
+				balao_fala_paser.show()
+				print("✅ Balão de fala visível acima do Paser!")
+			
+			# ⭐⭐ Mostrar e posicionar texto "Aperte Espaço" quando Paser estiver no novo local
+			_atualizar_posicao_texto()
+			if texto_aperte_espaco:
+				texto_aperte_espaco.visible = true
+				texto_aperte_espaco.show()
+				print("✅ Texto 'Aperte Espaço' visível!")
+			
+			print("✅ Paser movido para posição da Fase 3: ", posicao_fase_3)
+		elif gm.fase_concluida(1):
 			# Mover Paser para a posição da fase 2
 			global_position = posicao_fase_2
 			
@@ -400,3 +448,28 @@ func _esconder_balao2_imediato():
 				balao2.visible = false
 				balao2.hide()
 				print("✅ Balão 2 encontrado e escondido em CanvasLayer!")
+
+func _esconder_balao3_imediato():
+	# Tentar encontrar e esconder o balão 3 diretamente
+	var balao3 = get_node_or_null("../CanvasLayer/BalaoFala3")
+	if balao3:
+		balao3.visible = false
+		balao3.hide()
+		print("✅ Balão 3 escondido!")
+	
+	# Também tentar através da raiz da cena atual
+	var root = get_tree().current_scene
+	if root:
+		balao3 = root.get_node_or_null("CanvasLayer/BalaoFala3")
+		if balao3:
+			balao3.visible = false
+			balao3.hide()
+			print("✅ Balão 3 escondido através da raiz da cena!")
+		
+		# Procurar em todos os CanvasLayers na cena
+		for canvas in root.find_children("*", "CanvasLayer", true, false):
+			balao3 = canvas.get_node_or_null("BalaoFala3")
+			if balao3:
+				balao3.visible = false
+				balao3.hide()
+				print("✅ Balão 3 encontrado e escondido em CanvasLayer!")

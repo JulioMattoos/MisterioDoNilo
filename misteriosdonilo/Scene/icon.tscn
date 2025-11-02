@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://vah8xxmht0ap"]
+[gd_scene load_steps=21 format=3 uid="uid://vah8xxmht0ap"]
 
 [ext_resource type="Texture2D" uid="uid://w8eialwa5ldk" path="res://imagens/mapa/completo.png" id="1_h4brd"]
 [ext_resource type="Script" uid="uid://dvfbrpr0l1da4" path="res://scripts/khepre.gd" id="2_otv2m"]
@@ -11,9 +11,11 @@
 [ext_resource type="Script" uid="uid://xaygdupxkb4b" path="res://Scene/paser.gd" id="8_x76k5"]
 [ext_resource type="PackedScene" uid="uid://cgdvg6tiw3k8o" path="res://scripts/Fase_3/UI_Fase_3.tscn" id="9_h4brd"]
 [ext_resource type="PackedScene" uid="uid://bc11toql33v4v" path="res://Scene/Fase_2/Fase_2.tscn" id="10_fase2"]
+[ext_resource type="PackedScene" uid="uid://bdupuuuef8p65" path="res://Scene/Fase_3/Fase_3.tscn" id="11_8vfqo"]
 [ext_resource type="Texture2D" uid="uid://dh8yuqindxx64" path="res://imagens/mapa/balao.png" id="11_balao"]
 [ext_resource type="Texture2D" uid="uid://qli2no6x7bke" path="res://imagens/mapa/balao2.png" id="12_balao2"]
 [ext_resource type="Script" uid="uid://br284x10ol8ng" path="res://scripts/controlador_mapa.gd" id="13_controlador"]
+[ext_resource type="Texture2D" uid="uid://84c6nk0qr46y" path="res://imagens/mapa/balao3.png" id="15_6dron"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tr34o"]
 
@@ -193,8 +195,8 @@ script = ExtResource("2_otv2m")
 shape = SubResource("RectangleShape2D_tr34o")
 
 [node name="SkinKhepre" type="AnimatedSprite2D" parent="Khepre"]
-position = Vector2(-7.56979e-06, -3.57628e-06)
-scale = Vector2(0.2, 0.2)
+position = Vector2(1.9073486e-06, 1.5258789e-05)
+scale = Vector2(0.14848486, 0.14848484)
 sprite_frames = SubResource("SpriteFrames_rxos1")
 animation = &"walk_down"
 
@@ -206,6 +208,7 @@ script = ExtResource("8_x76k5")
 dialogue_box_scene = ExtResource("8_h4brd")
 next_level_scene = ExtResource("9_h4brd")
 fase_2_scene = ExtResource("10_fase2")
+fase_3_scene = ExtResource("11_8vfqo")
 
 [node name="Sprite2D" type="Sprite2D" parent="Paser"]
 position = Vector2(447.875, 349.875)
@@ -282,6 +285,18 @@ grow_vertical = 2
 texture = ExtResource("12_balao2")
 expand_mode = 1
 stretch_mode = 4
+
+[node name="BalaoFala3" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/BalaoFala3"]
+layout_mode = 0
+offset_left = 450.0
+offset_top = 28.0
+offset_right = 950.0
+offset_bottom = 528.0
+texture = ExtResource("15_6dron")
 
 [connection signal="body_entered" from="Paser/InteractionArea" to="Paser" method="_on_interaction_area_body_entered"]
 [connection signal="body_exited" from="Paser/InteractionArea" to="Paser" method="_on_interaction_area_body_exited"]

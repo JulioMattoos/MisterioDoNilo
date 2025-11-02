@@ -2,6 +2,7 @@ extends Node
 
 @onready var balao_fala = get_node_or_null("../CanvasLayer/BalaoFala")
 @onready var balao_fala2 = get_node_or_null("../CanvasLayer/BalaoFala2")
+@onready var balao_fala3 = get_node_or_null("../CanvasLayer/BalaoFala3")
 var dialogue_box_ja_foi_mostrado = false
 
 func _ready():
@@ -16,85 +17,116 @@ func _ready():
 		balao_fala = get_node_or_null("../CanvasLayer/BalaoFala")
 	if not balao_fala2:
 		balao_fala2 = get_node_or_null("../CanvasLayer/BalaoFala2")
+	if not balao_fala3:
+		balao_fala3 = get_node_or_null("../CanvasLayer/BalaoFala3")
 	
 	# ⭐⭐ Verificar se o DialogueBox já foi mostrado nesta sessão (usar GameManager)
 	var dialogue_box_ja_mostrado = false
 	var fase_1_completa = false
+	var fase_2_completa = false
 	var gm = get_node_or_null("/root/GameManager")
 	
 	if gm:
 		dialogue_box_ja_mostrado = gm.dialogue_box_mostrado
 		fase_1_completa = gm.fase_concluida(1)
+		fase_2_completa = gm.fase_concluida(2)
 		print("📊 GameManager encontrado!")
 		print("   dialogue_box_mostrado = ", dialogue_box_ja_mostrado)
 		print("   fase_1_completa = ", fase_1_completa)
-		print("   Condição para mostrar balão 2: fase_1_completa=", fase_1_completa, " AND not dialogue_box_ja_mostrado=", not dialogue_box_ja_mostrado)
+		print("   fase_2_completa = ", fase_2_completa)
 	else:
 		print("⚠️ GameManager não encontrado. Assumindo que DialogueBox não foi mostrado.")
 	
-	# Garantir que o balão seja escondido também através de busca direta na árvore
-	_verificar_e_esconder_balao_se_necessario(dialogue_box_ja_mostrado)
+	# ⭐⭐⭐ GERENCIAR VISIBILIDADE DOS BALÕES BASEADO NO PROGRESSO
+	# Prioridade: Fase 2 > Fase 1 > Inicial
 	
-	# ⭐⭐ Gerenciar visibilidade do primeiro balão
-	if balao_fala:
-		if dialogue_box_ja_mostrado:
-			# Se o DialogueBox já foi mostrado, esconder o balão permanentemente
+	if fase_2_completa:
+		# ⭐⭐⭐ FASE 2 CONCLUÍDA: Mostrar apenas balão 3
+		print("🎯 Fase 2 concluída - Mostrando balão 3")
+		
+		# Esconder balões 1 e 2
+		if balao_fala:
 			balao_fala.visible = false
 			balao_fala.hide()
-			print("✅ Balão 1 escondido: DialogueBox já foi mostrado nesta sessão")
-		else:
-			# Se ainda não foi mostrado, mostrar o balão
-			balao_fala.visible = true
-			balao_fala.show()
-			print("✅ Balão 1 visível: DialogueBox ainda não foi mostrado")
-	else:
-		print("❌ ERRO: Balão de fala 1 não encontrado!")
-	
-	# ⭐⭐ Gerenciar visibilidade do segundo balão (só aparece após fase 1 concluída)
-	if balao_fala2:
-		print("🔍 Verificando condições para balão 2:")
-		print("   fase_1_completa = ", fase_1_completa)
-		print("   dialogue_box_ja_mostrado = ", dialogue_box_ja_mostrado)
-		print("   Condição (fase_1_completa AND not dialogue_box_ja_mostrado) = ", fase_1_completa and not dialogue_box_ja_mostrado)
+			print("✅ Balão 1 escondido (Fase 2 concluída)")
 		
-		# ⭐⭐ IMPORTANTE: Se fase 1 foi concluída, mostrar balão 2 sempre
-		# Mas esconder se dialogue_box foi mostrado após concluir fase 1
-		if fase_1_completa:
-			# Se fase 1 foi concluída, mostrar balão 2
-			# O balão só será escondido quando o DialogueBox aparecer novamente (ao interagir com Paser no novo local)
-			balao_fala2.visible = true
-			balao_fala2.show()
-			balao_fala2.set_visible(true)
-			print("✅ Balão 2 VISÍVEL: Fase 1 concluída!")
-			print("   visible = ", balao_fala2.visible)
-			print("   dialogue_box_ja_mostrado = ", dialogue_box_ja_mostrado, " (será escondido se DialogueBox aparecer)")
-		else:
-			# Esconder balão 2 se fase 1 ainda não foi concluída
+		if balao_fala2:
 			balao_fala2.visible = false
 			balao_fala2.hide()
-			print("✅ Balão 2 escondido: Fase 1 ainda não concluída")
-	else:
-		print("❌ ERRO: Balão de fala 2 não encontrado!")
-		# Tentar buscar novamente
-		balao_fala2 = get_node_or_null("../CanvasLayer/BalaoFala2")
+			print("✅ Balão 2 escondido (Fase 2 concluída)")
+		
+		# Mostrar balão 3
+		if balao_fala3:
+			balao_fala3.visible = true
+			balao_fala3.show()
+			print("✅ Balão 3 VISÍVEL (Fase 2 concluída)")
+		else:
+			print("❌ ERRO: Balão 3 não encontrado!")
+	
+	elif fase_1_completa:
+		# ⭐⭐ FASE 1 CONCLUÍDA: Mostrar apenas balão 2
+		print("🎯 Fase 1 concluída - Mostrando balão 2")
+		
+		# Esconder balões 1 e 3
+		if balao_fala:
+			balao_fala.visible = false
+			balao_fala.hide()
+			print("✅ Balão 1 escondido (Fase 1 concluída)")
+		
+		if balao_fala3:
+			balao_fala3.visible = false
+			balao_fala3.hide()
+			print("✅ Balão 3 escondido (apenas Fase 1 concluída)")
+		
+		# Mostrar balão 2
 		if balao_fala2:
-			print("✅ Balão 2 encontrado via busca direta!")
-			# Repetir lógica de visibilidade
-			if fase_1_completa and not dialogue_box_ja_mostrado:
-				balao_fala2.visible = true
-				balao_fala2.show()
-				print("✅ Balão 2 VISÍVEL (após busca): Fase 1 concluída!")
+			balao_fala2.visible = true
+			balao_fala2.show()
+			print("✅ Balão 2 VISÍVEL (Fase 1 concluída)")
+		else:
+			print("❌ ERRO: Balão 2 não encontrado!")
+	
+	else:
+		# ⭐ NENHUMA FASE CONCLUÍDA: Mostrar apenas balão 1
+		print("🎯 Nenhuma fase concluída - Mostrando balão 1")
+		
+		# Esconder balões 2 e 3
+		if balao_fala2:
+			balao_fala2.visible = false
+			balao_fala2.hide()
+			print("✅ Balão 2 escondido (nenhuma fase concluída)")
+		
+		if balao_fala3:
+			balao_fala3.visible = false
+			balao_fala3.hide()
+			print("✅ Balão 3 escondido (nenhuma fase concluída)")
+		
+		# Mostrar balão 1 se DialogueBox não foi mostrado
+		if balao_fala:
+			if dialogue_box_ja_mostrado:
+				balao_fala.visible = false
+				balao_fala.hide()
+				print("✅ Balão 1 escondido: DialogueBox já foi mostrado")
+			else:
+				balao_fala.visible = true
+				balao_fala.show()
+				print("✅ Balão 1 visível: DialogueBox ainda não foi mostrado")
+		else:
+			print("❌ ERRO: Balão 1 não encontrado!")
 	
 	# Salvar o estado localmente
 	dialogue_box_ja_foi_mostrado = dialogue_box_ja_mostrado
 	
-	# Verificar novamente após mais um frame (caso o balão tenha sido recriado)
+	# Verificar novamente após alguns frames
 	await get_tree().process_frame
-	_verificar_e_esconder_balao_se_necessario(dialogue_box_ja_mostrado)
+	await get_tree().process_frame
 	
-	# ⭐⭐ Verificar novamente o balão 2 após mais um frame para garantir visibilidade
-	await get_tree().process_frame
-	if balao_fala2 and fase_1_completa:
+	# Re-aplicar visibilidade para garantir
+	if fase_2_completa and balao_fala3:
+		balao_fala3.visible = true
+		balao_fala3.show()
+		print("✅ Balão 3 verificado novamente e mantido visível!")
+	elif fase_1_completa and balao_fala2:
 		balao_fala2.visible = true
 		balao_fala2.show()
 		print("✅ Balão 2 verificado novamente e mantido visível!")

@@ -1,9 +1,0 @@
-[gd_scene load_steps=3 format=3 uid="uid://dmdhc872he75o"]
-
-[ext_resource type="PackedScene" uid="uid://sxmkhpirinpp" path="res://Caracters/main_body.tscn" id="1_anpkp"]
-[ext_resource type="Texture2D" uid="uid://bo4j7tua6ajqt" path="res://Caracters/Neferti/Neferti/Neferti_Base.png" id="2_ce006"]
-
-[node name="Neferti" instance=ExtResource("1_anpkp")]
-
-[node name="Textura" parent="." index="1"]
-texture = ExtResource("2_ce006")

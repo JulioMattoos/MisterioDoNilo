@@ -1,21 +1,21 @@
 [gd_scene load_steps=4 format=3 uid="uid://veuveg8n8v5p"]
 
-[ext_resource type="Script" uid="uid://50xd6b7no13d" path="res://scripts/Fase_1/card_resposta_fase_1.gd" id="1_4wm1d"]
-[ext_resource type="Texture2D" uid="uid://bkokkqtowblma" path="res://imagens/cards_Fase_1/pg1_a2.png" id="2_4wm1d"]
+[ext_resource type="Script" path="res://scripts/Fase_3/card_resposta_fase_3.gd" id="1_card9"]
+[ext_resource type="Texture2D" path="res://imagens/cards_Fase_3/pg3-a5.png" id="2_card9"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_84waf"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_card9"]
 size = Vector2(155, 153)
 
-[node name="CardResposta_Fase_1" type="Area2D"]
-script = ExtResource("1_4wm1d")
+[node name="Card9Resposta_Fase_3" type="Area2D"]
+script = ExtResource("1_card9")
 
-[node name="SpriteCard_Fase_1" type="Sprite2D" parent="."]
+[node name="SpriteCard_Fase_3" type="Sprite2D" parent="."]
 scale = Vector2(0.05, 0.05)
-texture = ExtResource("2_4wm1d")
+texture = ExtResource("2_card9")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-0.5, 0.5)
 scale = Vector2(0.53, 0.53)
-shape = SubResource("RectangleShape2D_84waf")
+shape = SubResource("RectangleShape2D_card9")
 
 [connection signal="input_event" from="." to="." method="_on_input_event"]

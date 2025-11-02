@@ -4,15 +4,14 @@
 [ext_resource type="Texture2D" uid="uid://b58p4xy2ru508" path="res://imagens/assets_Fase_3/Fase_3.jpeg" id="2_6qwjd"]
 [ext_resource type="PackedScene" uid="uid://cvqhkirudawdw" path="res://Scene/Fase_3/AreaResposta_Fase_3.tscn" id="3_pvynm"]
 [ext_resource type="Script" uid="uid://dr80fpjlnfh1r" path="res://scripts/Fase_3/area_resposta_fase_3.gd" id="4_ohdg3"]
-[ext_resource type="PackedScene" uid="uid://b7gajvccibqf4" path="res://Scene/Fase_3/Card5Resposta_Fase_3.tscn" id="6_i3oin"]
 [ext_resource type="Script" uid="uid://n8hbopem8bmh" path="res://scripts/Fase_3/card_resposta_fase_3.gd" id="6_jh57f"]
 [ext_resource type="Script" uid="uid://dnj16rknwjes2" path="res://Scene/Fase_3/popup_dica.gd" id="10_res67"]
 [ext_resource type="Texture2D" uid="uid://dhptgd30sw4ia" path="res://imagens/assets_Fase_1/9.png" id="11_gnrma"]
-[ext_resource type="PackedScene" uid="uid://c1li540ntoj6d" path="res://Scene/Fase_1/Card28Resposta_Fase_1.tscn" id="11_ubv32"]
-[ext_resource type="PackedScene" uid="uid://veuveg8n8v5p" path="res://Scene/Fase_1/Card9Resposta_Fase_1.tscn" id="12_kckyr"]
-[ext_resource type="PackedScene" uid="uid://b7gajvccibqf4" path="res://Scene/Fase_1/Card5Resposta_Fase_1.tscn" id="13_jh57f"]
-[ext_resource type="PackedScene" uid="uid://bcr20bxec5srd" path="res://Scene/Fase_1/Card3Resposta_Fase_1.tscn" id="14_btb6q"]
-[ext_resource type="PackedScene" uid="uid://rdmdk150aurm" path="res://Scene/Fase_1/Card2Resposta_Fase_1.tscn" id="15_ftp3i"]
+[ext_resource type="PackedScene" uid="uid://card8fase3" path="res://Scene/Fase_3/Card8Resposta_Fase_3.tscn" id="8_card8"]
+[ext_resource type="PackedScene" uid="uid://card12fase3" path="res://Scene/Fase_3/Card12Resposta_Fase_3.tscn" id="9_card12"]
+[ext_resource type="PackedScene" uid="uid://card36fase3" path="res://Scene/Fase_3/Card36Resposta_Fase_3.tscn" id="10_card36"]
+[ext_resource type="PackedScene" uid="uid://card32fase3" path="res://Scene/Fase_3/Card32Resposta_Fase_3.tscn" id="11_card32"]
+[ext_resource type="PackedScene" uid="uid://veuveg8n8v5p" path="res://Scene/Fase_3/Card9Resposta_Fase_3.tscn" id="12_card9"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_i3oin"]
 size = Vector2(110, 127)
@@ -71,35 +70,35 @@ visible = false
 position = Vector2(74, 46)
 shape = SubResource("RectangleShape2D_rsbfn")
 
-[node name="Card28Resposta_Fase_3" parent="." instance=ExtResource("11_ubv32")]
+[node name="Card8Resposta_Fase_3" parent="." instance=ExtResource("8_card8")]
 position = Vector2(201, 667)
 script = ExtResource("6_jh57f")
 
-[node name="Card9Resposta_Fase_3" parent="." instance=ExtResource("12_kckyr")]
+[node name="Card12Resposta_Fase_3" parent="." instance=ExtResource("9_card12")]
 position = Vector2(357, 668)
 script = ExtResource("6_jh57f")
 
-[node name="Card3Resposta_Fase_3" parent="." instance=ExtResource("14_btb6q")]
-position = Vector2(660, 667)
-script = ExtResource("6_jh57f")
-
-[node name="Card2Resposta_Fase_3" parent="." instance=ExtResource("15_ftp3i")]
-position = Vector2(804, 666)
-script = ExtResource("6_jh57f")
-
-[node name="Card5Resposta_Fase_3" parent="." instance=ExtResource("6_i3oin")]
+[node name="Card36Resposta_Fase_3" parent="." instance=ExtResource("10_card36")]
 position = Vector2(510, 665)
 script = ExtResource("6_jh57f")
 
-[node name="Card_Correto_Fase_1" parent="." instance=ExtResource("11_ubv32")]
+[node name="Card32Resposta_Fase_3" parent="." instance=ExtResource("11_card32")]
+position = Vector2(660, 667)
+script = ExtResource("6_jh57f")
+
+[node name="Card9Resposta_Fase_3" parent="." instance=ExtResource("12_card9")]
+position = Vector2(804, 666)
+script = ExtResource("6_jh57f")
+
+[node name="Card_Correto_Fase_1" parent="." instance=ExtResource("9_card12")]
 position = Vector2(874, 179)
 script = ExtResource("6_jh57f")
 
-[node name="Card_Correto_Fase_2" parent="." instance=ExtResource("12_kckyr")]
+[node name="Card_Correto_Fase_2" parent="." instance=ExtResource("12_card9")]
 position = Vector2(875, 301)
 script = ExtResource("6_jh57f")
 
-[node name="Card_Correto_Fase_3" parent="." instance=ExtResource("13_jh57f")]
+[node name="Card_Correto_Fase_3" parent="." instance=ExtResource("11_card32")]
 position = Vector2(877, 435)
 collision_mask = 0
 script = ExtResource("6_jh57f")

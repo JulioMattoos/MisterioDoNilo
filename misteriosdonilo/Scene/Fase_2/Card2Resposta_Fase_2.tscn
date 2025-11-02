@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://dgvskhj5ju57u"]
 
-[ext_resource type="Script" path="res://scripts/Fase_2/card_resposta_fase_2.gd" id="1_hg7r4"]
+[ext_resource type="Script" uid="uid://n8hbopem8bmh" path="res://scripts/Fase_2/card_resposta_fase_2.gd" id="1_hg7r4"]
 [ext_resource type="Texture2D" uid="uid://db465vb5p3vq5" path="res://imagens/cards_Fase_1/pg1_a5.png" id="2_xc3lp"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_84waf"]

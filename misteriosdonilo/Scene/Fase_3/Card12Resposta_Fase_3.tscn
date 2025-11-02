@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://card12fase3"]
 
-[ext_resource type="Script" path="res://scripts/Fase_3/card_resposta_fase_3.gd" id="1_card12"]
-[ext_resource type="Texture2D" path="res://imagens/cards_Fase_3/pg3-a2.png" id="2_card12"]
+[ext_resource type="Script" uid="uid://n8hbopem8bmh" path="res://scripts/Fase_3/card_resposta_fase_3.gd" id="1_card12"]
+[ext_resource type="Texture2D" uid="uid://cnk7twbqvmcip" path="res://imagens/cards_Fase_3_1/pg3-a2.png" id="2_card12"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_card12"]
 size = Vector2(155, 153)

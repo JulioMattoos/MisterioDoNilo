@@ -1,0 +1,104 @@
+[gd_scene load_steps=15 format=3 uid="uid://bdupuuuef8p65"]
+
+[ext_resource type="Script" uid="uid://b2t4inbhvb0np" path="res://scripts/Fase_3/fase_3.gd" id="1_6qwjd"]
+[ext_resource type="Texture2D" uid="uid://b58p4xy2ru508" path="res://imagens/assets_Fase_3/Fase_3.jpeg" id="2_6qwjd"]
+[ext_resource type="PackedScene" uid="uid://cvqhkirudawdw" path="res://Scene/Fase_1/AreaResposta_Fase_1.tscn" id="3_pvynm"]
+[ext_resource type="Script" uid="uid://dr80fpjlnfh1r" path="res://scripts/Fase_3/area_resposta_fase_3.gd" id="4_ohdg3"]
+[ext_resource type="Script" uid="uid://n8hbopem8bmh" path="res://scripts/Fase_3/card_resposta_fase_3.gd" id="6_jh57f"]
+[ext_resource type="Script" uid="uid://dnj16rknwjes2" path="res://Scene/Fase_1/popup_dica.gd" id="10_res67"]
+[ext_resource type="Texture2D" uid="uid://dhptgd30sw4ia" path="res://imagens/assets_Fase_1/9.png" id="11_gnrma"]
+[ext_resource type="PackedScene" uid="uid://c1li540ntoj6d" path="res://scripts/Fase_3/Card28Resposta_Fase_3.tscn" id="11_ubv32"]
+[ext_resource type="PackedScene" uid="uid://veuveg8n8v5p" path="res://scripts/Fase_3/Card9Resposta_Fase_3.tscn" id="12_kckyr"]
+[ext_resource type="PackedScene" uid="uid://b7gajvccibqf4" path="res://Scene/Fase_1/Card5Resposta_Fase_1.tscn" id="13_jh57f"]
+[ext_resource type="PackedScene" uid="uid://bcr20bxec5srd" path="res://scripts/Fase_3/Card3Resposta_Fase_3.tscn" id="14_btb6q"]
+[ext_resource type="PackedScene" uid="uid://rdmdk150aurm" path="res://Scene/Fase_1/Card2Resposta_Fase_1.tscn" id="15_ftp3i"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_i3oin"]
+size = Vector2(110, 127)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rsbfn"]
+size = Vector2(112, 60)
+
+[node name="Fase_3" type="Node2D"]
+position = Vector2(3, 0)
+script = ExtResource("1_6qwjd")
+
+[node name="Camera_Fase_3" type="Camera2D" parent="."]
+position = Vector2(512, 384)
+
+[node name="Background_Fase_3" type="Sprite2D" parent="."]
+position = Vector2(510, 384)
+scale = Vector2(0.987342, 1.04384)
+texture = ExtResource("2_6qwjd")
+
+[node name="ContainerCards_Fase_3" type="Node2D" parent="."]
+position = Vector2(-408, 930)
+
+[node name="AreaResposta2Fase3" parent="." instance=ExtResource("3_pvynm")]
+position = Vector2(369, -60)
+collision_layer = 2
+script = ExtResource("4_ohdg3")
+
+[node name="AreaResposta1Fase3" parent="." instance=ExtResource("3_pvynm")]
+position = Vector2(372, -183)
+collision_layer = 2
+script = ExtResource("4_ohdg3")
+
+[node name="AreaResposta3Fase3" parent="." instance=ExtResource("3_pvynm")]
+position = Vector2(369, 70)
+collision_layer = 2
+script = ExtResource("4_ohdg3")
+
+[node name="AreaPergaminho" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AreaPergaminho"]
+position = Vector2(928, 630)
+shape = SubResource("RectangleShape2D_i3oin")
+
+[node name="PopupDica" type="CanvasLayer" parent="."]
+script = ExtResource("10_res67")
+
+[node name="pergaminho" type="Sprite2D" parent="PopupDica"]
+position = Vector2(1659, 373)
+scale = Vector2(0.532552, 0.710185)
+texture = ExtResource("11_gnrma")
+
+[node name="Area2D" type="Area2D" parent="PopupDica"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PopupDica/Area2D"]
+visible = false
+position = Vector2(74, 46)
+shape = SubResource("RectangleShape2D_rsbfn")
+
+[node name="Card28Resposta_Fase_3" parent="." instance=ExtResource("11_ubv32")]
+position = Vector2(201, 667)
+script = ExtResource("6_jh57f")
+
+[node name="Card9Resposta_Fase_3" parent="." instance=ExtResource("12_kckyr")]
+position = Vector2(357, 668)
+script = ExtResource("6_jh57f")
+
+[node name="Card3Resposta_Fase_3" parent="." instance=ExtResource("14_btb6q")]
+position = Vector2(660, 667)
+script = ExtResource("6_jh57f")
+
+[node name="Card2Resposta_Fase_3" parent="." instance=ExtResource("15_ftp3i")]
+position = Vector2(804, 666)
+script = ExtResource("6_jh57f")
+
+[node name="Card5Resposta_Fase_3" parent="." instance=ExtResource("13_jh57f")]
+position = Vector2(510, 665)
+script = ExtResource("6_jh57f")
+
+[node name="Card_Correto_Fase_1" parent="." instance=ExtResource("11_ubv32")]
+position = Vector2(874, 179)
+script = ExtResource("6_jh57f")
+
+[node name="Card_Correto_Fase_2" parent="." instance=ExtResource("12_kckyr")]
+position = Vector2(875, 301)
+script = ExtResource("6_jh57f")
+
+[node name="Card_Correto_Fase_3" parent="." instance=ExtResource("13_jh57f")]
+position = Vector2(877, 435)
+collision_mask = 0
+script = ExtResource("6_jh57f")

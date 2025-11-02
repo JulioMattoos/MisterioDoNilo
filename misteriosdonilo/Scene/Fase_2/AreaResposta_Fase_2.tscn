@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://bg6v6vkpja07x"]
+
+[ext_resource type="Script" uid="uid://dr80fpjlnfh1r" path="res://scripts/Fase_2/area_resposta_fase_2.gd" id="1_mms3q"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6ahln"]
+size = Vector2(31, 31)
+
+[node name="AreaRespostaFase2" type="Area2D" groups=["area_resposta"]]
+script = ExtResource("1_mms3q")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 0)
+scale = Vector2(3, 3)
+shape = SubResource("RectangleShape2D_6ahln")
+
+[node name="CardCorretoSprite" type="Sprite2D" parent="."]
+position = Vector2(0, 0)

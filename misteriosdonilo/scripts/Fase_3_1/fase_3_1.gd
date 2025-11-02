@@ -417,10 +417,10 @@ func mostrar_tela_final():
 	# Aguarda o jogador apertar Espaço
 	await _aguardar_tecla_espaco()
 	
-	# Troca de cena para o mapa principal
-	print("🗺️ Retornando ao mapa principal...")
+	# Troca de cena para o Rito Final
+	print("🎬 Iniciando Rito Final...")
 	if get_tree():
-		get_tree().change_scene_to_file("res://Scene/icon.tscn")
+		get_tree().change_scene_to_file("res://Scene/RitoFinal.tscn")
 	else:
 		push_error("❌ Erro: get_tree() retornou null ao tentar mudar de cena!")
 

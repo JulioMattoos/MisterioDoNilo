@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://dyrfqwevmyhb3" path="res://Caracters/Khepre/Khepre/Khepre_RightWalk.png" id="5_4rraq"]
 [ext_resource type="Texture2D" uid="uid://bygpu60u1erho" path="res://Caracters/Khepre/Khepre/Khepre_RightWalk1.png" id="6_up0aw"]
 [ext_resource type="Script" uid="uid://xaygdupxkb4b" path="res://Scene/paser.gd" id="7_0vn6r"]
-[ext_resource type="PackedScene" uid="uid://bdupuuuef8p65" path="res://Scene/Fase_3/Fase_3.tscn" id="8_0k1jd"]
+[ext_resource type="PackedScene" uid="uid://bdupuuuef8p65" path="res://scripts/Fase_3/Fase_3.tscn" id="8_0k1jd"]
 [ext_resource type="Texture2D" uid="uid://bydfudoeaxjc8" path="res://Scene/Paser.png" id="8_3bwm8"]
 [ext_resource type="Texture2D" uid="uid://dubtx88e17q4x" path="res://Caracters/Paser/Paser/DialogoPaser.png" id="9_44vhy"]
 
@@ -236,15 +236,3 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("9_44vhy")
 expand_mode = 1
-
-[node name="Label" type="Label" parent="DialogueBox/TextureRect"]
-modulate = Color(0.817576, 0.229956, 0.276069, 1)
-self_modulate = Color(0.921569, 0, 0, 1)
-custom_minimum_size = Vector2(10, 10)
-layout_mode = 0
-offset_left = 115.0
-offset_top = 185.0
-offset_right = 333.0
-offset_bottom = 208.0
-scale = Vector2(0.3, 0.3)
-text = "Aperte espaço para iniciar!!"

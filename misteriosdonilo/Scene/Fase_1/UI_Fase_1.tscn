@@ -22,21 +22,9 @@ offset_left = -512.0
 offset_right = -512.0
 grow_horizontal = 2
 
-[node name="LabelTitulo_Fase_1" type="Label" parent="TelaInicial_Fase_1"]
-layout_mode = 2
-offset_left = 512.0
-offset_right = 1540.0
-offset_bottom = 145.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 36
-text = "FASE 1 - ADIÇÃO E SUBTRAÇÃO"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="BotaoIniciar_Fase_1" type="Button" parent="TelaInicial_Fase_1"]
 clip_contents = true
-layout_mode = 2
+layout_mode = 0
 offset_left = 589.0
 offset_top = 668.0
 offset_right = 828.0
@@ -44,9 +32,13 @@ offset_bottom = 749.0
 theme_override_font_sizes/font_size = 24
 text = "INICIAR JOGO"
 
+[node name="TextureRect" type="TextureRect" parent="TelaInicial_Fase_1"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
 [node name="TelaVitoria_Fase_1" type="Control" parent="."]
 visible = false
-layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0

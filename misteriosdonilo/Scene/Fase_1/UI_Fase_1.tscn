@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://cgdvg6tiw3k8o"]
 
 [ext_resource type="Script" uid="uid://m6kb522vrckk" path="res://scripts/Fase_1/ui_fase_1.gd" id="1_ljqpy"]
-[ext_resource type="Texture2D" uid="uid://cbt7cbnshn10f" path="res://imagens/assets_Fase_1/3.png" id="2_jclib"]
+[ext_resource type="Texture2D" uid="uid://dnw0lr7hat022" path="res://imagens/mapa/ui_fase_1.png" id="2_jclib"]
 
 [node name="UiFase1" type="Control"]
 layout_mode = 3
@@ -9,8 +9,8 @@ anchors_preset = 0
 script = ExtResource("1_ljqpy")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(512, 384)
-scale = Vector2(0.533333, 0.711111)
+position = Vector2(511.00006, 382)
+scale = Vector2(1.4600003, 1.528)
 texture = ExtResource("2_jclib")
 
 [node name="TelaInicial_Fase_1" type="Control" parent="."]
@@ -25,12 +25,12 @@ grow_horizontal = 2
 [node name="BotaoIniciar_Fase_1" type="Button" parent="TelaInicial_Fase_1"]
 clip_contents = true
 layout_mode = 0
-offset_left = 589.0
-offset_top = 668.0
-offset_right = 828.0
-offset_bottom = 749.0
+offset_left = 626.0
+offset_top = 660.0
+offset_right = 865.0
+offset_bottom = 741.0
 theme_override_font_sizes/font_size = 24
-text = "INICIAR JOGO"
+text = "INICIAR FASE"
 
 [node name="TextureRect" type="TextureRect" parent="TelaInicial_Fase_1"]
 layout_mode = 0

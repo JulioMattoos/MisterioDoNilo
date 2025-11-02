@@ -13,12 +13,18 @@ var card_correto_sprite: Sprite2D
 var ultimo_card_recebido: int = -1
 
 func _ready():
+	# Configurar detecção de áreas
+	monitoring = true
+	monitorable = true
+	
 	# Conectar sinais
 	if not is_connected("area_entered", _on_area_entered):
 		connect("area_entered", _on_area_entered)
 	
 	# ⭐ INICIALIZAR SPRITE DO CARD CORRETO
 	_inicializar_sprite_card_correto()
+	
+	print("✅ AreaResposta_2 inicializada: ", name, " | Monitoring: ", monitoring, " | Monitorable: ", monitorable)
 	
 	if resultado_esperado == 0 and expressao.is_empty():
 		push_warning("AreaResposta_2 não foi configurada corretamente - use a função configurar()")
@@ -77,9 +83,14 @@ func configurar(_resultado_esperado: int, _expressao: String):
 
 func _on_area_entered(area: Area2D):
 	print("=== ÁREA DETECTOU ENTRADA ===")
+	print("   Área que detectou: ", name)
+	print("   Objeto que entrou: ", area.name)
+	print("   Classe do objeto: ", area.get_class())
+	print("   Script do objeto: ", area.get_script())
 	
 	# Verificar se é um CardResposta_2
 	if area is CardResposta_2:
+		print("   ✅ Reconhecido como CardResposta_2!")
 		var card: CardResposta_2 = area
 		
 		if not card.has_method("get_valor"):
@@ -87,10 +98,20 @@ func _on_area_entered(area: Area2D):
 			return
 		
 		var valor_card: int = card.get_valor()
+		print("   📊 Valor do card: ", valor_card)
 		_processar_resposta(valor_card, card)
 		return
 	
-	print("Objeto não reconhecido como card: ", area.name)
+	# Verificação alternativa por script
+	if area.get_script() and area.get_script().get_global_name() == "CardResposta_2":
+		print("   ✅ Reconhecido como CardResposta_2 (por script)!")
+		if area.has_method("get_valor"):
+			var valor_card: int = area.get_valor()
+			print("   📊 Valor do card: ", valor_card)
+			_processar_resposta(valor_card, area)
+			return
+	
+	print("   ❌ Objeto não reconhecido como card: ", area.name)
 
 func _processar_resposta(_valor_card: int, _card: Object):
 	var correto_para_esta_area: bool = (_valor_card == resultado_esperado)

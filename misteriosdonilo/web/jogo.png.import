@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bvqspfnea0isa"
-path="res://.godot/imported/40.png-1b87fc2b9568bab921033be7a31d2310.ctex"
+uid="uid://bch42h3owdhfy"
+path="res://.godot/imported/jogo.png-dd03a2b254e9072394e5b310a52d9cea.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://MisterioDoNilo-main/Designer/Números/Numeros_Hieráticos/40.png"
-dest_files=["res://.godot/imported/40.png-1b87fc2b9568bab921033be7a31d2310.ctex"]
+source_file="res://web/jogo.png"
+dest_files=["res://.godot/imported/jogo.png-dd03a2b254e9072394e5b310a52d9cea.ctex"]
 
 [params]
 

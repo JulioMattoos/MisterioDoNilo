@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://citmmmiqq2bs4"
-path="res://.godot/imported/7b06c791-9ffa-4f8f-8d4a-374454f8888d.png-27917b3a6ddf75937067847431a07961.ctex"
+uid="uid://c03uxdmfn4406"
+path="res://.godot/imported/jogo.icon.png-95074da183ee075062d7532251afd10c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://MisterioDoNilo-main/Designer/Inspirações/7b06c791-9ffa-4f8f-8d4a-374454f8888d.png"
-dest_files=["res://.godot/imported/7b06c791-9ffa-4f8f-8d4a-374454f8888d.png-27917b3a6ddf75937067847431a07961.ctex"]
+source_file="res://web/jogo.icon.png"
+dest_files=["res://.godot/imported/jogo.icon.png-95074da183ee075062d7532251afd10c.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://v10e5wlpar4r"
-path="res://.godot/imported/60.png-56e4a90b60753950f7c5ea6bffa1de7b.ctex"
+uid="uid://cl7w1fxr11853"
+path="res://.godot/imported/jogo.apple-touch-icon.png-0e4ae741141e802b4203d5d5b77216ef.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://MisterioDoNilo-main/Designer/Números/Numeros_Hieráticos/60.png"
-dest_files=["res://.godot/imported/60.png-56e4a90b60753950f7c5ea6bffa1de7b.ctex"]
+source_file="res://web/jogo.apple-touch-icon.png"
+dest_files=["res://.godot/imported/jogo.apple-touch-icon.png-0e4ae741141e802b4203d5d5b77216ef.ctex"]
 
 [params]
 

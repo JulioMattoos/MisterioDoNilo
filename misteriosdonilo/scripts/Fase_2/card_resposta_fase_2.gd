@@ -13,6 +13,10 @@ var _arrastando := false
 var _offset: Vector2
 
 func _ready():
+	# Configurar detecção de áreas
+	monitoring = true
+	monitorable = true
+	
 	# ⭐ NOVO: Extrair valor automaticamente do nome
 	_extrair_valor_do_nome()
 	
@@ -26,7 +30,7 @@ func _ready():
 	
 	input_pickable = true
 	
-	print("✅ Card carregado - Nome: ", name, " - Valor: ", valor)
+	print("✅ Card carregado - Nome: ", name, " - Valor: ", valor, " | Monitoring: ", monitoring, " | Monitorable: ", monitorable)
 
 # ⭐ NOVO: Método para extrair valor do nome
 func _extrair_valor_do_nome():
@@ -80,6 +84,8 @@ func _terminar_arrasto():
 
 func _processar_soltura():
 	print("🔄 Soltando card: ", name, " - Valor: ", valor)
+	print("   📍 Posição atual: ", global_position)
+	print("   🔍 Monitoring: ", monitoring)
 	
 	# ⭐⭐ MELHORIA: Buscar áreas de forma mais robusta
 	var areas_sobrepostas = get_overlapping_areas()
@@ -89,7 +95,7 @@ func _processar_soltura():
 	print("🔍 Áreas sobrepostas encontradas: ", areas_sobrepostas.size())
 	
 	for area in areas_sobrepostas:
-		print("   - Área sobreposta: ", area.name, " | Tipo: ", area.get_class())
+		print("   - Área sobreposta: ", area.name, " | Tipo: ", area.get_class(), " | Script: ", area.get_script())
 		
 		# Verificar se é AreaResposta_2 de múltiplas formas
 		var e_area_resposta = false
@@ -97,12 +103,20 @@ func _processar_soltura():
 		if area is AreaResposta_2:
 			e_area_resposta = true
 			print("      ✅ Reconhecida como AreaResposta_2 (is)")
+		elif area.get_script() and area.get_script().get_global_name() == "AreaResposta_2":
+			e_area_resposta = true
+			print("      ✅ Reconhecida como AreaResposta_2 (script)")
 		elif area.has_method("configurar") and "resultado_esperado" in area:
 			e_area_resposta = true
 			print("      ✅ Reconhecida como AreaResposta_2 (métodos)")
 		elif "AreaResposta" in area.name and "Fase2" in area.name:
 			e_area_resposta = true
 			print("      ✅ Reconhecida como AreaResposta_2 (nome)")
+		else:
+			print("      ❌ NÃO reconhecida como AreaResposta_2")
+			print("         - is AreaResposta_2: ", area is AreaResposta_2)
+			print("         - has_method('configurar'): ", area.has_method("configurar"))
+			print("         - 'resultado_esperado' in area: ", "resultado_esperado" in area)
 		
 		if e_area_resposta:
 			var distancia = global_position.distance_to(area.global_position)

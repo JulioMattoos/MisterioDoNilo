@@ -3,9 +3,13 @@
 [ext_resource type="Script" uid="uid://ddm81n208sfbp" path="res://scripts/Fase_2/area_resposta_fase_2.gd" id="1_mms3q"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6ahln"]
-size = Vector2(31, 31)
+size = Vector2(60, 60)
 
 [node name="AreaRespostaFase2" type="Area2D" groups=["area_resposta"]]
+collision_layer = 16
+collision_mask = 8
+monitoring = true
+monitorable = true
 script = ExtResource("1_mms3q")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

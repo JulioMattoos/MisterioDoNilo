@@ -7,6 +7,10 @@
 size = Vector2(155, 153)
 
 [node name="CardResposta_Fase_2" type="Area2D"]
+collision_layer = 8
+collision_mask = 16
+monitoring = true
+monitorable = true
 script = ExtResource("1_fv5ka")
 
 [node name="SpriteCard_Fase_2" type="Sprite2D" parent="."]

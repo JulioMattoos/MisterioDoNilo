@@ -3,7 +3,7 @@ extends Node2D
 var equacoes = [
 	{"expressao": "4 × 7", "resultado": 28, "area_index": 1},
 	{"expressao": "6 ÷ 3", "resultado": 2, "area_index": 2},
-	{"expressao": "8 × 6", "resultado": 48, "area_index": 3}
+	{"expressao": "8 × 6", "resultado": 40, "area_index": 3}
 ]
 
 var equacao_atual = 0
@@ -58,7 +58,8 @@ func _ready():
 	else:
 		print("⚠️ UI_Fase_2 não encontrada! Iniciando jogo automaticamente...")
 		# ⭐ Se não há UI, iniciar jogo automaticamente após um delay
-		await get_tree().create_timer(0.5).timeout
+		if get_tree():
+			await get_tree().create_timer(0.5).timeout
 		iniciar_jogo()
 	
 	conectar_areas_resposta()
@@ -124,7 +125,8 @@ func iniciar_jogo():
 	carregar_cards_existentes()
 	
 	# ⭐⭐ FASE 2: Aguardar criação dos cards antes de liberar
-	await get_tree().process_frame
+	if get_tree():
+		await get_tree().process_frame
 	
 	liberar_todas_cartas()
 
@@ -173,7 +175,8 @@ func criar_cards_dinamicamente():
 	for card in container_cards.get_children():
 		card.queue_free()
 	
-	await get_tree().process_frame
+	if get_tree():
+		await get_tree().process_frame
 
 	# ⭐ CARDS DA FASE 2 (Multiplicação e Divisão)
 	var valores_cards = [2, 6, 28, 40, 48]
@@ -186,7 +189,7 @@ func criar_cards_dinamicamente():
 	}
 	
 	# ⭐⭐ FASE 2: Lista de valores corretos (os que devem aparecer quando acertados)
-	var valores_corretos = [2, 28, 48]  # Respostas das 3 equações da Fase 2
+	var valores_corretos = [2, 28, 40]  # Respostas das 3 equações da Fase 2
 
 	for i in range(valores_cards.size()):
 		var valor = valores_cards[i]
@@ -260,7 +263,8 @@ func _processar_resposta(valor: int, correto_para_esta_area: bool):
 			ui_fase_2.mostrar_feedback("Correto! 🎉", true)
 		
 		# Aguardar um pouco
-		await get_tree().create_timer(1.0).timeout
+		if get_tree():
+			await get_tree().create_timer(1.0).timeout
 		
 		# Avançar equação
 		equacao_atual += 1
@@ -402,9 +406,10 @@ func mostrar_tela_final():
 		print("❌ ERRO: Tela de conclusão não encontrada!")
 	
 	# Aguarda alguns frames
-	await get_tree().process_frame
-	await get_tree().process_frame
-	await get_tree().process_frame
+	if get_tree():
+		await get_tree().process_frame
+		await get_tree().process_frame
+		await get_tree().process_frame
 	
 	print("🖼️ Imagem de conclusão deveria estar visível agora!")
 	print("   Pressione ESPAÇO para continuar...")
@@ -414,7 +419,10 @@ func mostrar_tela_final():
 	
 	# Troca de cena para o mapa principal
 	print("🗺️ Retornando ao mapa principal...")
-	get_tree().change_scene_to_file("res://Scene/icon.tscn")
+	if get_tree():
+		get_tree().change_scene_to_file("res://Scene/icon.tscn")
+	else:
+		push_error("❌ Erro: get_tree() retornou null ao tentar mudar de cena!")
 
 # ⭐ FUNÇÃO: Aguardar tecla espaço
 func _aguardar_tecla_espaco() -> void:
@@ -426,7 +434,11 @@ func _aguardar_tecla_espaco() -> void:
 	
 	# Verificar a cada frame se a tecla foi pressionada
 	while true:
-		await get_tree().process_frame
+		if get_tree():
+			await get_tree().process_frame
+		else:
+			push_error("❌ Erro: get_tree() retornou null no loop de espera!")
+			break
 		
 		# Verificar através da flag (setada em _input)
 		if espaco_pressionado:
@@ -468,4 +480,3 @@ func _esconder_cards_corretos():
 	if card3:
 		card3.visible = false
 		print("✅ Card_Correto_Fase_23 escondido")
-

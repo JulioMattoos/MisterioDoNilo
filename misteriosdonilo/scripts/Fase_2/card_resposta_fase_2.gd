@@ -7,7 +7,7 @@ var valor: int = 0
 var posicao_original: Vector2
 var fixado: bool = false
 
-@onready var sprite: Sprite2D = get_node_or_null("$SpriteCard_Fase_2")
+@onready var sprite: Sprite2D = get_node_or_null("SpriteCard_Fase_2")
 
 var _arrastando := false
 var _offset: Vector2

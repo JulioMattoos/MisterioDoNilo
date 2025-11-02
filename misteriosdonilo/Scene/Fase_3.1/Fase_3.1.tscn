@@ -16,7 +16,7 @@
 [ext_resource type="Texture2D" uid="uid://b4imshfrlkkgx" path="res://Scene/Fase_3.1/concluido3_1.png" id="12_y7t5o"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_perg"]
-size = Vector2(83, 92)
+size = Vector2(77.5, 84)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_popup"]
 size = Vector2(112, 60)
@@ -48,7 +48,7 @@ collision_mask = 8
 script = ExtResource("4_d47wv")
 
 [node name="AreaResposta3Fase3_1" parent="." instance=ExtResource("3_rd2pb")]
-position = Vector2(854, 421)
+position = Vector2(858, 423)
 collision_layer = 16
 collision_mask = 8
 script = ExtResource("4_d47wv")
@@ -61,7 +61,7 @@ collision_mask = 16
 script = ExtResource("6_e3q0x")
 
 [node name="Card9Resposta_Fase_3_1" parent="." instance=ExtResource("5_2f376")]
-position = Vector2(720.00006, 673)
+position = Vector2(700, 670)
 scale = Vector2(1.2, 1.2)
 collision_layer = 8
 collision_mask = 16
@@ -96,14 +96,14 @@ collision_mask = 16
 script = ExtResource("6_e3q0x")
 
 [node name="Card_Correto_Fase_32" parent="." instance=ExtResource("5_2f376")]
-position = Vector2(861, 302)
+position = Vector2(861, 300)
 scale = Vector2(1.2, 1.2)
 collision_layer = 8
 collision_mask = 16
 script = ExtResource("6_e3q0x")
 
 [node name="Card_Correto_Fase_33" parent="." instance=ExtResource("4_e3q0x")]
-position = Vector2(855.00006, 417)
+position = Vector2(861, 420)
 scale = Vector2(1.2, 1.2)
 collision_layer = 8
 collision_mask = 16
@@ -113,7 +113,7 @@ script = ExtResource("6_e3q0x")
 script = ExtResource("9_3e5w5")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AreaPergaminho"]
-position = Vector2(908, 618)
+position = Vector2(902, 610)
 shape = SubResource("RectangleShape2D_perg")
 
 [node name="PopupDica" type="CanvasLayer" parent="."]
